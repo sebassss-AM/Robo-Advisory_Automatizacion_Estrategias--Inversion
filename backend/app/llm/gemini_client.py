@@ -7,39 +7,42 @@ Eres un asesor financiero IA especializado en robo-advisory.
 
 Tus funciones son:
 - Explicar el perfil de riesgo de un inversionista en lenguaje claro
-- Justificar propuestas de portafolio según el perfil calculado
-- Responder dudas sobre conceptos financieros básicos
+- Justificar propuestas de portafolio segun el perfil calculado
+- Responder dudas sobre conceptos financieros basicos
 
 Reglas estrictas:
-- NUNCA inventes datos financieros. Usa solo la información proporcionada.
+- NUNCA inventes datos financieros. Usa solo la informacion proporcionada.
 - NUNCA prometas rentabilidades garantizadas.
-- NUNCA recomiendes compra/venta de instrumentos específicos.
-- Siempre aclara que es una propuesta informativa y no una recomendación de inversión.
+- NUNCA recomiendes compra/venta de instrumentos especificos.
+- Siempre aclara que es una propuesta informativa y no una recomendacion de inversion.
 - Si no sabes algo, dilo.
 """
 
 
-def get_client() -> genai.Client:
+def get_client():
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        raise ValueError("GEMINI_API_KEY no configurada")
+        return None
     return genai.Client(api_key=api_key)
 
 
-def generate_response(
-    prompt: str, model: str = "gemini-2.0-flash"
-) -> str:
+def generate_response(prompt: str, model: str = "gemini-2.0-flash") -> str:
     client = get_client()
-    response = client.models.generate_content(
-        model=model,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            system_instruction=SYSTEM_PROMPT,
-            temperature=0.3,
-            max_output_tokens=1024,
-        ),
-    )
-    return response.text
+    if not client:
+        return ""
+    try:
+        response = client.models.generate_content(
+            model=model,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                system_instruction=SYSTEM_PROMPT,
+                temperature=0.3,
+                max_output_tokens=1024,
+            ),
+        )
+        return response.text
+    except Exception as e:
+        return f"[No se pudo generar explicacion: {e}]"
 
 
 def generate_profile_explanation(
@@ -50,7 +53,7 @@ def generate_profile_explanation(
 ) -> str:
     prompt = f"""
 Perfil calculado: {profile_name}
-Puntuación: {score}/100
+Puntuacion: {score}/100
 
 Respuestas del usuario:
 - Edad: {answers.get('age')}
@@ -62,9 +65,8 @@ Respuestas del usuario:
 Reglas aplicadas:
 {chr(10).join(f'- {r}' for r in rules)}
 
-Genera una explicación clara y amigable para el usuario de por qué se le asignó este perfil.
+Genera una explicacion clara y amigable para el usuario de por que se le asigno este perfil.
 """
-
     return generate_response(prompt)
 
 
@@ -80,19 +82,18 @@ def generate_portfolio_explanation(
 
     prompt = f"""
 Perfil del inversionista: {profile_name}
-Asignación propuesta:
+Asignacion propuesta:
 {allocations_text}
 
-Métricas de riesgo:
+Metricas de riesgo:
 - Volatilidad esperada: {risk_metrics.get('expected_volatility')}
-- Diversificación: {risk_metrics.get('diversification_score')}/100
-- Drawdown máximo estimado: {risk_metrics.get('max_drawdown_estimate')}
+- Diversificacion: {risk_metrics.get('diversification_score')}/100
+- Drawdown maximo estimado: {risk_metrics.get('max_drawdown_estimate')}
 
-Genera una explicación clara para el usuario sobre esta propuesta de portafolio.
+Genera una explicacion clara para el usuario sobre esta propuesta de portafolio.
 Debes incluir:
-1. Por qué esta asignación es adecuada para su perfil
-2. Qué significa cada métrica de riesgo
+1. Por que esta asignacion es adecuada para su perfil
+2. Que significa cada metrica de riesgo
 3. Un mensaje responsable indicando que es solo una propuesta informativa
 """
-
     return generate_response(prompt)

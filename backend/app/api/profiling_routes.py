@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, HTTPException
 
 from backend.app.agents.graph import build_graph
@@ -34,13 +36,16 @@ async def create_profile(answers: dict):
         RETURNING id
         """,
         (
-            answers,
+            json.dumps(answers),
             profile_result["profile"],
             profile_result["score"],
             profile_result["rules_version"],
             profile_result["explanations"],
         ),
     )
+
+    if not profile_id:
+        raise HTTPException(status_code=500, detail="No se pudo guardar el perfil")
 
     return {
         "profile_id": profile_id,

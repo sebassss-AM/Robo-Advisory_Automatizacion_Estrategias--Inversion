@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { api, type QuestionnaireAnswers } from "@/services/api-client"
+import { api, type FormAnswers } from "@/services/api-client"
 
 interface Question {
-  key: keyof QuestionnaireAnswers
+  key: keyof FormAnswers
   label: string
   description?: string
   type: "number" | "select" | "range"
@@ -17,36 +17,36 @@ interface Question {
 const questions: Question[] = [
   {
     key: "age",
-    label: "¿Cuál es tu edad?",
+    label: "Cual es tu edad?",
     type: "number",
     placeholder: "Ingresa tu edad",
   },
   {
     key: "investment_horizon",
-    label: "¿Cuál es tu horizonte de inversión?",
-    description: "¿Por cuánto tiempo planeas mantener tu inversión?",
+    label: "Cual es tu horizonte de inversion?",
+    description: "Por cuanto tiempo planeas mantener tu inversion?",
     type: "select",
     options: [
-      { value: "corto_plazo", label: "Menos de 3 años" },
-      { value: "mediano_plazo", label: "3 a 7 años" },
-      { value: "largo_plazo", label: "Más de 7 años" },
+      { value: "corto_plazo", label: "Menos de 3 anos" },
+      { value: "mediano_plazo", label: "3 a 7 anos" },
+      { value: "largo_plazo", label: "Mas de 7 anos" },
     ],
   },
   {
     key: "risk_tolerance",
-    label: "¿Cómo describirías tu tolerancia al riesgo?",
-    description: "¿Cómo reaccionarías si tu inversión fluctuara?",
+    label: "Como describirias tu tolerancia al riesgo?",
+    description: "Como reaccionarias si tu inversion fluctuara?",
     type: "select",
     options: [
-      { value: "baja", label: "Baja — Prefiero seguridad aunque gane menos" },
-      { value: "media", label: "Media — Acepto fluctuaciones moderadas" },
-      { value: "alta", label: "Alta — Busco máxima rentabilidad posible" },
+      { value: "baja", label: "Baja - Prefiero seguridad aunque gane menos" },
+      { value: "media", label: "Media - Acepto fluctuaciones moderadas" },
+      { value: "alta", label: "Alta - Busco maxima rentabilidad posible" },
     ],
   },
   {
     key: "goal",
-    label: "¿Cuál es tu objetivo principal?",
-    description: "¿Qué buscas lograr con esta inversión?",
+    label: "Cual es tu objetivo principal?",
+    description: "Que buscas lograr con esta inversion?",
     type: "select",
     options: [
       { value: "preservacion_capital", label: "Preservar mi capital" },
@@ -57,14 +57,14 @@ const questions: Question[] = [
   },
   {
     key: "monthly_income",
-    label: "¿Cuál es tu ingreso mensual?",
+    label: "Cual es tu ingreso mensual?",
     type: "number",
     placeholder: "Monto en USD",
   },
   {
     key: "investment_experience",
     label: "Nivel de experiencia en inversiones",
-    description: "Del 1 al 5, ¿cuánta experiencia tienes?",
+    description: "Del 1 al 5, cuanta experiencia tienes?",
     type: "range",
     min: 1,
     max: 5,
@@ -77,7 +77,7 @@ interface RiskQuestionnaireProps {
 
 export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps) {
   const [step, setStep] = useState(0)
-  const [answers, setAnswers] = useState<QuestionnaireAnswers>({
+  const [answers, setAnswers] = useState<FormAnswers>({
     age: "",
     investment_horizon: "",
     risk_tolerance: "",
@@ -90,7 +90,7 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
 
   const q = questions[step]
 
-  const handleChange = (key: keyof QuestionnaireAnswers, value: string) => {
+  const handleChange = (key: keyof FormAnswers, value: string) => {
     setAnswers((prev) => ({ ...prev, [key]: value }))
   }
 
@@ -115,12 +115,14 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
     setError("")
     try {
       const payload = {
-        ...answers,
         age: parseInt(answers.age) || 0,
+        investment_horizon: answers.investment_horizon,
+        risk_tolerance: answers.risk_tolerance,
+        goal: answers.goal,
         monthly_income: parseFloat(answers.monthly_income) || 0,
         investment_experience: parseInt(answers.investment_experience) || 1,
       }
-      const result = await api.submitQuestionnaire(payload as QuestionnaireAnswers)
+      const result = await api.submitQuestionnaire(payload)
       onComplete(result.profile_id)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al enviar el cuestionario")

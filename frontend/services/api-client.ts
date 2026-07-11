@@ -21,6 +21,15 @@ export interface QuestionnaireAnswers {
   investment_experience: number
 }
 
+export interface FormAnswers {
+  age: string
+  investment_horizon: string
+  risk_tolerance: string
+  goal: string
+  monthly_income: string
+  investment_experience: string
+}
+
 export interface ProfileResult {
   profile_id: string
   profile: string

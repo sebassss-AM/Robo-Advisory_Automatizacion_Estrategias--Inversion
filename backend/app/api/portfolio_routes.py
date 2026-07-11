@@ -1,6 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Body
 
-from backend.app.agents.graph import build_graph
 from backend.app.models.investor_profile import RiskProfile
 from backend.app.domain.asset_allocation_policies import build_allocations
 from backend.app.infrastructure.database import execute_insert, execute_query
@@ -9,7 +8,7 @@ router = APIRouter(prefix="/api/propuesta", tags=["portfolio"])
 
 
 @router.post("")
-async def create_proposal(profile_id: int):
+async def create_proposal(profile_id: int = Body(..., embed=True)):
     profile_rows = execute_query(
         "SELECT * FROM profiles WHERE id = %s", (profile_id,)
     )
