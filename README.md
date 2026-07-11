@@ -41,78 +41,39 @@ Sistema de asesoría financiera automatizada basado en agentes IA. Realiza perfi
 
 ```
 /
-├── frontend/                          # Next.js
-│   ├── app/
-│   │   ├── layout.tsx
-│   │   ├── page.tsx                   # Landing page
-│   │   ├── cuestionario/
-│   │   │   └── page.tsx               # Perfilamiento de riesgo
-│   │   ├── propuesta/
-│   │   │   └── page.tsx               # Visualizar portafolio
-│   │   └── asesor/
-│   │       └── page.tsx               # Panel de revisión
-│   ├── components/
-│   │   ├── RiskQuestionnaire.tsx
-│   │   ├── PortfolioChart.tsx
-│   │   └── ApprovalPanel.tsx
-│   ├── services/
-│   │   └── api-client.ts              # Cliente HTTP al backend
-│   ├── package.json
-│   ├── pnpm-lock.yaml
-│   └── next.config.js
+├── app/                               # Next.js App Router
+│   ├── layout.tsx
+│   ├── page.tsx                       # Landing page
+│   ├── cuestionario/
+│   │   └── page.tsx                   # Perfilamiento de riesgo
+│   ├── propuesta/
+│   │   └── page.tsx                   # Visualizar portafolio
+│   └── asesor/
+│       └── page.tsx                   # Panel de revisión
+│
+├── components/                        # Componentes React
+│   ├── RiskQuestionnaire.tsx
+│   ├── PortfolioChart.tsx
+│   └── ApprovalPanel.tsx
+│
+├── services/
+│   └── api-client.ts                  # Cliente HTTP al backend
+│
+├── api/                               # Vercel Python serverless
+│   └── index.py                       # FastAPI entry point
 │
 ├── backend/                           # FastAPI + LangGraph
-│   ├── app/
-│   │   ├── __init__.py
-│   │   ├── main.py                    # FastAPI app + startup
-│   │   │
-│   │   ├── api/                       # Capa de entrada (routes)
-│   │   │   ├── __init__.py
-│   │   │   ├── profiling_routes.py    # POST /perfil, GET /perfil/{id}
-│   │   │   ├── portfolio_routes.py    # POST /propuesta
-│   │   │   └── approval_routes.py     # POST /revisar, GET /historial
-│   │   │
-│   │   ├── agents/                    # LangGraph state graph
-│   │   │   ├── __init__.py
-│   │   │   ├── graph.py              # StateGraph definition
-│   │   │   ├── investor_profiling_node.py
-│   │   │   ├── portfolio_generation_node.py
-│   │   │   └── advisor_approval_node.py
-│   │   │
-│   │   ├── domain/                    # Lógica de negocio pura
-│   │   │   ├── __init__.py
-│   │   │   ├── risk_profiling_rules.py
-│   │   │   ├── asset_allocation_policies.py
-│   │   │   └── instrument_catalog.py
-│   │   │
-│   │   ├── models/                    # Pydantic schemas
-│   │   │   ├── __init__.py
-│   │   │   ├── investor_profile.py
-│   │   │   ├── portfolio_proposal.py
-│   │   │   └── audit_decision.py
-│   │   │
-│   │   ├── infrastructure/            # Conexiones externas
-│   │   │   ├── __init__.py
-│   │   │   ├── database.py            # Vercel Postgres (Neon)
-│   │   │   ├── redis_session.py       # Vercel KV
-│   │   │   └── chroma_vector_store.py # RAG
-│   │   │
-│   │   └── llm/                       # Gemini integration
-│   │       ├── __init__.py
-│   │       └── gemini_client.py
-│   │
-│   └── requirements.txt
+│   └── app/
+│       ├── main.py
+│       ├── api/                       # Routes
+│       ├── agents/                    # LangGraph state graph
+│       ├── domain/                    # Lógica de negocio
+│       ├── models/                    # Pydantic schemas
+│       ├── infrastructure/            # DB, Redis, ChromaDB
+│       └── llm/                       # Gemini integration
 │
 ├── tests/
-│   ├── test_risk_profiling_rules.py
-│   ├── test_asset_allocation_policies.py
-│   └── test_profiling_node.py
-│
 ├── docs/
-│   ├── stack.md
-│   └── arquitectura.md
-│
-├── vercel.json                        # Monorepo routing config
 ├── parametros_del_proyecto.md
 ├── track3.md
 └── README.md
@@ -120,42 +81,25 @@ Sistema de asesoría financiera automatizada basado en agentes IA. Realiza perfi
 
 ---
 
-## Configuración de Despliegue (Vercel)
+## Despliegue (Vercel)
 
-El `vercel.json` en la raíz define cómo se construye y enruta cada parte del proyecto:
+Vercel detecta automáticamente:
+- **Next.js** en la raíz → frontend
+- **Python** en `api/` → backend serverless functions
 
-```json
-{
-  "builds": [
-    { "src": "frontend/package.json", "use": "@vercel/next" },
-    { "src": "api/index.py", "use": "@vercel/python" }
-  ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "api/index.py" },
-    { "src": "/(.*)", "dest": "frontend/$1" }
-  ]
-}
-```
-
-- **Frontend** → Next.js build automático, sirve en todas las rutas que no empiecen con `/api`
-- **Backend** → FastAPI corre como serverless function Python, sirve en `/api/*`
+Sin necesidad de `vercel.json`.
 
 ---
 
 ## Desarrollo
 
 ```bash
-# Frontend
-cd frontend
-pnpm install
-pnpm dev
-
 # Backend
-cd backend
-python -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+uvicorn backend.app.main:app --reload
+
+# Frontend
+pnpm dev
 ```
 
 ---
