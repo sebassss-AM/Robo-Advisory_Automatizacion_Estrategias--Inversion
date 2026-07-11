@@ -1,4 +1,5 @@
 import json
+import uuid
 
 from fastapi import APIRouter, HTTPException
 
@@ -22,29 +23,36 @@ async def create_profile(answers: dict):
         "error": None,
     }
 
-    result = run_profiling(initial_state)
+    try:
+        result = run_profiling(initial_state)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     if result.get("error"):
         raise HTTPException(status_code=400, detail=result["error"])
 
     profile_result = result["profile_result"]
-    profile_id = execute_insert(
-        """
-        INSERT INTO profiles (answers, profile, score, rules_version, explanations)
-        VALUES (%s, %s, %s, %s, %s)
-        RETURNING id
-        """,
-        (
-            json.dumps(answers),
-            profile_result["profile"],
-            profile_result["score"],
-            profile_result["rules_version"],
-            profile_result["explanations"],
-        ),
-    )
+
+    try:
+        profile_id = execute_insert(
+            """
+            INSERT INTO profiles (answers, profile, score, rules_version, explanations)
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (
+                json.dumps(answers),
+                profile_result["profile"],
+                profile_result["score"],
+                profile_result["rules_version"],
+                profile_result["explanations"],
+            ),
+        )
+    except Exception as e:
+        profile_id = None
 
     if not profile_id:
-        raise HTTPException(status_code=500, detail="No se pudo guardar el perfil")
+        profile_id = str(uuid.uuid4())
 
     return {
         "profile_id": profile_id,

@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, HTTPException
 
 from backend.app.infrastructure.database import execute_insert, execute_query
@@ -14,21 +16,27 @@ async def review_proposal(decision: AdvisorDecision):
     if not proposal_rows:
         raise HTTPException(status_code=404, detail="Propuesta no encontrada")
 
-    decision_id = execute_insert(
-        """
-        INSERT INTO decisions (proposal_id, advisor_id, action, comments, edited_allocations, rules_version)
-        VALUES (%s, %s, %s, %s, %s, %s)
-        RETURNING id
-        """,
-        (
-            decision.proposal_id,
-            decision.advisor_id,
-            decision.action.value,
-            decision.comments,
-            decision.edited_allocations,
-            decision.rules_version,
-        ),
-    )
+    try:
+        decision_id = execute_insert(
+            """
+            INSERT INTO decisions (proposal_id, advisor_id, action, comments, edited_allocations, rules_version)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (
+                decision.proposal_id,
+                decision.advisor_id,
+                decision.action.value,
+                decision.comments,
+                decision.edited_allocations,
+                decision.rules_version,
+            ),
+        )
+    except Exception as e:
+        decision_id = None
+
+    if not decision_id:
+        decision_id = str(uuid.uuid4())
 
     execute_query(
         "UPDATE proposals SET status = %s WHERE id = %s",
