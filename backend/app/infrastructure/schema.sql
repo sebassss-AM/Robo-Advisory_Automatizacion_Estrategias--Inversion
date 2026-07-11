@@ -33,3 +33,11 @@ CREATE TABLE IF NOT EXISTS decisions (
     rules_version VARCHAR(10) NOT NULL,
     decided_at TIMESTAMP DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    display_name VARCHAR(100),
+    created_at TIMESTAMP DEFAULT NOW()
+);

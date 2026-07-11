@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { api, type HistoryItem } from "@/services/api-client"
-import { isAuthenticated, logout } from "@/services/auth"
+import { isAuthenticated, logout, getUser } from "@/services/auth"
 
 const actionBadge: Record<string, string> = {
   aprobado: "bg-green-100 text-green-700",
@@ -49,6 +49,9 @@ export default function AsesorPage() {
             <span className="font-bold text-gray-900">InversIA</span>
           </a>
           <nav className="flex items-center gap-4">
+            <span className="text-sm text-gray-500">
+              {getUser()?.display_name || getUser()?.username}
+            </span>
             <a
               href="/"
               className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"

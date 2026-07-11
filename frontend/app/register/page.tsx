@@ -2,25 +2,33 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { login } from "@/services/auth"
+import { register } from "@/services/auth"
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [displayName, setDisplayName] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+
+    if (password !== confirmPassword) {
+      setError("Las contraseñas no coinciden")
+      return
+    }
+
     setLoading(true)
 
     try {
-      await login(username, password)
+      await register(username, password, displayName || undefined)
       router.push("/asesor")
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al iniciar sesión")
+      setError(err instanceof Error ? err.message : "Error al registrarse")
     } finally {
       setLoading(false)
     }
@@ -34,10 +42,10 @@ export default function LoginPage() {
             I
           </div>
           <h1 className="mt-4 text-2xl font-bold text-gray-900">
-            Iniciar Sesión
+            Crear Cuenta
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Accedé al panel de asesor
+            Registrate como asesor
           </p>
         </div>
 
@@ -51,8 +59,21 @@ export default function LoginPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="mt-1 w-full rounded-xl border border-gray-300 p-3 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              placeholder="Tu usuario"
+              placeholder="Min. 3 caracteres"
               autoFocus
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Nombre visible (opcional)
+            </label>
+            <input
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              className="mt-1 w-full rounded-xl border border-gray-300 p-3 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              placeholder="Ej: Juan Pérez"
             />
           </div>
 
@@ -65,7 +86,20 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 w-full rounded-xl border border-gray-300 p-3 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              placeholder="Tu contraseña"
+              placeholder="Min. 4 caracteres"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Confirmar contraseña
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="mt-1 w-full rounded-xl border border-gray-300 p-3 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              placeholder="Repetí la contraseña"
             />
           </div>
 
@@ -80,14 +114,14 @@ export default function LoginPage() {
             disabled={loading || !username || !password}
             className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? "Ingresando..." : "Ingresar"}
+            {loading ? "Registrando..." : "Crear cuenta"}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-500">
-          ¿No tenés cuenta?{" "}
-          <a href="/register" className="font-semibold text-blue-600 hover:text-blue-700">
-            Registrate
+          ¿Ya tenés cuenta?{" "}
+          <a href="/login" className="font-semibold text-blue-600 hover:text-blue-700">
+            Iniciar sesión
           </a>
         </p>
       </div>

@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 
 load_dotenv()
 
+from backend.app.api.auth_routes import router as auth_router
 from backend.app.api.profiling_routes import router as profiling_router
 from backend.app.api.portfolio_routes import router as portfolio_router
 from backend.app.api.approval_routes import router as approval_router
@@ -74,6 +75,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router)
 app.include_router(profiling_router)
 app.include_router(portfolio_router)
 app.include_router(approval_router)

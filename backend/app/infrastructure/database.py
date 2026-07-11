@@ -80,6 +80,15 @@ def _ensure_database():
             decided_at TIMESTAMP DEFAULT NOW()
         )
         """,
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            id TEXT PRIMARY KEY,
+            username VARCHAR(50) UNIQUE NOT NULL,
+            password_hash VARCHAR(255) NOT NULL,
+            display_name VARCHAR(100),
+            created_at TIMESTAMP DEFAULT NOW()
+        )
+        """,
     ]
     for q in queries:
         with conn.cursor() as cur:
