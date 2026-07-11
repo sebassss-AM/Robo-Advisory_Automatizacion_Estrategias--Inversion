@@ -128,10 +128,10 @@ El `vercel.json` en la raíz define cómo se construye y enruta cada parte del p
 {
   "builds": [
     { "src": "frontend/package.json", "use": "@vercel/next" },
-    { "src": "backend/**/*.py", "use": "@vercel/python" }
+    { "src": "api/index.py", "use": "@vercel/python" }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "backend/$1" },
+    { "src": "/api/(.*)", "dest": "api/index.py" },
     { "src": "/(.*)", "dest": "frontend/$1" }
   ]
 }
