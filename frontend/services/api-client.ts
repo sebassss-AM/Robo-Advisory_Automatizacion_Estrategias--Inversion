@@ -67,7 +67,7 @@ export interface ProposalResult {
 }
 
 export interface AdvisorDecision {
-  proposal_id: number
+  proposal_id: string
   advisor_id: string
   action: "aprobado" | "editado" | "rechazado"
   comments?: string
@@ -93,12 +93,12 @@ export const api = {
       body: JSON.stringify(answers),
     }),
 
-  getProfile: (id: number) => request<ProfileResult>(`/perfil/${id}`),
+  getProfile: (id: string) => request<ProfileResult>(`/perfil/${id}`),
 
-  createProposal: (profile_id: number) =>
+  createProposal: (profile_id: string, profile?: string) =>
     request<ProposalResult>("/propuesta", {
       method: "POST",
-      body: JSON.stringify({ profile_id }),
+      body: JSON.stringify({ profile_id, ...(profile ? { profile } : {}) }),
     }),
 
   getProposal: (id: number) => request<ProposalResult>(`/propuesta/${id}`),

@@ -22,12 +22,14 @@ function PropuestaContent() {
       return
     }
 
+    const profile = searchParams.get("profile") || undefined
+
     api
-      .createProposal(Number(profileId))
+      .createProposal(profileId, profile)
       .then(setProposal)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [profileId, router])
+  }, [profileId, searchParams, router])
 
   if (loading) {
     return (
@@ -167,7 +169,7 @@ function PropuestaContent() {
 
             <div className="mt-6">
               <ApprovalPanel
-                proposalId={Number(proposal?.proposal_id)}
+                proposalId={proposal?.proposal_id || ""}
                 profileName={proposal?.profile || ""}
                 allocations={proposal?.allocations || []}
                 rulesVersion="1.0.0"

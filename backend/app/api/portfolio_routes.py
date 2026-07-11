@@ -11,17 +11,32 @@ router = APIRouter(prefix="/api/propuesta", tags=["portfolio"])
 
 
 @router.post("")
-async def create_proposal(profile_id: int = Body(..., embed=True)):
-    profile_rows = execute_query(
-        "SELECT * FROM profiles WHERE id = %s", (profile_id,)
-    )
-    if not profile_rows:
-        raise HTTPException(status_code=404, detail="Perfil no encontrado")
+async def create_proposal(
+    profile_id: str = Body(...),
+    profile: str = Body(None),
+):
+    resolved_profile: RiskProfile | None = None
 
-    profile_data = profile_rows[0]
-    profile = RiskProfile(profile_data["profile"])
+    if profile:
+        try:
+            resolved_profile = RiskProfile(profile)
+        except ValueError:
+            pass
 
-    proposal = build_allocations(profile, str(profile_id))
+    if not resolved_profile:
+        profile_rows = execute_query(
+            "SELECT * FROM profiles WHERE id = %s", (profile_id,)
+        )
+        if profile_rows:
+            resolved_profile = RiskProfile(profile_rows[0]["profile"])
+
+    if not resolved_profile:
+        raise HTTPException(
+            status_code=400,
+            detail="No se pudo determinar el perfil de riesgo. Proporciona 'profile' o asegúrate de que el perfil exista en la base de datos.",
+        )
+
+    proposal = build_allocations(resolved_profile, profile_id)
 
     try:
         proposal_id = execute_insert(
@@ -38,7 +53,7 @@ async def create_proposal(profile_id: int = Body(..., embed=True)):
                 "pending",
             ),
         )
-    except Exception as e:
+    except Exception:
         proposal_id = None
 
     if not proposal_id:
@@ -47,7 +62,7 @@ async def create_proposal(profile_id: int = Body(..., embed=True)):
     return {
         "proposal_id": proposal_id,
         "profile_id": profile_id,
-        "profile": profile.value,
+        "profile": resolved_profile.value,
         "allocations": [a.model_dump() for a in proposal.allocations],
         "risk_metrics": proposal.risk_metrics.model_dump(),
         "explanation": proposal.explanation,
@@ -55,7 +70,7 @@ async def create_proposal(profile_id: int = Body(..., embed=True)):
 
 
 @router.get("/{proposal_id}")
-async def get_proposal(proposal_id: int):
+async def get_proposal(proposal_id: str):
     rows = execute_query("SELECT * FROM proposals WHERE id = %s", (proposal_id,))
     if not rows:
         raise HTTPException(status_code=404, detail="Propuesta no encontrada")

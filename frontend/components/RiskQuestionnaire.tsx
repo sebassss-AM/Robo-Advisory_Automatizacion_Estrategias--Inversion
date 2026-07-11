@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { api, type FormAnswers } from "@/services/api-client"
+import { api, type FormAnswers, type ProfileResult } from "@/services/api-client"
 
 interface Question {
   key: keyof FormAnswers
@@ -72,7 +72,7 @@ const questions: Question[] = [
 ]
 
 interface RiskQuestionnaireProps {
-  onComplete: (profileId: string) => void
+  onComplete: (result: ProfileResult) => void
 }
 
 export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps) {
@@ -123,7 +123,7 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
         investment_experience: parseInt(answers.investment_experience) || 1,
       }
       const result = await api.submitQuestionnaire(payload)
-      onComplete(result.profile_id)
+      onComplete(result)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al enviar el cuestionario")
     } finally {

@@ -2,12 +2,13 @@
 
 import { useRouter } from "next/navigation"
 import RiskQuestionnaire from "@/components/RiskQuestionnaire"
+import type { ProfileResult } from "@/services/api-client"
 
 export default function CuestionarioPage() {
   const router = useRouter()
 
-  const handleComplete = (profileId: string) => {
-    router.push(`/propuesta?profile_id=${profileId}`)
+  const handleComplete = (result: ProfileResult) => {
+    router.push(`/propuesta?profile_id=${result.profile_id}&profile=${result.profile}`)
   }
 
   return (

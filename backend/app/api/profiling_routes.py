@@ -65,7 +65,7 @@ async def create_profile(answers: dict):
 
 
 @router.get("/{profile_id}")
-async def get_profile(profile_id: int):
+async def get_profile(profile_id: str):
     rows = execute_query("SELECT * FROM profiles WHERE id = %s", (profile_id,))
     if not rows:
         raise HTTPException(status_code=404, detail="Perfil no encontrado")

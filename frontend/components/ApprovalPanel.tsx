@@ -4,7 +4,7 @@ import { useState } from "react"
 import { api, type Allocation } from "@/services/api-client"
 
 interface ApprovalPanelProps {
-  proposalId: number
+  proposalId: string
   profileName: string
   allocations: Allocation[]
   rulesVersion: string
