@@ -2,7 +2,7 @@ import json
 
 from fastapi import APIRouter, HTTPException
 
-from backend.app.agents.graph import build_graph
+from backend.app.agents.investor_profiling_node import run_profiling
 from backend.app.infrastructure.database import execute_insert, execute_query
 
 router = APIRouter(prefix="/api/perfil", tags=["profiling"])
@@ -10,7 +10,6 @@ router = APIRouter(prefix="/api/perfil", tags=["profiling"])
 
 @router.post("")
 async def create_profile(answers: dict):
-    graph = build_graph()
     initial_state = {
         "session_id": "session_1",
         "step": "start",
@@ -23,7 +22,7 @@ async def create_profile(answers: dict):
         "error": None,
     }
 
-    result = await graph.ainvoke(initial_state)
+    result = run_profiling(initial_state)
 
     if result.get("error"):
         raise HTTPException(status_code=400, detail=result["error"])
