@@ -42,10 +42,21 @@ def execute_insert(query: str, params: tuple = ()) -> Optional[str]:
 
 
 def init_db():
-    queries = [
+    drop_queries = [
+        "DROP TABLE IF EXISTS decisions CASCADE",
+        "DROP TABLE IF EXISTS proposals CASCADE",
+        "DROP TABLE IF EXISTS profiles CASCADE",
+    ]
+    for q in drop_queries:
+        try:
+            execute_query(q)
+        except Exception:
+            pass
+
+    create_queries = [
         """
-        CREATE TABLE IF NOT EXISTS profiles (
-            id SERIAL PRIMARY KEY,
+        CREATE TABLE profiles (
+            id TEXT PRIMARY KEY,
             answers JSONB NOT NULL,
             profile VARCHAR(20) NOT NULL,
             score INTEGER NOT NULL,
@@ -55,9 +66,9 @@ def init_db():
         )
         """,
         """
-        CREATE TABLE IF NOT EXISTS proposals (
-            id SERIAL PRIMARY KEY,
-            profile_id INTEGER REFERENCES profiles(id),
+        CREATE TABLE proposals (
+            id TEXT PRIMARY KEY,
+            profile_id TEXT REFERENCES profiles(id),
             allocations JSONB NOT NULL,
             risk_metrics JSONB NOT NULL,
             explanation TEXT,
@@ -66,9 +77,9 @@ def init_db():
         )
         """,
         """
-        CREATE TABLE IF NOT EXISTS decisions (
-            id SERIAL PRIMARY KEY,
-            proposal_id INTEGER REFERENCES proposals(id),
+        CREATE TABLE decisions (
+            id TEXT PRIMARY KEY,
+            proposal_id TEXT REFERENCES proposals(id),
             advisor_id VARCHAR(100) NOT NULL,
             action VARCHAR(20) NOT NULL,
             comments TEXT,
@@ -78,8 +89,11 @@ def init_db():
         )
         """,
     ]
-    for query in queries:
-        execute_query(query)
+    for q in create_queries:
+        try:
+            execute_query(q)
+        except Exception as e:
+            print(f"[WARN] No se pudo crear tabla: {e}")
 
 
 def close():

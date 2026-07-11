@@ -37,15 +37,16 @@ async def create_proposal(
         )
 
     proposal = build_allocations(resolved_profile, profile_id)
+    proposal_id = str(uuid.uuid4())
 
     try:
-        proposal_id = execute_insert(
+        execute_insert(
             """
-            INSERT INTO proposals (profile_id, allocations, risk_metrics, explanation, status)
-            VALUES (%s, %s, %s, %s, %s)
-            RETURNING id
+            INSERT INTO proposals (id, profile_id, allocations, risk_metrics, explanation, status)
+            VALUES (%s, %s, %s, %s, %s, %s)
             """,
             (
+                proposal_id,
                 profile_id,
                 [a.model_dump() for a in proposal.allocations],
                 proposal.risk_metrics.model_dump(),
@@ -54,10 +55,7 @@ async def create_proposal(
             ),
         )
     except Exception:
-        proposal_id = None
-
-    if not proposal_id:
-        proposal_id = str(uuid.uuid4())
+        pass
 
     return {
         "proposal_id": proposal_id,

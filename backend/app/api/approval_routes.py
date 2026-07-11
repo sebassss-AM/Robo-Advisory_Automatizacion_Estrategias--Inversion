@@ -12,15 +12,16 @@ _in_memory_decisions: list[dict] = []
 
 @router.post("")
 async def review_proposal(decision: AdvisorDecision):
-    db_decision_id = None
+    decision_id = str(uuid.uuid4())
+
     try:
-        db_decision_id = execute_insert(
+        execute_insert(
             """
-            INSERT INTO decisions (proposal_id, advisor_id, action, comments, edited_allocations, rules_version)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            RETURNING id
+            INSERT INTO decisions (id, proposal_id, advisor_id, action, comments, edited_allocations, rules_version)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             """,
             (
+                decision_id,
                 decision.proposal_id,
                 decision.advisor_id,
                 decision.action.value,
@@ -30,21 +31,15 @@ async def review_proposal(decision: AdvisorDecision):
             ),
         )
     except Exception:
-        db_decision_id = None
+        pass
 
-    if db_decision_id:
-        decision_id = str(db_decision_id)
-    else:
-        decision_id = str(uuid.uuid4())
-
-    if not db_decision_id:
-        try:
-            execute_query(
-                "UPDATE proposals SET status = %s WHERE id = %s",
-                (decision.action.value, decision.proposal_id),
-            )
-        except Exception:
-            pass
+    try:
+        execute_query(
+            "UPDATE proposals SET status = %s WHERE id = %s",
+            (decision.action.value, decision.proposal_id),
+        )
+    except Exception:
+        pass
 
     _in_memory_decisions.insert(
         0,
@@ -56,7 +51,7 @@ async def review_proposal(decision: AdvisorDecision):
             "comments": decision.comments,
             "rules_version": decision.rules_version,
             "decided_at": None,
-            "profile": "No disponible",
+            "profile": None,
         },
     )
 

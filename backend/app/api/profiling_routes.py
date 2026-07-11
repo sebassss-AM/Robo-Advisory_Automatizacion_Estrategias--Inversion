@@ -1,4 +1,3 @@
-import json
 import uuid
 
 from fastapi import APIRouter, HTTPException
@@ -11,11 +10,13 @@ router = APIRouter(prefix="/api/perfil", tags=["profiling"])
 
 @router.post("")
 async def create_profile(answers: dict):
+    profile_id = str(uuid.uuid4())
+
     initial_state = {
         "session_id": "session_1",
         "step": "start",
         "answers": answers,
-        "profile_id": None,
+        "profile_id": profile_id,
         "profile_result": None,
         "proposal_id": None,
         "proposal_result": None,
@@ -34,14 +35,14 @@ async def create_profile(answers: dict):
     profile_result = result["profile_result"]
 
     try:
-        profile_id = execute_insert(
+        execute_insert(
             """
-            INSERT INTO profiles (answers, profile, score, rules_version, explanations)
-            VALUES (%s, %s, %s, %s, %s)
-            RETURNING id
+            INSERT INTO profiles (id, answers, profile, score, rules_version, explanations)
+            VALUES (%s, %s, %s, %s, %s, %s)
             """,
             (
-                json.dumps(answers),
+                profile_id,
+                answers,
                 profile_result["profile"],
                 profile_result["score"],
                 profile_result["rules_version"],
@@ -49,10 +50,7 @@ async def create_profile(answers: dict):
             ),
         )
     except Exception as e:
-        profile_id = None
-
-    if not profile_id:
-        profile_id = str(uuid.uuid4())
+        pass
 
     return {
         "profile_id": profile_id,
