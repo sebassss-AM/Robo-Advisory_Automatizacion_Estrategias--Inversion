@@ -1,8 +1,7 @@
-import sys
-import os
+from fastapi import FastAPI
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+app = FastAPI()
 
-from backend.app.main import app
-
-handler = app
+@app.get("/api/health")
+async def health():
+    return {"status": "ok", "version": "test"}
