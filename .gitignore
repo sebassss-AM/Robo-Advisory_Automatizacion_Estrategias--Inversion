@@ -1,0 +1,11 @@
+*.pyc
+__pycache__/
+venv/
+node_modules/
+.frontend/.next/
+env/
+.env
+*.egg-info/
+dist/
+chroma_db/
+
