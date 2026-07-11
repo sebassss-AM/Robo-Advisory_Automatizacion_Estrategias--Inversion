@@ -48,8 +48,8 @@ async def create_proposal(
             (
                 proposal_id,
                 profile_id,
-                [a.model_dump() for a in proposal.allocations],
-                proposal.risk_metrics.model_dump(),
+                json.dumps([a.model_dump() for a in proposal.allocations]),
+                json.dumps(proposal.risk_metrics.model_dump()),
                 proposal.explanation,
                 "pending",
             ),

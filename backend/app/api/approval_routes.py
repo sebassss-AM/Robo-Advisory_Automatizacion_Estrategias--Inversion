@@ -1,3 +1,4 @@
+import json
 import uuid
 
 from fastapi import APIRouter, HTTPException
@@ -26,7 +27,7 @@ async def review_proposal(decision: AdvisorDecision):
                 decision.advisor_id,
                 decision.action.value,
                 decision.comments,
-                decision.edited_allocations,
+                json.dumps(decision.edited_allocations) if decision.edited_allocations else None,
                 decision.rules_version,
             ),
         )

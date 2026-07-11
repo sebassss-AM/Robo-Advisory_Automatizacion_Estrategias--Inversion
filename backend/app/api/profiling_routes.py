@@ -1,3 +1,5 @@
+import json
+import json
 import uuid
 
 from fastapi import APIRouter, HTTPException
@@ -42,11 +44,11 @@ async def create_profile(answers: dict):
             """,
             (
                 profile_id,
-                answers,
+                json.dumps(answers),
                 profile_result["profile"],
                 profile_result["score"],
                 profile_result["rules_version"],
-                profile_result["explanations"],
+                json.dumps(profile_result["explanations"]),
             ),
         )
     except Exception as e:
