@@ -1,4 +1,14 @@
+"use client"
+
+import { useEffect, useState } from "react"
+
 export default function Home() {
+  const [loggedIn, setLoggedIn] = useState(false)
+
+  useEffect(() => {
+    import("@/services/auth").then((m) => setLoggedIn(m.isAuthenticated()))
+  }, [])
+
   return (
     <div className="min-h-screen">
       <header className="border-b bg-white">
@@ -10,14 +20,14 @@ export default function Home() {
             <span className="text-lg font-bold text-gray-900">InversIA</span>
           </div>
           <nav className="flex items-center gap-6">
-            <a href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+            <a href={loggedIn ? "/asesor" : "/login"} className="text-sm font-medium text-gray-600 hover:text-gray-900">
               Acceso Asesores
             </a>
             <a
-              href="/cuestionario"
+              href={loggedIn ? "/cuestionario" : "/login"}
               className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
             >
-              Comenzar
+              {loggedIn ? "Comenzar" : "Iniciar Sesión"}
             </a>
           </nav>
         </div>
@@ -34,22 +44,22 @@ export default function Home() {
               <span className="text-blue-600">explicado y transparente</span>
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-gray-600">
-              Respondes un cuestionario, la IA analiza tu perfil de riesgo y genera una propuesta
+              Respondés un cuestionario, la IA analiza tu perfil de riesgo y genera una propuesta
               de portafolio. Un asesor humano revisa y aprueba antes de cualquier acción.
               Sin letra chica, sin promesas falsas.
             </p>
-            <div className="mt-10 flex gap-4">
+            <div className="mt-10 flex flex-wrap gap-4">
               <a
-                href="/cuestionario"
+                href={loggedIn ? "/cuestionario" : "/register"}
                 className="rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl"
               >
-                Iniciar Perfilamiento
+                {loggedIn ? "Iniciar Perfilamiento" : "Crear Cuenta"}
               </a>
               <a
-                href="#como-funciona"
+                href={loggedIn ? "/cuestionario" : "/login"}
                 className="rounded-xl border bg-white px-8 py-4 text-base font-semibold text-gray-700 transition hover:bg-gray-50"
               >
-                Cómo funciona
+                {loggedIn ? "Nuevo Perfilamiento" : "Ya tengo cuenta"}
               </a>
             </div>
           </div>

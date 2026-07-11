@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { api, type ProposalResult } from "@/services/api-client"
+import { isAuthenticated } from "@/services/auth"
 import PortfolioChart from "@/components/PortfolioChart"
 import ApprovalPanel from "@/components/ApprovalPanel"
 
@@ -17,6 +18,10 @@ function PropuestaContent() {
   const [decisionMade, setDecisionMade] = useState(false)
 
   useEffect(() => {
+    if (!isAuthenticated()) {
+      router.replace("/login")
+      return
+    }
     if (!profileId) {
       router.push("/cuestionario")
       return

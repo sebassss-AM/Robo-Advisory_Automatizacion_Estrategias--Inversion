@@ -1,11 +1,19 @@
 "use client"
 
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import RiskQuestionnaire from "@/components/RiskQuestionnaire"
 import type { ProfileResult } from "@/services/api-client"
+import { isAuthenticated } from "@/services/auth"
 
 export default function CuestionarioPage() {
   const router = useRouter()
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.replace("/login")
+    }
+  }, [router])
 
   const handleComplete = (result: ProfileResult) => {
     router.push(`/propuesta?profile_id=${result.profile_id}&profile=${result.profile}`)
