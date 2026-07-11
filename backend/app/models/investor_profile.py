@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class RiskTolerance(str, Enum):
@@ -37,6 +37,20 @@ class QuestionnaireAnswers(BaseModel):
     investment_experience: int = Field(
         ..., ge=1, le=5, description="Experiencia en inversiones del 1 al 5"
     )
+
+    @field_validator("age", "investment_experience", mode="before")
+    @classmethod
+    def coerce_int(cls, v):
+        if isinstance(v, str):
+            return int(v) if v else 0
+        return v
+
+    @field_validator("monthly_income", mode="before")
+    @classmethod
+    def coerce_float(cls, v):
+        if isinstance(v, str):
+            return float(v) if v else 0.0
+        return v
 
 
 class RiskProfileResult(BaseModel):
