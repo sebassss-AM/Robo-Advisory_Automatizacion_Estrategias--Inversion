@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { api, type ProposalResult } from "@/services/api-client"
 import PortfolioChart from "@/components/PortfolioChart"
 import ApprovalPanel from "@/components/ApprovalPanel"
 
-export default function PropuestaPage() {
+function PropuestaContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const profileId = searchParams.get("profile_id")
@@ -138,5 +138,20 @@ export default function PropuestaPage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function PropuestaPage() {
+  return (
+    <Suspense fallback={
+      <main className="flex min-h-screen items-center justify-center p-8">
+        <div className="text-center">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+          <p className="mt-4 text-gray-600">Cargando...</p>
+        </div>
+      </main>
+    }>
+      <PropuestaContent />
+    </Suspense>
   )
 }
