@@ -7,23 +7,14 @@ from backend.app.models.audit_decision import AdvisorDecision, DecisionAction
 
 router = APIRouter(prefix="/api/revisar", tags=["approval"])
 
+_in_memory_decisions: list[dict] = []
+
 
 @router.post("")
 async def review_proposal(decision: AdvisorDecision):
-    proposal_exists = False
+    db_decision_id = None
     try:
-        rows = execute_query(
-            "SELECT id FROM proposals WHERE id = %s", (decision.proposal_id,)
-        )
-        proposal_exists = bool(rows)
-    except Exception:
-        pass
-
-    if not proposal_exists:
-        pass
-
-    try:
-        decision_id = execute_insert(
+        db_decision_id = execute_insert(
             """
             INSERT INTO decisions (proposal_id, advisor_id, action, comments, edited_allocations, rules_version)
             VALUES (%s, %s, %s, %s, %s, %s)
@@ -39,18 +30,35 @@ async def review_proposal(decision: AdvisorDecision):
             ),
         )
     except Exception:
-        decision_id = None
+        db_decision_id = None
 
-    if not decision_id:
+    if db_decision_id:
+        decision_id = str(db_decision_id)
+    else:
         decision_id = str(uuid.uuid4())
 
-    try:
-        execute_query(
-            "UPDATE proposals SET status = %s WHERE id = %s",
-            (decision.action.value, decision.proposal_id),
-        )
-    except Exception:
-        pass
+    if not db_decision_id:
+        try:
+            execute_query(
+                "UPDATE proposals SET status = %s WHERE id = %s",
+                (decision.action.value, decision.proposal_id),
+            )
+        except Exception:
+            pass
+
+    _in_memory_decisions.insert(
+        0,
+        {
+            "id": decision_id,
+            "proposal_id": decision.proposal_id,
+            "advisor_id": decision.advisor_id,
+            "action": decision.action.value,
+            "comments": decision.comments,
+            "rules_version": decision.rules_version,
+            "decided_at": None,
+            "profile": "No disponible",
+        },
+    )
 
     return {
         "decision_id": decision_id,
@@ -72,6 +80,9 @@ async def get_history():
             ORDER BY d.decided_at DESC
             """
         )
-        return [dict(row) for row in rows]
+        if rows:
+            return [dict(row) for row in rows]
     except Exception:
-        return []
+        pass
+
+    return _in_memory_decisions
