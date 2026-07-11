@@ -41,21 +41,13 @@ def execute_insert(query: str, params: tuple = ()) -> Optional[str]:
     return None
 
 
-def init_db():
-    drop_queries = [
-        "DROP TABLE IF EXISTS decisions CASCADE",
-        "DROP TABLE IF EXISTS proposals CASCADE",
-        "DROP TABLE IF EXISTS profiles CASCADE",
-    ]
-    for q in drop_queries:
-        try:
-            execute_query(q)
-        except Exception:
-            pass
-
-    create_queries = [
+def _ensure_database():
+    conn = get_connection()
+    if not conn:
+        return False
+    queries = [
         """
-        CREATE TABLE profiles (
+        CREATE TABLE IF NOT EXISTS profiles (
             id TEXT PRIMARY KEY,
             answers JSONB NOT NULL,
             profile VARCHAR(20) NOT NULL,
@@ -66,7 +58,7 @@ def init_db():
         )
         """,
         """
-        CREATE TABLE proposals (
+        CREATE TABLE IF NOT EXISTS proposals (
             id TEXT PRIMARY KEY,
             profile_id TEXT REFERENCES profiles(id),
             allocations JSONB NOT NULL,
@@ -77,7 +69,7 @@ def init_db():
         )
         """,
         """
-        CREATE TABLE decisions (
+        CREATE TABLE IF NOT EXISTS decisions (
             id TEXT PRIMARY KEY,
             proposal_id TEXT REFERENCES proposals(id),
             advisor_id VARCHAR(100) NOT NULL,
@@ -89,11 +81,18 @@ def init_db():
         )
         """,
     ]
-    for q in create_queries:
-        try:
-            execute_query(q)
-        except Exception as e:
-            print(f"[WARN] No se pudo crear tabla: {e}")
+    for q in queries:
+        with conn.cursor() as cur:
+            cur.execute(q)
+    return True
+
+
+def init_db():
+    ok = _ensure_database()
+    if ok:
+        print("[DB] Tablas verificadas/creadas correctamente en Neon")
+    else:
+        print("[DB] Neon no disponible, usando almacenamiento en memoria")
 
 
 def close():
