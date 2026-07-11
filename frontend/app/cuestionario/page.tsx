@@ -15,6 +15,9 @@ export default function CuestionarioPage() {
     <div className="min-h-screen bg-white">
       <header className="border-b">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
+          <a href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+            Acceso Asesores
+          </a>
           <a href="/" className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-xs font-bold text-white">
               I

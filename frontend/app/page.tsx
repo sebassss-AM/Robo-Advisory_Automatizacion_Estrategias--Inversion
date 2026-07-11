@@ -10,7 +10,7 @@ export default function Home() {
             <span className="text-lg font-bold text-gray-900">InversIA</span>
           </div>
           <nav className="flex items-center gap-6">
-            <a href="/asesor" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+            <a href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900">
               Acceso Asesores
             </a>
             <a

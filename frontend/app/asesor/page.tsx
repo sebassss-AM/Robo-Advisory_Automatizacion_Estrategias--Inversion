@@ -1,7 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { api, type HistoryItem } from "@/services/api-client"
+import { isAuthenticated, logout } from "@/services/auth"
 
 const actionBadge: Record<string, string> = {
   aprobado: "bg-green-100 text-green-700",
@@ -10,16 +12,31 @@ const actionBadge: Record<string, string> = {
 }
 
 export default function AsesorPage() {
+  const router = useRouter()
   const [history, setHistory] = useState<HistoryItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [checking, setChecking] = useState(true)
 
   useEffect(() => {
+    if (!isAuthenticated()) {
+      router.replace("/login")
+      return
+    }
+    setChecking(false)
+
     api
       .getHistory()
       .then(setHistory)
       .catch(console.error)
       .finally(() => setLoading(false))
-  }, [])
+  }, [router])
+
+  const handleLogout = () => {
+    logout()
+    router.push("/login")
+  }
+
+  if (checking) return null
 
   return (
     <div className="min-h-screen bg-white">
@@ -38,6 +55,12 @@ export default function AsesorPage() {
             >
               Inicio
             </a>
+            <button
+              onClick={handleLogout}
+              className="rounded-lg px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+            >
+              Cerrar sesión
+            </button>
           </nav>
         </div>
       </header>
