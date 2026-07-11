@@ -6,17 +6,25 @@ import { api, type QuestionnaireAnswers } from "@/services/api-client"
 interface Question {
   key: keyof QuestionnaireAnswers
   label: string
+  description?: string
   type: "number" | "select" | "range"
   options?: { value: string; label: string }[]
   min?: number
   max?: number
+  placeholder?: string
 }
 
 const questions: Question[] = [
-  { key: "age", label: "¿Cuál es tu edad?", type: "number" },
+  {
+    key: "age",
+    label: "¿Cuál es tu edad?",
+    type: "number",
+    placeholder: "Ingresa tu edad",
+  },
   {
     key: "investment_horizon",
     label: "¿Cuál es tu horizonte de inversión?",
+    description: "¿Por cuánto tiempo planeas mantener tu inversión?",
     type: "select",
     options: [
       { value: "corto_plazo", label: "Menos de 3 años" },
@@ -27,16 +35,18 @@ const questions: Question[] = [
   {
     key: "risk_tolerance",
     label: "¿Cómo describirías tu tolerancia al riesgo?",
+    description: "¿Cómo reaccionarías si tu inversión fluctuara?",
     type: "select",
     options: [
-      { value: "baja", label: "Baja — prefiero seguridad" },
-      { value: "media", label: "Media — acepto fluctuaciones moderadas" },
-      { value: "alta", label: "Alta — busco máxima rentabilidad" },
+      { value: "baja", label: "Baja — Prefiero seguridad aunque gane menos" },
+      { value: "media", label: "Media — Acepto fluctuaciones moderadas" },
+      { value: "alta", label: "Alta — Busco máxima rentabilidad posible" },
     ],
   },
   {
     key: "goal",
     label: "¿Cuál es tu objetivo principal?",
+    description: "¿Qué buscas lograr con esta inversión?",
     type: "select",
     options: [
       { value: "preservacion_capital", label: "Preservar mi capital" },
@@ -45,10 +55,16 @@ const questions: Question[] = [
       { value: "crecimiento_agresivo", label: "Crecimiento agresivo" },
     ],
   },
-  { key: "monthly_income", label: "¿Cuál es tu ingreso mensual (USD)?", type: "number" },
+  {
+    key: "monthly_income",
+    label: "¿Cuál es tu ingreso mensual?",
+    type: "number",
+    placeholder: "Monto en USD",
+  },
   {
     key: "investment_experience",
-    label: "Nivel de experiencia en inversiones (1-5)",
+    label: "Nivel de experiencia en inversiones",
+    description: "Del 1 al 5, ¿cuánta experiencia tienes?",
     type: "range",
     min: 1,
     max: 5,
@@ -107,105 +123,117 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
     }
   }
 
+  const progress = ((step + 1) / questions.length) * 100
+
   return (
-    <div className="w-full max-w-lg">
+    <div>
       {error && (
-        <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+        <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-700">
           {error}
         </div>
       )}
 
-      <div className="mb-6">
-        <div className="flex justify-between text-sm text-gray-500">
-          <span>Paso {step + 1} de {questions.length}</span>
-          <span>{Math.round(((step + 1) / questions.length) * 100)}%</span>
+      <div className="mb-8">
+        <div className="flex items-center justify-between text-sm">
+          <span className="font-medium text-gray-700">
+            Pregunta {step + 1} de {questions.length}
+          </span>
+          <span className="text-gray-500">{Math.round(progress)}%</span>
         </div>
-        <div className="mt-2 h-2 w-full rounded-full bg-gray-200">
+        <div className="mt-2 h-2 rounded-full bg-gray-100">
           <div
-            className="h-2 rounded-full bg-blue-600 transition-all"
-            style={{ width: `${((step + 1) / questions.length) * 100}%` }}
+            className="h-2 rounded-full bg-blue-600 transition-all duration-300"
+            style={{ width: `${progress}%` }}
           />
         </div>
       </div>
 
-      <div className="min-h-[200px]">
-        <label className="text-lg font-medium text-gray-900">{q.label}</label>
-
-        {q.type === "number" && (
-          <input
-            type="number"
-            value={answers[q.key]}
-            onChange={(e) => handleChange(q.key, e.target.value)}
-            className="mt-2 w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-500 focus:outline-none"
-            placeholder="Ingresa tu respuesta"
-          />
+      <div className="min-h-[220px]">
+        <label className="text-xl font-bold text-gray-900">{q.label}</label>
+        {q.description && (
+          <p className="mt-1 text-gray-600">{q.description}</p>
         )}
 
-        {q.type === "select" && q.options && (
-          <div className="mt-3 space-y-2">
-            {q.options.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => handleChange(q.key, opt.value)}
-                className={`w-full rounded-lg border p-3 text-left transition ${
-                  answers[q.key] === opt.value
-                    ? "border-blue-500 bg-blue-50 text-blue-700"
-                    : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {q.type === "range" && (
-          <div className="mt-3">
+        <div className="mt-6">
+          {q.type === "number" && (
             <input
-              type="range"
-              min={q.min}
-              max={q.max}
-              value={answers[q.key] || q.min}
+              type="number"
+              value={answers[q.key]}
               onChange={(e) => handleChange(q.key, e.target.value)}
-              className="w-full"
+              className="w-full rounded-xl border border-gray-300 p-4 text-lg text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              placeholder={q.placeholder}
             />
-            <div className="mt-1 flex justify-between text-sm text-gray-500">
-              <span>{q.min}</span>
-              <span className="font-medium text-blue-600">{answers[q.key] || q.min}</span>
-              <span>{q.max}</span>
+          )}
+
+          {q.type === "select" && q.options && (
+            <div className="space-y-3">
+              {q.options.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => handleChange(q.key, opt.value)}
+                  className={`w-full rounded-xl border p-4 text-left text-base transition ${
+                    answers[q.key] === opt.value
+                      ? "border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-200"
+                      : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
-          </div>
-        )}
+          )}
+
+          {q.type === "range" && (
+            <div className="py-4">
+              <input
+                type="range"
+                min={q.min}
+                max={q.max}
+                value={answers[q.key] || q.min}
+                onChange={(e) => handleChange(q.key, e.target.value)}
+                className="w-full accent-blue-600"
+              />
+              <div className="mt-2 flex items-center justify-between">
+                {q.min && <span className="text-sm text-gray-400">{q.min}</span>}
+                <span className="rounded-lg bg-blue-100 px-4 py-1 text-lg font-bold text-blue-700">
+                  {answers[q.key] || q.min} / {q.max}
+                </span>
+                {q.max && <span className="text-sm text-gray-400">{q.max}</span>}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="mt-8 flex justify-between">
-        {step > 0 && (
+      <div className="mt-10 flex items-center justify-between border-t pt-6">
+        {step > 0 ? (
           <button
             onClick={handleBack}
-            className="rounded-lg border border-gray-300 px-6 py-2 text-gray-700 hover:bg-gray-100"
+            className="rounded-xl border border-gray-300 px-6 py-3 font-medium text-gray-700 transition hover:bg-gray-50"
           >
             Anterior
           </button>
+        ) : (
+          <div />
         )}
-        <div className="ml-auto">
-          {step < questions.length - 1 ? (
-            <button
-              onClick={handleNext}
-              disabled={!canProceed()}
-              className="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
-            >
-              Siguiente
-            </button>
-          ) : (
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="rounded-lg bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:opacity-50"
-            >
-              {loading ? "Enviando..." : "Ver mi perfil"}
-            </button>
-          )}
-        </div>
+
+        {step < questions.length - 1 ? (
+          <button
+            onClick={handleNext}
+            disabled={!canProceed()}
+            className="rounded-xl bg-blue-600 px-8 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+          >
+            Siguiente
+          </button>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="rounded-xl bg-green-600 px-8 py-3 font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
+          >
+            {loading ? "Analizando..." : "Obtener mi perfil"}
+          </button>
+        )}
       </div>
     </div>
   )

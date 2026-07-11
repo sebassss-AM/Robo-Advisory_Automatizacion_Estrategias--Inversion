@@ -31,125 +31,167 @@ function PropuestaContent() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center p-8">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-          <p className="mt-4 text-gray-600">Generando tu propuesta personalizada...</p>
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+          <p className="mt-4 text-lg text-gray-600">Generando tu propuesta...</p>
         </div>
-      </main>
+      </div>
     )
   }
 
   if (error) {
     return (
-      <main className="flex min-h-screen items-center justify-center p-8">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600">Error: {error}</p>
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+            <span className="text-2xl text-red-600">!</span>
+          </div>
+          <h2 className="mt-4 text-xl font-bold text-gray-900">Algo salió mal</h2>
+          <p className="mt-2 text-gray-600">{error}</p>
           <button
             onClick={() => router.push("/cuestionario")}
-            className="mt-4 text-blue-600 underline"
+            className="mt-6 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
           >
-            Volver al cuestionario
+            Volver al inicio
           </button>
         </div>
-      </main>
+      </div>
     )
   }
 
   if (decisionMade) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-8">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <span className="text-3xl">✓</span>
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
+            <span className="text-4xl text-green-600">✓</span>
           </div>
-          <h2 className="mt-4 text-xl font-semibold text-gray-900">
+          <h2 className="mt-6 text-2xl font-bold text-gray-900">
             Decisión registrada
           </h2>
           <p className="mt-2 text-gray-600">
-            La propuesta ha sido procesada según tu decisión.
+            La propuesta ha sido procesada exitosamente.
           </p>
           <button
             onClick={() => router.push("/")}
-            className="mt-6 rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+            className="mt-8 rounded-xl bg-blue-600 px-8 py-3 font-semibold text-white hover:bg-blue-700"
           >
             Volver al inicio
           </button>
         </div>
-      </main>
+      </div>
     )
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-8">
-      <div className="w-full max-w-2xl">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Tu Propuesta de Portafolio
-        </h1>
-        <p className="mt-1 text-gray-500">
-          Perfil: <span className="font-medium capitalize">{proposal?.profile}</span>
-        </p>
-
-        <div className="mt-6">
-          <PortfolioChart allocations={proposal?.allocations || []} />
+    <div className="min-h-screen bg-white">
+      <header className="border-b">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+          <a href="/" className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-xs font-bold text-white">
+              I
+            </div>
+            <span className="font-bold text-gray-900">InversIA</span>
+          </a>
+          <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
+            Perfil: {proposal?.profile}
+          </span>
         </div>
+      </header>
 
-        <div className="mt-6 rounded-lg border bg-blue-50 p-4">
-          <h2 className="font-semibold text-gray-900">Métricas de Riesgo</h2>
-          <ul className="mt-2 space-y-1 text-sm text-gray-700">
-            <li>
-              <span className="font-medium">Volatilidad esperada:</span>{" "}
-              {proposal?.risk_metrics.expected_volatility}
-            </li>
-            <li>
-              <span className="font-medium">Diversificación:</span>{" "}
-              {proposal?.risk_metrics.diversification_score}/100
-            </li>
-            <li>
-              <span className="font-medium">Drawdown máximo estimado:</span>{" "}
-              {proposal?.risk_metrics.max_drawdown_estimate}
-            </li>
-          </ul>
-        </div>
-
-        <div className="mt-6 rounded-lg border bg-gray-50 p-4">
-          <h2 className="font-semibold text-gray-900">Explicación</h2>
-          <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">
-            {proposal?.explanation}
+      <main className="mx-auto max-w-5xl px-6 py-12">
+        <div className="mb-10">
+          <h1 className="text-3xl font-bold text-gray-900">
+            Propuesta de Portafolio
+          </h1>
+          <p className="mt-2 text-gray-600">
+            Esta propuesta está alineada con tu perfil de riesgo. Un asesor autorizado debe
+            revisarla y aprobarla antes de ejecutar cualquier acción.
           </p>
         </div>
 
-        <p className="mt-4 text-xs text-gray-400">
-          Esta es una propuesta informativa. No constituye una recomendación de inversión.
-          Un asesor autorizado debe revisar y aprobar antes de ejecutar.
-        </p>
+        <div className="grid gap-8 lg:grid-cols-5">
+          <div className="lg:col-span-3">
+            <div className="rounded-2xl border bg-surface p-6">
+              <h2 className="mb-6 text-lg font-bold text-gray-900">
+                Distribución sugerida
+              </h2>
+              <PortfolioChart allocations={proposal?.allocations || []} />
+            </div>
 
-        <div className="mt-8">
-          <h2 className="mb-4 text-xl font-semibold text-gray-900">
-            Revisión del Asesor
-          </h2>
-          <ApprovalPanel
-            proposalId={Number(proposal?.proposal_id)}
-            profileName={proposal?.profile || ""}
-            allocations={proposal?.allocations || []}
-            rulesVersion="1.0.0"
-            onDecisionComplete={() => setDecisionMade(true)}
-          />
+            <div className="mt-6 rounded-2xl border bg-surface p-6">
+              <h2 className="mb-4 text-lg font-bold text-gray-900">
+                Explicación
+              </h2>
+              <p className="whitespace-pre-wrap leading-relaxed text-gray-700">
+                {proposal?.explanation}
+              </p>
+            </div>
+          </div>
+
+          <div className="lg:col-span-2">
+            <div className="rounded-2xl border bg-blue-50 p-6">
+              <h2 className="text-lg font-bold text-gray-900">
+                Métricas de Riesgo
+              </h2>
+              <div className="mt-5 space-y-4">
+                <div className="rounded-xl bg-white p-4">
+                  <p className="text-sm text-gray-500">Volatilidad esperada</p>
+                  <p className="mt-1 text-lg font-bold text-gray-900">
+                    {proposal?.risk_metrics.expected_volatility}
+                  </p>
+                </div>
+                <div className="rounded-xl bg-white p-4">
+                  <p className="text-sm text-gray-500">Puntaje de diversificación</p>
+                  <div className="mt-2 flex items-center gap-3">
+                    <div className="h-2 flex-1 rounded-full bg-gray-200">
+                      <div
+                        className="h-2 rounded-full bg-blue-600"
+                        style={{ width: `${proposal?.risk_metrics.diversification_score}%` }}
+                      />
+                    </div>
+                    <span className="text-lg font-bold text-gray-900">
+                      {proposal?.risk_metrics.diversification_score}/100
+                    </span>
+                  </div>
+                </div>
+                <div className="rounded-xl bg-white p-4">
+                  <p className="text-sm text-gray-500">Drawdown máximo estimado</p>
+                  <p className="mt-1 text-lg font-bold text-gray-900">
+                    {proposal?.risk_metrics.max_drawdown_estimate}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <ApprovalPanel
+                proposalId={Number(proposal?.proposal_id)}
+                profileName={proposal?.profile || ""}
+                allocations={proposal?.allocations || []}
+                rulesVersion="1.0.0"
+                onDecisionComplete={() => setDecisionMade(true)}
+              />
+            </div>
+          </div>
         </div>
-      </div>
-    </main>
+
+        <p className="mt-10 text-center text-sm text-gray-400">
+          Esta es una propuesta informativa generada por IA. No constituye una recomendación
+          de inversión ni garantiza rentabilidad futura.
+        </p>
+      </main>
+    </div>
   )
 }
 
 export default function PropuestaPage() {
   return (
     <Suspense fallback={
-      <main className="flex min-h-screen items-center justify-center p-8">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-          <p className="mt-4 text-gray-600">Cargando...</p>
-        </div>
-      </main>
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+      </div>
     }>
       <PropuestaContent />
     </Suspense>

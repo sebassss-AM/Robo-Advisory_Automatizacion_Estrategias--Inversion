@@ -2,8 +2,8 @@ import type { Metadata } from "next"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Robo-Advisory IA",
-  description: "Asesoría financiera automatizada con agentes IA",
+  title: "InversIA - Asesor Financiero Inteligente",
+  description: "Perfilamiento de riesgo, propuestas de portafolio y revisión por asesor autorizado con inteligencia artificial.",
 }
 
 export default function RootLayout({
@@ -13,7 +13,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className="min-h-screen bg-gray-50">{children}</body>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+      </head>
+      <body>{children}</body>
     </html>
   )
 }
