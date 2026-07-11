@@ -1,4 +1,4 @@
-from backend.app.agents.graph import AgentState
+from backend.app.agents.state import AgentState
 from backend.app.domain.risk_profiling_rules import calculate_profile
 from backend.app.domain.instrument_catalog import INSTRUMENTS
 from backend.app.llm.gemini_client import generate_profile_explanation

@@ -1,22 +1,11 @@
-from typing import Literal, TypedDict
+from typing import Literal
 
 from langgraph.graph import StateGraph, END
 
+from backend.app.agents.state import AgentState
 from backend.app.agents.investor_profiling_node import run_profiling
 from backend.app.agents.portfolio_generation_node import run_portfolio_generation
 from backend.app.agents.advisor_approval_node import run_advisor_approval
-
-
-class AgentState(TypedDict):
-    session_id: str
-    step: str
-    answers: dict | None
-    profile_id: str | None
-    profile_result: dict | None
-    proposal_id: str | None
-    proposal_result: dict | None
-    advisor_decision: str | None
-    error: str | None
 
 
 def should_continue(state: AgentState) -> Literal["portfolio", "end"]:

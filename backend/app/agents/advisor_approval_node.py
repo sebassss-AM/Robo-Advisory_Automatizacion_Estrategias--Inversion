@@ -1,6 +1,4 @@
-from datetime import datetime
-
-from backend.app.agents.graph import AgentState
+from backend.app.agents.state import AgentState
 
 
 def run_advisor_approval(state: AgentState) -> dict:

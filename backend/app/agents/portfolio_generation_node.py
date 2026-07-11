@@ -1,6 +1,5 @@
-from backend.app.agents.graph import AgentState
+from backend.app.agents.state import AgentState
 from backend.app.domain.asset_allocation_policies import build_allocations
-from backend.app.domain.instrument_catalog import INSTRUMENTS
 from backend.app.llm.gemini_client import generate_portfolio_explanation
 from backend.app.models.investor_profile import RiskProfile
 
