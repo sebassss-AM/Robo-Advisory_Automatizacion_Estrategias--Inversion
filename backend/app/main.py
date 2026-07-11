@@ -82,3 +82,41 @@ app.include_router(approval_router)
 @app.get("/api/health")
 async def health():
     return {"status": "ok", "version": "1.0.0"}
+
+
+@app.get("/api/db-check")
+async def db_check():
+    from backend.app.infrastructure.database import get_connection, execute_query
+
+    db_url = os.getenv("DATABASE_URL")
+    if not db_url:
+        return {
+            "connected": False,
+            "error": "DATABASE_URL no está configurada",
+            "solution": "Agrega DATABASE_URL en Vercel Dashboard → Settings → Environment Variables",
+        }
+
+    try:
+        conn = get_connection()
+        if conn is None:
+            return {
+                "connected": False,
+                "error": "get_connection() devolvió None",
+                "solution": "Verifica que DATABASE_URL sea correcta",
+            }
+        result = execute_query("SELECT NOW() as now")
+        tables = execute_query(
+            "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
+        )
+        return {
+            "connected": True,
+            "db_time": str(result[0]["now"]) if result else None,
+            "tables": [t["table_name"] for t in tables] if tables else [],
+            "note": "Neon está funcionando correctamente",
+        }
+    except Exception as e:
+        return {
+            "connected": False,
+            "error": str(e),
+            "solution": "Verifica que DATABASE_URL sea correcta y que Neon permita la conexión",
+        }
