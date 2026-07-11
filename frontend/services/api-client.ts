@@ -6,8 +6,15 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     ...options,
   })
   if (!res.ok) {
-    const error = await res.json().catch(() => ({ detail: "Error desconocido" }))
-    throw new Error(error.detail || `HTTP ${res.status}`)
+    const body = await res.json().catch(() => ({}))
+    const detail = body?.detail
+    const message =
+      typeof detail === "string"
+        ? detail
+        : Array.isArray(detail)
+          ? detail.map((e: unknown) => (typeof e === "object" && e !== null ? String((e as Record<string, unknown>).msg || JSON.stringify(e)) : String(e))).join("; ")
+          : `Error del servidor (HTTP ${res.status})`
+    throw new Error(message)
   }
   return res.json()
 }
