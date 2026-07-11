@@ -14,9 +14,9 @@ Cada producto debe cumplir, como mínimo, con los requisitos y criterios de acep
 
 ### Condiciones de demostración
 
-- [ ] Se permiten datos ficticios, archivos de prueba e integraciones simuladas si el flujo funcional se puede demostrar de extremo a extremo.
-- [ ] Las acciones reguladas o sensibles deben quedar como propuesta, alerta o solicitud de aprobación; no es necesario ejecutarlas en producción.
-- [ ] Cada equipo conserva libertad creativa sobre interfaz, canal, tecnología y funcionalidades adicionales.
+- [x] Se permiten datos ficticios, archivos de prueba e integraciones simuladas si el flujo funcional se puede demostrar de extremo a extremo.
+- [x] Las acciones reguladas o sensibles deben quedar como propuesta, alerta o solicitud de aprobación; no es necesario ejecutarlas en producción.
+- [x] Cada equipo conserva libertad creativa sobre interfaz, canal, tecnología y funcionalidades adicionales.
 
 ---
 
@@ -36,9 +36,9 @@ Cada producto debe cumplir, como mínimo, con los requisitos y criterios de acep
 
 **Criterios de aceptación**
 
-- [ ] El Asesor Financiero IA realiza un cuestionario de perfilamiento.
-- [ ] Calcula un perfil preliminar mediante reglas visibles y versionadas.
-- [ ] Permite al usuario revisar respuestas y entender cómo influyen en el resultado.
+- [x] El Asesor Financiero IA realiza un cuestionario de perfilamiento.
+- [x] Calcula un perfil preliminar mediante reglas visibles y versionadas (`RULES_VERSION = "1.0.0"`).
+- [x] Permite al usuario revisar respuestas y entender cómo influyen en el resultado.
 
 ---
 
@@ -50,9 +50,9 @@ Cada producto debe cumplir, como mínimo, con los requisitos y criterios de acep
 
 **Criterios de aceptación**
 
-- [ ] El sistema usa un catálogo ficticio o aprobado de instrumentos.
-- [ ] Muestra porcentajes de asignación, riesgo esperado y una explicación legible.
-- [ ] No ejecuta órdenes ni promete rentabilidad; presenta una propuesta para revisión.
+- [x] El sistema usa un catálogo ficticio o aprobado de instrumentos (`backend/app/domain/instrument_catalog.py`).
+- [x] Muestra porcentajes de asignación, riesgo esperado y una explicación legible.
+- [x] No ejecuta órdenes ni promete rentabilidad; presenta una propuesta para revisión.
 
 ---
 
@@ -64,9 +64,9 @@ Cada producto debe cumplir, como mínimo, con los requisitos y criterios de acep
 
 **Criterios de aceptación**
 
-- [ ] El asesor recibe un resumen del perfil, propuesta y justificación.
-- [ ] Puede aprobar, editar o rechazar la propuesta.
-- [ ] Cada decisión queda registrada con fecha, versión de reglas y responsable.
+- [x] El asesor recibe un resumen del perfil, propuesta y justificación.
+- [x] Puede aprobar, editar o rechazar la propuesta.
+- [x] Cada decisión queda registrada con fecha, versión de reglas y responsable (`audit_decision.py` + tabla `decisions`).
 
 ---
 

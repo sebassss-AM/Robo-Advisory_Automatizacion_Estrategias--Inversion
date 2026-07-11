@@ -41,23 +41,22 @@ Sistema de asesoría financiera automatizada basado en agentes IA. Realiza perfi
 
 ```
 /
-├── app/                               # Next.js App Router
-│   ├── layout.tsx
-│   ├── page.tsx                       # Landing page
-│   ├── cuestionario/
-│   │   └── page.tsx                   # Perfilamiento de riesgo
-│   ├── propuesta/
-│   │   └── page.tsx                   # Visualizar portafolio
-│   └── asesor/
-│       └── page.tsx                   # Panel de revisión
-│
-├── components/                        # Componentes React
-│   ├── RiskQuestionnaire.tsx
-│   ├── PortfolioChart.tsx
-│   └── ApprovalPanel.tsx
-│
-├── services/
-│   └── api-client.ts                  # Cliente HTTP al backend
+├── frontend/                          # Next.js App Router
+│   ├── app/
+│   │   ├── layout.tsx
+│   │   ├── page.tsx                   # Landing page
+│   │   ├── cuestionario/
+│   │   │   └── page.tsx               # Perfilamiento de riesgo
+│   │   ├── propuesta/
+│   │   │   └── page.tsx               # Visualizar portafolio
+│   │   └── asesor/
+│   │       └── page.tsx               # Panel de revisión
+│   ├── components/                    # Componentes React
+│   │   ├── RiskQuestionnaire.tsx
+│   │   ├── PortfolioChart.tsx
+│   │   └── ApprovalPanel.tsx
+│   └── services/
+│       └── api-client.ts              # Cliente HTTP al backend
 │
 ├── api/                               # Vercel Python serverless
 │   └── index.py                       # FastAPI entry point
@@ -76,6 +75,8 @@ Sistema de asesoría financiera automatizada basado en agentes IA. Realiza perfi
 ├── docs/
 ├── parametros_del_proyecto.md
 ├── track3.md
+├── .env.example
+├── vercel.json
 └── README.md
 ```
 
@@ -84,10 +85,10 @@ Sistema de asesoría financiera automatizada basado en agentes IA. Realiza perfi
 ## Despliegue (Vercel)
 
 Vercel detecta automáticamente:
-- **Next.js** en la raíz → frontend
+- **Next.js** en `frontend/` → frontend
 - **Python** en `api/` → backend serverless functions
 
-Sin necesidad de `vercel.json`.
+> Nota: el `vercel.json` en la raíz configura las rutas porque el frontend está dentro de `frontend/`.
 
 ---
 
@@ -98,8 +99,8 @@ Sin necesidad de `vercel.json`.
 source venv/bin/activate
 uvicorn backend.app.main:app --reload
 
-# Frontend
-pnpm dev
+# Frontend (desde frontend/)
+cd frontend && pnpm dev
 ```
 
 ---

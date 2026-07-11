@@ -10,7 +10,7 @@ def run_portfolio_generation(state: AgentState) -> dict:
         return {"error": "No hay perfil de riesgo calculado"}
 
     profile = RiskProfile(profile_result["profile"])
-    profile_id = state.get("profile_id", "unknown")
+    profile_id = state.get("profile_id") or "unknown"
 
     proposal = build_allocations(profile, profile_id)
 
