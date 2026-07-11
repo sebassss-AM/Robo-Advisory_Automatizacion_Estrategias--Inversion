@@ -24,11 +24,27 @@ Sistema de asesoría financiera automatizada basado en agentes IA. Realiza perfi
 
 ## Funcionalidades
 
+- **Autenticación de asesores** — Registro e inicio de sesión con JWT, datos persistentes en Neon
 - **Perfilamiento de riesgo** — Cuestionario interactivo con reglas visibles y versionadas
 - **Propuesta de portafolio** — Asignación de activos explicada en lenguaje natural
 - **Revisión por asesor** — Aprobación, edición o rechazo con audit trail completo
 
 ---
+
+## Autenticación
+
+El sistema requiere **inicio de sesión obligatorio** para usar cualquier funcionalidad:
+
+| Endpoint | Descripción |
+|----------|-------------|
+| `POST /api/auth/register` | Registro de nuevo asesor |
+| `POST /api/auth/login` | Inicio de sesión (devuelve JWT) |
+| `GET /api/auth/me` | Verificar token activo |
+
+- Las contraseñas se guardan hasheadas con **bcrypt**
+- Los tokens **JWT** expiran a las 24 horas
+- La sesión persiste en `localStorage` (solo el token)
+- Todos los datos se almacenan en **Neon** (PostgreSQL serverless)
 
 ## Documentación
 
@@ -45,6 +61,10 @@ Sistema de asesoría financiera automatizada basado en agentes IA. Realiza perfi
 │   ├── app/
 │   │   ├── layout.tsx
 │   │   ├── page.tsx                   # Landing page
+│   │   ├── login/
+│   │   │   └── page.tsx               # Inicio de sesión
+│   │   ├── register/
+│   │   │   └── page.tsx               # Registro de asesor
 │   │   ├── cuestionario/
 │   │   │   └── page.tsx               # Perfilamiento de riesgo
 │   │   ├── propuesta/
@@ -56,7 +76,8 @@ Sistema de asesoría financiera automatizada basado en agentes IA. Realiza perfi
 │   │   ├── PortfolioChart.tsx
 │   │   └── ApprovalPanel.tsx
 │   └── services/
-│       └── api-client.ts              # Cliente HTTP al backend
+│       ├── api-client.ts              # Cliente HTTP al backend
+│       └── auth.ts                    # Auth service (JWT)
 │
 ├── api/                               # Vercel Python serverless
 │   └── index.py                       # FastAPI entry point
@@ -65,10 +86,17 @@ Sistema de asesoría financiera automatizada basado en agentes IA. Realiza perfi
 │   └── app/
 │       ├── main.py
 │       ├── api/                       # Routes
+│       │   ├── auth_routes.py         # Registro, login JWT
+│       │   ├── profiling_routes.py
+│       │   ├── portfolio_routes.py
+│       │   └── approval_routes.py
 │       ├── agents/                    # LangGraph state graph
 │       ├── domain/                    # Lógica de negocio
 │       ├── models/                    # Pydantic schemas
 │       ├── infrastructure/            # DB, Redis, ChromaDB
+│       │   ├── database.py
+│       │   ├── schema.sql
+│       │   └── ...
 │       └── llm/                       # Gemini integration
 │
 ├── tests/
@@ -102,6 +130,9 @@ uvicorn backend.app.main:app --reload
 # Frontend (desde frontend/)
 cd frontend && pnpm dev
 ```
+
+> Asegurate de tener las variables de entorno configuradas en Vercel Dashboard:
+> `DATABASE_URL`, `GEMINI_API_KEY` y opcionalmente `JWT_SECRET`.
 
 ---
 
