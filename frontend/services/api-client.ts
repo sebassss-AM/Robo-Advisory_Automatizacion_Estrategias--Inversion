@@ -13,12 +13,12 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export interface QuestionnaireAnswers {
-  age: string
+  age: number
   investment_horizon: string
   risk_tolerance: string
   goal: string
-  monthly_income: string
-  investment_experience: string
+  monthly_income: number
+  investment_experience: number
 }
 
 export interface ProfileResult {

@@ -114,7 +114,13 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
     setLoading(true)
     setError("")
     try {
-      const result = await api.submitQuestionnaire(answers)
+      const payload = {
+        ...answers,
+        age: parseInt(answers.age) || 0,
+        monthly_income: parseFloat(answers.monthly_income) || 0,
+        investment_experience: parseInt(answers.investment_experience) || 1,
+      }
+      const result = await api.submitQuestionnaire(payload as QuestionnaireAnswers)
       onComplete(result.profile_id)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al enviar el cuestionario")
