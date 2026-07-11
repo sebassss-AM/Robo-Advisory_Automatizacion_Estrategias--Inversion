@@ -7,12 +7,12 @@ from psycopg2.extras import RealDictCursor
 _connection: Optional[psycopg2.extensions.connection] = None
 
 
-def get_connection() -> psycopg2.extensions.connection:
+def get_connection():
     global _connection
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        return None
     if _connection is None or _connection.closed:
-        database_url = os.getenv("DATABASE_URL")
-        if not database_url:
-            raise ValueError("DATABASE_URL no configurada")
         _connection = psycopg2.connect(database_url)
         _connection.autocommit = True
     return _connection
@@ -20,6 +20,8 @@ def get_connection() -> psycopg2.extensions.connection:
 
 def execute_query(query: str, params: tuple = ()) -> list[dict]:
     conn = get_connection()
+    if not conn:
+        return []
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute(query, params)
         if cur.description:
@@ -29,6 +31,8 @@ def execute_query(query: str, params: tuple = ()) -> list[dict]:
 
 def execute_insert(query: str, params: tuple = ()) -> Optional[str]:
     conn = get_connection()
+    if not conn:
+        return None
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute(query, params)
         if cur.description:

@@ -10,13 +10,17 @@ COLLECTION_NAME = "financial_docs"
 _client: Optional[chromadb.Client] = None
 
 
-def get_client() -> chromadb.Client:
+def get_client():
     global _client
     if _client is None:
-        _client = chromadb.PersistentClient(
-            path=CHROMA_DIR,
-            settings=Settings(anonymized_telemetry=False),
-        )
+        try:
+            _client = chromadb.PersistentClient(
+                path=CHROMA_DIR,
+                settings=Settings(anonymized_telemetry=False),
+            )
+        except Exception as e:
+            print(f"[WARN] ChromaDB no disponible: {e}")
+            return None
     return _client
 
 

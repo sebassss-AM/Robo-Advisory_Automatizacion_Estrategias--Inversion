@@ -7,12 +7,12 @@ import redis.asyncio as aioredis
 _client: Optional[aioredis.Redis] = None
 
 
-def get_client() -> aioredis.Redis:
+def get_client():
     global _client
+    kv_url = os.getenv("KV_URL")
+    if not kv_url:
+        return None
     if _client is None:
-        kv_url = os.getenv("KV_URL")
-        if not kv_url:
-            raise ValueError("KV_URL no configurada")
         _client = aioredis.from_url(kv_url, decode_responses=True)
     return _client
 

@@ -12,10 +12,19 @@ from backend.app.infrastructure.redis_session import close as close_redis
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db()
+    try:
+        init_db()
+    except Exception as e:
+        print(f"[WARN] Base de datos no disponible: {e}")
     yield
-    close_db()
-    await close_redis()
+    try:
+        close_db()
+    except Exception:
+        pass
+    try:
+        await close_redis()
+    except Exception:
+        pass
 
 
 app = FastAPI(
