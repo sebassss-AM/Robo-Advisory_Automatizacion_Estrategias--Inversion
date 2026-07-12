@@ -1,5 +1,3 @@
-from collections.abc import Generator
-from unittest.mock import patch
 import pytest
 
 from backend.app.models.investor_profile import (
@@ -47,36 +45,8 @@ def aggressive_answers() -> QuestionnaireAnswers:
 
 
 @pytest.fixture
-def mock_llm() -> Generator:
+def mock_llm():
+    from unittest.mock import patch
     with patch("backend.app.agents.investor_profiling_node.generate_profile_explanation") as mock:
         mock.return_value = "Explicación simulada del perfil."
         yield mock
-
-
-@pytest.fixture
-def mock_llm_portfolio() -> Generator:
-    with patch("backend.app.agents.portfolio_generation_node.generate_portfolio_explanation") as mock:
-        mock.return_value = "Explicación simulada del portafolio."
-        yield mock
-
-
-@pytest.fixture
-def profiling_state() -> dict:
-    return {
-        "session_id": "test-session-1",
-        "step": "start",
-        "answers": {
-            "age": 35,
-            "investment_horizon": "largo_plazo",
-            "risk_tolerance": "media",
-            "goal": "crecimiento",
-            "monthly_income": 5000.0,
-            "investment_experience": 2,
-        },
-        "profile_id": None,
-        "profile_result": None,
-        "proposal_id": None,
-        "proposal_result": None,
-        "advisor_decision": None,
-        "error": None,
-    }

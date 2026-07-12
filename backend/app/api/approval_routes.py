@@ -8,8 +8,6 @@ from backend.app.models.audit_decision import AdvisorDecision
 
 router = APIRouter(prefix="/api/revisar", tags=["approval"])
 
-_in_memory_decisions: list[dict] = []
-
 
 @router.post("")
 async def review_proposal(decision: AdvisorDecision):
@@ -46,20 +44,6 @@ async def review_proposal(decision: AdvisorDecision):
         ("completado", decision.proposal_id),
     )
 
-    _in_memory_decisions.insert(
-        0,
-        {
-            "id": decision_id,
-            "proposal_id": decision.proposal_id,
-            "advisor_id": decision.advisor_id,
-            "action": decision.action.value,
-            "comments": decision.comments,
-            "rules_version": decision.rules_version,
-            "decided_at": None,
-            "profile": profile_name,
-        },
-    )
-
     return {
         "decision_id": decision_id,
         "proposal_id": decision.proposal_id,
@@ -80,10 +64,6 @@ async def get_history():
             ORDER BY d.decided_at DESC
             """
         )
-        db_results = [dict(r) for r in rows] if rows else []
+        return [dict(r) for r in rows] if rows else []
     except Exception:
-        db_results = []
-
-    seen_ids = {r["id"] for r in db_results}
-    combined = db_results + [d for d in _in_memory_decisions if d["id"] not in seen_ids]
-    return combined
+        return []

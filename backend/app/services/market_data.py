@@ -1,5 +1,4 @@
 import time
-from functools import lru_cache
 
 _CACHE: dict[str, tuple[float, dict]] = {}
 _CACHE_TTL = 300
@@ -48,9 +47,4 @@ def _get_ticker_info(ticker: str) -> dict | None:
         return None
 
 
-@lru_cache(maxsize=1)
-def get_spy_info():
-    spx = _get_ticker_info("^GSPC")
-    if spx:
-        return spx
-    return _get_ticker_info("SPY")
+

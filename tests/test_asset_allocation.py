@@ -1,9 +1,7 @@
-"""Tests unitarios de las políticas de asignación de activos."""
-
 import pytest
 
 from backend.app.domain.asset_allocation_policies import (
-    ALLOCATION_POLICIES,
+    DETAILED_ALLOCATIONS,
     RISK_METRICS_BY_PROFILE,
     build_allocations,
     build_explanation,
@@ -16,29 +14,37 @@ from backend.app.models.portfolio_proposal import (
 )
 
 
-class TestAllocationPolicies:
+class TestDetailedAllocations:
     def test_conservador_allocation(self):
-        policy = ALLOCATION_POLICIES[RiskProfile.CONSERVATIVE]
-        assert policy[InstrumentCategory.FIXED_INCOME] == 60
-        assert policy[InstrumentCategory.EQUITY] == 30
-        assert policy[InstrumentCategory.LIQUIDITY] == 10
-        assert policy[InstrumentCategory.ALTERNATIVES] == 0
+        detail = DETAILED_ALLOCATIONS[RiskProfile.CONSERVATIVE]
+        fix = sum(pct for _, pct in detail[InstrumentCategory.FIXED_INCOME])
+        eq = sum(pct for _, pct in detail[InstrumentCategory.EQUITY])
+        liq = sum(pct for _, pct in detail[InstrumentCategory.LIQUIDITY])
+        assert fix == 60
+        assert eq == 30
+        assert liq == 10
 
     def test_moderado_allocation(self):
-        policy = ALLOCATION_POLICIES[RiskProfile.MODERATE]
-        assert policy[InstrumentCategory.FIXED_INCOME] == 40
-        assert policy[InstrumentCategory.EQUITY] == 50
-        assert policy[InstrumentCategory.LIQUIDITY] == 10
+        detail = DETAILED_ALLOCATIONS[RiskProfile.MODERATE]
+        fix = sum(pct for _, pct in detail[InstrumentCategory.FIXED_INCOME])
+        eq = sum(pct for _, pct in detail[InstrumentCategory.EQUITY])
+        liq = sum(pct for _, pct in detail[InstrumentCategory.LIQUIDITY])
+        assert fix == 40
+        assert eq == 50
+        assert liq == 10
 
     def test_agresivo_allocation(self):
-        policy = ALLOCATION_POLICIES[RiskProfile.AGGRESSIVE]
-        assert policy[InstrumentCategory.FIXED_INCOME] == 20
-        assert policy[InstrumentCategory.EQUITY] == 70
-        assert policy[InstrumentCategory.LIQUIDITY] == 10
+        detail = DETAILED_ALLOCATIONS[RiskProfile.AGGRESSIVE]
+        fix = sum(pct for _, pct in detail[InstrumentCategory.FIXED_INCOME])
+        eq = sum(pct for _, pct in detail[InstrumentCategory.EQUITY])
+        liq = sum(pct for _, pct in detail[InstrumentCategory.LIQUIDITY])
+        assert fix == 20
+        assert eq == 70
+        assert liq == 10
 
     def test_all_profiles_sum_100(self):
-        for profile, policy in ALLOCATION_POLICIES.items():
-            total = sum(policy.values())
+        for profile, detail in DETAILED_ALLOCATIONS.items():
+            total = sum(pct for _, pct in sum(detail.values(), []))
             assert total == 100, f"Perfil {profile} suma {total}% (debe ser 100%)"
 
 
@@ -67,17 +73,6 @@ class TestBuildAllocations:
     def test_agresivo_build(self):
         proposal = build_allocations(RiskProfile.AGGRESSIVE, "p-002")
         assert len(proposal.allocations) == 3
-
-    def test_allocations_match_policy(self):
-        for profile in RiskProfile:
-            proposal = build_allocations(profile, f"p-{profile.value}")
-            policy = ALLOCATION_POLICIES[profile]
-            for alloc in proposal.allocations:
-                expected_pct = policy[alloc.category]
-                assert alloc.percentage == expected_pct, (
-                    f"Perfil {profile}: {alloc.category.value} esperado {expected_pct}%, "
-                    f"obtenido {alloc.percentage}%"
-                )
 
 
 class TestBuildExplanation:

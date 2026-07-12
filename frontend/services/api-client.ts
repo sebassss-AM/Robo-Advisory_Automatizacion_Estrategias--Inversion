@@ -138,8 +138,6 @@ export const api = {
       body: JSON.stringify(answers),
     }),
 
-  getProfile: (id: string) => request<ProfileResult>(`/perfil/${id}`),
-
   createProposal: (profile_id: string, profile?: string, monthly_investment?: number) =>
     request<ProposalResult>("/propuesta", {
       method: "POST",
@@ -149,8 +147,6 @@ export const api = {
         ...(monthly_investment && monthly_investment > 0 ? { monthly_investment } : {}),
       }),
     }),
-
-  getProposal: (id: number) => request<ProposalResult>(`/propuesta/${id}`),
 
   reviewProposal: (decision: AdvisorDecision) =>
     request<{ decision_id: string; message: string }>("/revisar", {

@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { api, type ProposalResult, type Allocation } from "@/services/api-client"
-import { isAuthenticated, logout, isAdvisor } from "@/services/auth"
+import { isAuthenticated, logout } from "@/services/auth"
 import PortfolioChart from "@/components/PortfolioChart"
 import ApprovalPanel from "@/components/ApprovalPanel"
 

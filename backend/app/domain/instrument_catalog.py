@@ -51,14 +51,6 @@ INSTRUMENTS: list[Instrument] = [
     ),
 ]
 
-TICKERS_BY_CATEGORY = {
-    InstrumentCategory.FIXED_INCOME: ["BND", "SHY"],
-    InstrumentCategory.EQUITY: ["VTI", "VXUS", "QQQ"],
-    InstrumentCategory.LIQUIDITY: ["SGOV"],
-    InstrumentCategory.ALTERNATIVES: [],
-}
-
-
 def get_instrument_by_id(instrument_id: str) -> Instrument | None:
     for instrument in INSTRUMENTS:
         if instrument.id == instrument_id:
@@ -66,5 +58,4 @@ def get_instrument_by_id(instrument_id: str) -> Instrument | None:
     return None
 
 
-def get_instruments_by_category(category: InstrumentCategory) -> list[Instrument]:
-    return [i for i in INSTRUMENTS if i.category == category]
+

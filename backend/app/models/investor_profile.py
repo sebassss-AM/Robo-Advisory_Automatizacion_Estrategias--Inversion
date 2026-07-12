@@ -64,8 +64,4 @@ class RiskProfileResult(BaseModel):
     calculated_at: datetime = Field(default_factory=datetime.now)
 
 
-class InvestorProfile(BaseModel):
-    id: str | None = None
-    answers: QuestionnaireAnswers
-    result: RiskProfileResult
-    created_at: datetime = Field(default_factory=datetime.now)
+

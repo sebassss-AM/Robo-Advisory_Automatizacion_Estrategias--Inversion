@@ -8,27 +8,6 @@ from backend.app.models.portfolio_proposal import (
 from backend.app.services.market_data import _get_ticker_info
 from backend.app.domain.instrument_catalog import get_instrument_by_id
 
-ALLOCATION_POLICIES = {
-    RiskProfile.CONSERVATIVE: {
-        InstrumentCategory.FIXED_INCOME: 60,
-        InstrumentCategory.EQUITY: 30,
-        InstrumentCategory.LIQUIDITY: 10,
-        InstrumentCategory.ALTERNATIVES: 0,
-    },
-    RiskProfile.MODERATE: {
-        InstrumentCategory.FIXED_INCOME: 40,
-        InstrumentCategory.EQUITY: 50,
-        InstrumentCategory.LIQUIDITY: 10,
-        InstrumentCategory.ALTERNATIVES: 0,
-    },
-    RiskProfile.AGGRESSIVE: {
-        InstrumentCategory.FIXED_INCOME: 20,
-        InstrumentCategory.EQUITY: 70,
-        InstrumentCategory.LIQUIDITY: 10,
-        InstrumentCategory.ALTERNATIVES: 0,
-    },
-}
-
 DETAILED_ALLOCATIONS = {
     RiskProfile.CONSERVATIVE: {
         InstrumentCategory.FIXED_INCOME: [
@@ -124,22 +103,6 @@ def _enrich_with_market_data(ticker: str, percentage: float, category: Instrumen
         expected_return=exp_return,
         return_pct=return_pct,
     )
-
-
-def build_market_summary(allocations: list[Allocation]) -> str:
-    lines = ["Datos de mercado actuales:"]
-    for a in allocations:
-        info = _get_ticker_info(a.instrument_id)
-        if info:
-            parts = [f"  {a.instrument_name}: ${info.get('price', 'N/A')}"]
-            if info.get("pe_ratio"):
-                parts.append(f"P/E {info['pe_ratio']:.1f}")
-            if info.get("dividend_yield") is not None:
-                parts.append(f"Div {info['dividend_yield']:.2f}%")
-            if info.get("ytd_return") is not None:
-                parts.append(f"YTD {info['ytd_return']:+.2f}%")
-            lines.append(" · ".join(parts))
-    return "\n".join(lines)
 
 
 def _compute_weighted_return(allocations: list[Allocation]) -> tuple[str, float]:
