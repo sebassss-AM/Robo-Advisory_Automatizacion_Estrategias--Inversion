@@ -17,7 +17,7 @@ def conservative_answers() -> QuestionnaireAnswers:
         investment_horizon=InvestmentHorizon.SHORT_TERM,
         risk_tolerance=RiskTolerance.LOW,
         goal=InvestmentGoal.CAPITAL_PRESERVATION,
-        monthly_income=3000.0,
+        monthly_investment=0, monthly_income=3000.0,
         investment_experience=1,
     )
 
@@ -29,7 +29,7 @@ def moderate_answers() -> QuestionnaireAnswers:
         investment_horizon=InvestmentHorizon.SHORT_TERM,
         risk_tolerance=RiskTolerance.LOW,
         goal=InvestmentGoal.GROWTH,
-        monthly_income=4000.0,
+        monthly_investment=0, monthly_income=4000.0,
         investment_experience=2,
     )
 
@@ -41,7 +41,7 @@ def aggressive_answers() -> QuestionnaireAnswers:
         investment_horizon=InvestmentHorizon.LONG_TERM,
         risk_tolerance=RiskTolerance.HIGH,
         goal=InvestmentGoal.AGGRESSIVE_GROWTH,
-        monthly_income=8000.0,
+        monthly_investment=0, monthly_income=8000.0,
         investment_experience=5,
     )
 

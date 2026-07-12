@@ -134,6 +134,30 @@ function PropuestaContent() {
             <div className="rounded-2xl border bg-surface p-6">
               <h2 className="mb-6 text-lg font-bold text-gray-900">Distribución sugerida</h2>
               <PortfolioChart allocations={proposal?.allocations || []} />
+
+              {proposal?.monthly_investment && proposal.monthly_investment > 0 && (
+                <div className="mt-6 rounded-xl bg-green-50 p-4">
+                  <p className="mb-3 text-sm font-medium text-green-800">
+                    Con tu aporte de <strong>${proposal.monthly_investment}/mes</strong>, cada mes pondrías:
+                  </p>
+                  <div className="space-y-2">
+                    {proposal.allocations.map((a) => {
+                      const amount = (a.percentage / 100) * proposal.monthly_investment
+                      return (
+                        <div key={a.instrument_id} className="flex items-center justify-between rounded-lg bg-white px-3 py-2 text-sm">
+                          <span className="font-medium text-gray-700">{a.instrument_name}</span>
+                          <span className="text-gray-900">
+                            <strong>${amount.toFixed(2)}</strong> ({a.percentage}%)
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <p className="mt-3 text-xs text-green-700">
+                    * Monto estimado basado en tu inversión mensual. Podés ajustarlo cuando quieras.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="mt-6 rounded-2xl border bg-surface p-6">

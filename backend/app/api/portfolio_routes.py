@@ -17,6 +17,7 @@ async def create_proposal(
     profile: str = Body(None),
 ):
     resolved_profile: RiskProfile | None = None
+    monthly_investment = 0.0
 
     if profile:
         try:
@@ -30,6 +31,11 @@ async def create_proposal(
         )
         if profile_rows:
             resolved_profile = RiskProfile(profile_rows[0]["profile"])
+            answers = profile_rows[0].get("answers", {})
+            if isinstance(answers, str):
+                import json
+                answers = json.loads(answers)
+            monthly_investment = float(answers.get("monthly_investment", 0))
 
     if not resolved_profile:
         raise HTTPException(
@@ -71,6 +77,7 @@ async def create_proposal(
         "allocations": allocs_dict,
         "risk_metrics": proposal.risk_metrics.model_dump(),
         "explanation": final_explanation,
+        "monthly_investment": monthly_investment,
     }
 
 

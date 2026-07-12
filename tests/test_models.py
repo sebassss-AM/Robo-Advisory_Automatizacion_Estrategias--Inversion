@@ -27,7 +27,7 @@ class TestQuestionnaireAnswers:
             investment_horizon=InvestmentHorizon.LONG_TERM,
             risk_tolerance=RiskTolerance.HIGH,
             goal=InvestmentGoal.AGGRESSIVE_GROWTH,
-            monthly_income=5000.0,
+            monthly_investment=0, monthly_income=5000.0,
             investment_experience=3,
         )
         assert answers.age == 30
@@ -40,7 +40,7 @@ class TestQuestionnaireAnswers:
                 investment_horizon=InvestmentHorizon.SHORT_TERM,
                 risk_tolerance=RiskTolerance.LOW,
                 goal=InvestmentGoal.INCOME,
-                monthly_income=1000.0,
+                monthly_investment=0, monthly_income=1000.0,
                 investment_experience=1,
             )
 
@@ -51,7 +51,7 @@ class TestQuestionnaireAnswers:
                 investment_horizon=InvestmentHorizon.SHORT_TERM,
                 risk_tolerance=RiskTolerance.LOW,
                 goal=InvestmentGoal.INCOME,
-                monthly_income=1000.0,
+                monthly_investment=0, monthly_income=1000.0,
                 investment_experience=1,
             )
 
@@ -62,7 +62,7 @@ class TestQuestionnaireAnswers:
                 investment_horizon=InvestmentHorizon.SHORT_TERM,
                 risk_tolerance=RiskTolerance.LOW,
                 goal=InvestmentGoal.INCOME,
-                monthly_income=1000.0,
+                monthly_investment=0, monthly_income=1000.0,
                 investment_experience=0,
             )
 
@@ -73,7 +73,7 @@ class TestQuestionnaireAnswers:
                 investment_horizon=InvestmentHorizon.SHORT_TERM,
                 risk_tolerance=RiskTolerance.LOW,
                 goal=InvestmentGoal.INCOME,
-                monthly_income=1000.0,
+                monthly_investment=0, monthly_income=1000.0,
                 investment_experience=6,
             )
 
@@ -84,7 +84,7 @@ class TestQuestionnaireAnswers:
                 investment_horizon=InvestmentHorizon.SHORT_TERM,
                 risk_tolerance=RiskTolerance.LOW,
                 goal=InvestmentGoal.INCOME,
-                monthly_income=-100.0,
+                monthly_investment=0, monthly_income=-100.0,
                 investment_experience=1,
             )
 
@@ -94,7 +94,7 @@ class TestQuestionnaireAnswers:
             investment_horizon=InvestmentHorizon.SHORT_TERM,
             risk_tolerance=RiskTolerance.LOW,
             goal=InvestmentGoal.INCOME,
-            monthly_income="2500.50",
+            monthly_investment=0, monthly_income="2500.50",
             investment_experience="2",
         )
         assert answers.age == 30

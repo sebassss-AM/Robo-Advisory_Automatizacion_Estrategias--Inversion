@@ -34,6 +34,9 @@ class QuestionnaireAnswers(BaseModel):
     risk_tolerance: RiskTolerance
     goal: InvestmentGoal
     monthly_income: float = Field(..., ge=0, description="Ingreso mensual en USD")
+    monthly_investment: float = Field(
+        default=0, ge=0, description="Monto que puede invertir por mes en USD"
+    )
     investment_experience: int = Field(
         ..., ge=1, le=5, description="Experiencia en inversiones del 1 al 5"
     )
@@ -45,7 +48,7 @@ class QuestionnaireAnswers(BaseModel):
             return int(v) if v else 0
         return v
 
-    @field_validator("monthly_income", mode="before")
+    @field_validator("monthly_income", "monthly_investment", mode="before")
     @classmethod
     def coerce_float(cls, v):
         if isinstance(v, str):

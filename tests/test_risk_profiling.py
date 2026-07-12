@@ -25,7 +25,7 @@ class TestCalculateRiskScore:
             investment_horizon=InvestmentHorizon.SHORT_TERM,
             risk_tolerance=RiskTolerance.LOW,
             goal=InvestmentGoal.CAPITAL_PRESERVATION,
-            monthly_income=3000.0,
+            monthly_investment=0, monthly_income=3000.0,
             investment_experience=1,
         )
         score = calculate_risk_score(answers)
@@ -37,7 +37,7 @@ class TestCalculateRiskScore:
             investment_horizon=InvestmentHorizon.LONG_TERM,
             risk_tolerance=RiskTolerance.HIGH,
             goal=InvestmentGoal.AGGRESSIVE_GROWTH,
-            monthly_income=10000.0,
+            monthly_investment=0, monthly_income=10000.0,
             investment_experience=5,
         )
         score = calculate_risk_score(answers)
@@ -49,7 +49,7 @@ class TestCalculateRiskScore:
             investment_horizon=InvestmentHorizon.LONG_TERM,
             risk_tolerance=RiskTolerance.HIGH,
             goal=InvestmentGoal.AGGRESSIVE_GROWTH,
-            monthly_income=10000.0,
+            monthly_investment=0, monthly_income=10000.0,
             investment_experience=5,
         )
         score = calculate_risk_score(answers)
@@ -61,7 +61,7 @@ class TestCalculateRiskScore:
             investment_horizon=InvestmentHorizon.MEDIUM_TERM,
             risk_tolerance=RiskTolerance.MEDIUM,
             goal=InvestmentGoal.GROWTH,
-            monthly_income=5000.0,
+            monthly_investment=0, monthly_income=5000.0,
             investment_experience=5,
         )
         score = calculate_risk_score(answers)

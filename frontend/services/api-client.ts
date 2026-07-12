@@ -40,6 +40,7 @@ export interface QuestionnaireAnswers {
   risk_tolerance: string
   goal: string
   monthly_income: number
+  monthly_investment: number
   investment_experience: number
 }
 
@@ -49,6 +50,7 @@ export interface FormAnswers {
   risk_tolerance: string
   goal: string
   monthly_income: string
+  monthly_investment: string
   investment_experience: string
 }
 
@@ -79,6 +81,7 @@ export interface ProposalResult {
     max_drawdown_estimate: string
   }
   explanation: string
+  monthly_investment: number
 }
 
 export interface AdvisorDecision {

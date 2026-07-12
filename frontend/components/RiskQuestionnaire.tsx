@@ -58,8 +58,16 @@ const questions: Question[] = [
   {
     key: "monthly_income",
     label: "¿Cuál es tu ingreso mensual?",
+    description: "Esto nos ayuda a evaluar tu capacidad financiera.",
     type: "number",
     placeholder: "Monto en USD",
+  },
+  {
+    key: "monthly_investment",
+    label: "¿Cuánto de eso podrías destinar a invertir por mes?",
+    description: "No es necesario que sea todo tu ingreso. Solo lo que puedas comprometer.",
+    type: "number",
+    placeholder: "Ej: 200",
   },
   {
     key: "investment_experience",
@@ -83,6 +91,7 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
     risk_tolerance: "",
     goal: "",
     monthly_income: "",
+    monthly_investment: "",
     investment_experience: "",
   })
   const [loading, setLoading] = useState(false)
@@ -120,6 +129,7 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
         risk_tolerance: answers.risk_tolerance,
         goal: answers.goal,
         monthly_income: parseFloat(answers.monthly_income) || 0,
+        monthly_investment: parseFloat(answers.monthly_investment) || 0,
         investment_experience: parseInt(answers.investment_experience) || 1,
       }
       const result = await api.submitQuestionnaire(payload)
