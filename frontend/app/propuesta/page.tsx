@@ -35,22 +35,42 @@ function volColor(text: string): string {
 }
 
 function simpleMarkdown(text: string): string {
-  return text
-    .split(/\n{2,}/)
-    .map((block) => {
-      const trimmed = block.trim()
-      if (!trimmed) return ""
-      if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
-        const items = trimmed.split(/\n(?=[-*] )/).map((item) => {
-          const content = item.replace(/^[-*]\s/, "").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-          return `<li class="ml-4 list-disc text-gray-700 leading-relaxed">${content}</li>`
-        })
-        return `<ul class="space-y-1">${items.join("")}</ul>`
+  const lines = text.split("\n")
+  const out: string[] = []
+  let inList = false
+  let listType = ""
+
+  for (const raw of lines) {
+    const line = raw.trim()
+    if (!line) {
+      if (inList) { out.push("</ul>"); inList = false }
+      continue
+    }
+
+    const formatted = line.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+
+    const isBullet = line.startsWith("- ") || line.startsWith("* ")
+    const isNumbered = /^\d+[.)] /.test(line)
+
+    if (isBullet || isNumbered) {
+      const type = isBullet ? "disc" : "decimal"
+      if (!inList || listType !== type) {
+        if (inList) out.push("</ul>")
+        out.push(`<ul class="list-${type} list-inside space-y-0.5">`)
+        inList = true
+        listType = type
       }
-      const withBold = trimmed.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-      return `<p class="text-gray-700 leading-relaxed">${withBold}</p>`
-    })
-    .join("")
+      const content = formatted.replace(/^[-*\d]+[.)\s]\s*/, "")
+      out.push(`<li class="text-gray-700 leading-relaxed">${content}</li>`)
+      continue
+    }
+
+    if (inList) { out.push("</ul>"); inList = false }
+    out.push(`<p class="text-gray-700 leading-relaxed">${formatted}</p>`)
+  }
+
+  if (inList) out.push("</ul>")
+  return out.join("")
 }
 
 function PropuestaContent() {
