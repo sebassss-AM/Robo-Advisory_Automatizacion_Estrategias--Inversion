@@ -123,15 +123,17 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
     setLoading(true)
     setError("")
     try {
+      const monthlyInvest = parseFloat(answers.monthly_investment) || 0
       const payload = {
         age: parseInt(answers.age) || 0,
         investment_horizon: answers.investment_horizon,
         risk_tolerance: answers.risk_tolerance,
         goal: answers.goal,
         monthly_income: parseFloat(answers.monthly_income) || 0,
-        monthly_investment: parseFloat(answers.monthly_investment) || 0,
+        monthly_investment: monthlyInvest,
         investment_experience: parseInt(answers.investment_experience) || 1,
       }
+      localStorage.setItem("inversia_monthly_investment", String(monthlyInvest))
       const result = await api.submitQuestionnaire(payload)
       onComplete(result)
     } catch (err) {

@@ -75,45 +75,4 @@ Mencioná cómo cada respuesta influyó en el resultado.
     return generate_response(prompt)
 
 
-def generate_portfolio_explanation(
-    profile_name: str,
-    allocations: list[dict],
-    risk_metrics: dict,
-) -> str:
-    lines = []
-    for a in allocations:
-        parts = [f"- {a['percentage']}% en {a.get('instrument_name', a['instrument_id'])} ({a['category']})"]
-        extra = []
-        if a.get("amount_usd"):
-            extra.append(f"Precio: ${a['amount_usd']:.2f}")
-        if a.get("pe_ratio"):
-            extra.append(f"P/E: {a['pe_ratio']}")
-        if a.get("dividend_yield") is not None:
-            extra.append(f"Dividendo: {a['dividend_yield']:.2f}%")
-        if extra:
-            parts[0] += " — " + " | ".join(extra)
-        lines.append(parts[0])
-    allocations_text = "\n".join(lines)
 
-    prompt = f"""
-Perfil del inversionista: {profile_name}
-
-Asignación propuesta (con datos de mercado actuales):
-{allocations_text}
-
-Métricas de riesgo:
-- Volatilidad esperada: {risk_metrics.get('expected_volatility')}
-- Diversificación: {risk_metrics.get('diversification_score')}/100
-- Drawdown máximo estimado: {risk_metrics.get('max_drawdown_estimate')}
-
-INSTRUCCIÓN IMPORTANTE: Los datos de precio, P/E y dividendos arriba son REALES de Yahoo Finance.
-NO inventes ningún número adicional. Si un dato no está listado, no lo menciones.
-
-Generá una explicación clara para el usuario sobre esta propuesta de portafolio.
-Incluí:
-1. Por qué esta asignación es adecuada para su perfil de riesgo
-2. Qué significa cada métrica de riesgo en lenguaje simple
-3. Solo si los datos fueron proporcionados, mencioná el precio actual y P/E de los instrumentos
-4. Un mensaje responsable indicando que es solo una propuesta informativa, no una recomendación
-"""
-    return generate_response(prompt)

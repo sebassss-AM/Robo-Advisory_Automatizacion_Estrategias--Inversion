@@ -6,7 +6,6 @@ from fastapi import APIRouter, HTTPException, Body
 from backend.app.models.investor_profile import RiskProfile
 from backend.app.domain.asset_allocation_policies import build_allocations
 from backend.app.infrastructure.database import execute_insert, execute_query
-from backend.app.llm.gemini_client import generate_portfolio_explanation
 
 router = APIRouter(prefix="/api/propuesta", tags=["portfolio"])
 
@@ -15,9 +14,9 @@ router = APIRouter(prefix="/api/propuesta", tags=["portfolio"])
 async def create_proposal(
     profile_id: str = Body(...),
     profile: str = Body(None),
+    monthly_investment: float = Body(default=0.0),
 ):
     resolved_profile: RiskProfile | None = None
-    monthly_investment = 0.0
 
     if profile:
         try:
@@ -31,10 +30,11 @@ async def create_proposal(
         )
         if profile_rows:
             resolved_profile = RiskProfile(profile_rows[0]["profile"])
-            answers = profile_rows[0].get("answers", {})
-            if isinstance(answers, str):
-                answers = json.loads(answers)
-            monthly_investment = float(answers.get("monthly_investment", 0))
+            if monthly_investment == 0:
+                answers = profile_rows[0].get("answers", {})
+                if isinstance(answers, str):
+                    answers = json.loads(answers)
+                monthly_investment = float(answers.get("monthly_investment", 0))
 
     if not resolved_profile:
         raise HTTPException(
@@ -47,13 +47,6 @@ async def create_proposal(
 
     allocs_dict = [a.model_dump() for a in proposal.allocations]
 
-    llm_explanation = generate_portfolio_explanation(
-        profile_name=resolved_profile.value,
-        allocations=allocs_dict,
-        risk_metrics=proposal.risk_metrics.model_dump(),
-    )
-    final_explanation = llm_explanation if llm_explanation else proposal.explanation
-
     execute_insert(
         """
         INSERT INTO proposals (id, profile_id, allocations, risk_metrics, explanation, status)
@@ -64,7 +57,7 @@ async def create_proposal(
             profile_id,
             json.dumps(allocs_dict),
             json.dumps(proposal.risk_metrics.model_dump()),
-            final_explanation,
+            proposal.explanation,
             "pending",
         ),
     )
@@ -75,7 +68,7 @@ async def create_proposal(
         "profile": resolved_profile.value,
         "allocations": allocs_dict,
         "risk_metrics": proposal.risk_metrics.model_dump(),
-        "explanation": final_explanation,
+        "explanation": proposal.explanation,
         "monthly_investment": monthly_investment,
     }
 

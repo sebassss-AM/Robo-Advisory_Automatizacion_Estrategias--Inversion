@@ -95,9 +95,10 @@ function PropuestaContent() {
     }
 
     const profile = searchParams.get("profile") || undefined
+    const storedInvest = parseFloat(localStorage.getItem("inversia_monthly_investment") || "0")
 
     api
-      .createProposal(profileId, profile)
+      .createProposal(profileId, profile, storedInvest > 0 ? storedInvest : undefined)
       .then(setProposal)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))

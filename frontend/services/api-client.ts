@@ -138,10 +138,14 @@ export const api = {
 
   getProfile: (id: string) => request<ProfileResult>(`/perfil/${id}`),
 
-  createProposal: (profile_id: string, profile?: string) =>
+  createProposal: (profile_id: string, profile?: string, monthly_investment?: number) =>
     request<ProposalResult>("/propuesta", {
       method: "POST",
-      body: JSON.stringify({ profile_id, ...(profile ? { profile } : {}) }),
+      body: JSON.stringify({
+        profile_id,
+        ...(profile ? { profile } : {}),
+        ...(monthly_investment && monthly_investment > 0 ? { monthly_investment } : {}),
+      }),
     }),
 
   getProposal: (id: number) => request<ProposalResult>(`/propuesta/${id}`),

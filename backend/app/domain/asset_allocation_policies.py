@@ -214,6 +214,21 @@ def build_explanation(profile: RiskProfile, allocations: list[Allocation]) -> st
                 lines.append(f"  - {a.instrument_name}")
 
     lines.append("")
+    lines.append("**Métricas de riesgo del portafolio:**")
+    lines.append("")
+    lines.append(
+        "La **volatilidad esperada** indica cuánto puede fluctuar el valor de tu inversión. "
+        "Una volatilidad más alta significa cambios más bruscos, tanto al alza como a la baja."
+    )
+    lines.append(
+        "La **diversificación** mide qué tan repartida está tu inversión entre distintos tipos de activos. "
+        "Un puntaje más alto indica menor dependencia de un solo instrumento."
+    )
+    lines.append(
+        "El **drawdown máximo estimado** representa la mayor caída que podría experimentar tu portafolio "
+        "desde su punto más alto. Es una medida de riesgo a considerar."
+    )
+    lines.append("")
     lines.append(
         "Esta asignación busca equilibrar tu tolerancia al riesgo con tus objetivos de inversión. "
         "Los datos de mercado mostrados son obtenidos de fuentes públicas (Yahoo Finance) como referencia. "
