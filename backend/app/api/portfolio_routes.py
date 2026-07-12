@@ -39,23 +39,20 @@ async def create_proposal(
     proposal = build_allocations(resolved_profile, profile_id)
     proposal_id = str(uuid.uuid4())
 
-    try:
-        execute_insert(
-            """
-            INSERT INTO proposals (id, profile_id, allocations, risk_metrics, explanation, status)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            """,
-            (
-                proposal_id,
-                profile_id,
-                json.dumps([a.model_dump() for a in proposal.allocations]),
-                json.dumps(proposal.risk_metrics.model_dump()),
-                proposal.explanation,
-                "pending",
-            ),
-        )
-    except Exception:
-        pass
+    execute_insert(
+        """
+        INSERT INTO proposals (id, profile_id, allocations, risk_metrics, explanation, status)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """,
+        (
+            proposal_id,
+            profile_id,
+            json.dumps([a.model_dump() for a in proposal.allocations]),
+            json.dumps(proposal.risk_metrics.model_dump()),
+            proposal.explanation,
+            "pending",
+        ),
+    )
 
     return {
         "proposal_id": proposal_id,

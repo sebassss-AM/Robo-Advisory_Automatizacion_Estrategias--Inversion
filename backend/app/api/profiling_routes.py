@@ -36,25 +36,22 @@ async def create_profile(answers: dict, user: dict = Depends(get_current_user)):
 
     profile_result = result["profile_result"]
 
-    try:
-        execute_insert(
-            """
-            INSERT INTO profiles (id, user_id, answers, profile, score, rules_version, explanations, status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            """,
-            (
-                profile_id,
-                user["id"],
-                json.dumps(answers),
-                profile_result["profile"],
-                profile_result["score"],
-                profile_result["rules_version"],
-                json.dumps(profile_result["explanations"]),
-                "pendiente",
-            ),
-        )
-    except Exception:
-        pass
+    execute_insert(
+        """
+        INSERT INTO profiles (id, user_id, answers, profile, score, rules_version, explanations, status)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """,
+        (
+            profile_id,
+            user["id"],
+            json.dumps(answers),
+            profile_result["profile"],
+            profile_result["score"],
+            profile_result["rules_version"],
+            json.dumps(profile_result["explanations"]),
+            "pendiente",
+        ),
+    )
 
     return {
         "profile_id": profile_id,

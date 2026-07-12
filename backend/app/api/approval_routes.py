@@ -1,10 +1,10 @@
 import json
 import uuid
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from backend.app.infrastructure.database import execute_insert, execute_query
-from backend.app.models.audit_decision import AdvisorDecision, DecisionAction
+from backend.app.models.audit_decision import AdvisorDecision
 
 router = APIRouter(prefix="/api/revisar", tags=["approval"])
 
@@ -15,40 +15,36 @@ _in_memory_decisions: list[dict] = []
 async def review_proposal(decision: AdvisorDecision):
     decision_id = str(uuid.uuid4())
 
-    try:
-        execute_insert(
-            """
-            INSERT INTO decisions (id, proposal_id, advisor_id, action, comments, edited_allocations, rules_version)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """,
-            (
-                decision_id,
-                decision.proposal_id,
-                decision.advisor_id,
-                decision.action.value,
-                decision.comments,
-                json.dumps(decision.edited_allocations) if decision.edited_allocations else None,
-                decision.rules_version,
-            ),
-        )
-    except Exception:
-        pass
+    profile_rows = execute_query(
+        "SELECT p.profile FROM proposals p WHERE p.id = %s", (decision.proposal_id,)
+    )
+    profile_name = profile_rows[0]["profile"] if profile_rows else None
 
-    try:
-        execute_query(
-            "UPDATE proposals SET status = %s WHERE id = %s",
-            (decision.action.value, decision.proposal_id),
-        )
-    except Exception:
-        pass
+    execute_insert(
+        """
+        INSERT INTO decisions (id, proposal_id, advisor_id, action, comments, edited_allocations, rules_version)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """,
+        (
+            decision_id,
+            decision.proposal_id,
+            decision.advisor_id,
+            decision.action.value,
+            decision.comments,
+            json.dumps(decision.edited_allocations) if decision.edited_allocations else None,
+            decision.rules_version,
+        ),
+    )
 
-    try:
-        execute_query(
-            "UPDATE profiles SET status = %s WHERE id = (SELECT profile_id FROM proposals WHERE id = %s)",
-            ("completado", decision.proposal_id),
-        )
-    except Exception:
-        pass
+    execute_query(
+        "UPDATE proposals SET status = %s WHERE id = %s",
+        (decision.action.value, decision.proposal_id),
+    )
+
+    execute_query(
+        "UPDATE profiles SET status = %s WHERE id = (SELECT profile_id FROM proposals WHERE id = %s)",
+        ("completado", decision.proposal_id),
+    )
 
     _in_memory_decisions.insert(
         0,
@@ -60,7 +56,7 @@ async def review_proposal(decision: AdvisorDecision):
             "comments": decision.comments,
             "rules_version": decision.rules_version,
             "decided_at": None,
-            "profile": None,
+            "profile": profile_name,
         },
     )
 
@@ -80,13 +76,14 @@ async def get_history():
             SELECT d.id, d.proposal_id, d.advisor_id, d.action, d.comments,
                    d.rules_version, d.decided_at, p.profile
             FROM decisions d
-            JOIN proposals p ON p.id = d.proposal_id
+            LEFT JOIN proposals p ON p.id = d.proposal_id
             ORDER BY d.decided_at DESC
             """
         )
-        if rows:
-            return [dict(row) for row in rows]
+        db_results = [dict(r) for r in rows] if rows else []
     except Exception:
-        pass
+        db_results = []
 
-    return _in_memory_decisions
+    seen_ids = {r["id"] for r in db_results}
+    combined = db_results + [d for d in _in_memory_decisions if d["id"] not in seen_ids]
+    return combined
