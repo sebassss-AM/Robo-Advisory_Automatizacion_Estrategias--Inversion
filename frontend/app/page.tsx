@@ -14,6 +14,7 @@ export default function Home() {
   const handleLogout = () => {
     import("@/services/auth").then((m) => {
       m.logout()
+      setLoggedIn(false)
       router.push("/")
     })
   }
@@ -29,22 +30,21 @@ export default function Home() {
             <span className="text-lg font-bold text-gray-900">InversIA</span>
           </div>
           <nav className="flex items-center gap-6">
-            <a href={loggedIn ? "/asesor" : "/login"} className="text-sm font-medium text-gray-600 hover:text-gray-900">
-              Acceso Asesores
-            </a>
             {loggedIn ? (
-              <button
-                onClick={handleLogout}
-                className="rounded-lg px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
-              >
-                Cerrar sesión
-              </button>
+              <>
+                <a href="/asesor" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+                  Acceso Asesores
+                </a>
+                <button
+                  onClick={handleLogout}
+                  className="rounded-lg px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+                >
+                  Cerrar sesión
+                </button>
+              </>
             ) : (
-              <a
-                href="/login"
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                Iniciar Sesión
+              <a href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+                Acceso Asesores
               </a>
             )}
           </nav>
@@ -146,10 +146,10 @@ export default function Home() {
               Sin compromiso. Solo un cuestionario y recibirás tu propuesta.
             </p>
             <a
-              href="/cuestionario"
+              href={loggedIn ? "/cuestionario" : "/register"}
               className="mt-8 inline-block rounded-xl bg-blue-600 px-10 py-4 text-lg font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl"
             >
-              Iniciar Perfilamiento
+              {loggedIn ? "Iniciar Perfilamiento" : "Crear Cuenta"}
             </a>
           </div>
         </section>
