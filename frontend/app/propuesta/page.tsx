@@ -7,6 +7,52 @@ import { isAuthenticated, logout, isAdvisor } from "@/services/auth"
 import PortfolioChart from "@/components/PortfolioChart"
 import ApprovalPanel from "@/components/ApprovalPanel"
 
+const COLORS = [
+  "bg-blue-500", "bg-emerald-500", "bg-amber-500",
+  "bg-violet-500", "bg-rose-500", "bg-cyan-500", "bg-orange-500",
+]
+
+const RISK_LABELS: Record<string, { label: string; color: string }> = {
+  "baja": { label: "Baja", color: "text-emerald-600" },
+  "media": { label: "Media", color: "text-amber-600" },
+  "alta": { label: "Alta", color: "text-red-600" },
+}
+
+function formatRiskLevel(text: string): { label: string; color: string } {
+  const lower = text.toLowerCase()
+  for (const [key, val] of Object.entries(RISK_LABELS)) {
+    if (lower.includes(key)) return val
+  }
+  if (lower.includes("%")) return { label: text, color: "text-gray-900" }
+  return { label: text, color: "text-gray-900" }
+}
+
+function volColor(text: string): string {
+  const lower = text.toLowerCase()
+  if (lower.includes("baja")) return "bg-emerald-500"
+  if (lower.includes("alta")) return "bg-red-500"
+  return "bg-amber-500"
+}
+
+function simpleMarkdown(text: string): string {
+  return text
+    .split(/\n{2,}/)
+    .map((block) => {
+      const trimmed = block.trim()
+      if (!trimmed) return ""
+      if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+        const items = trimmed.split(/\n(?=[-*] )/).map((item) => {
+          const content = item.replace(/^[-*]\s/, "").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+          return `<li class="ml-4 list-disc text-gray-700 leading-relaxed">${content}</li>`
+        })
+        return `<ul class="space-y-1">${items.join("")}</ul>`
+      }
+      const withBold = trimmed.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      return `<p class="text-gray-700 leading-relaxed">${withBold}</p>`
+    })
+    .join("")
+}
+
 function PropuestaContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -99,10 +145,13 @@ function PropuestaContent() {
     )
   }
 
+  const monthlyInvest = proposal?.monthly_investment ?? 0
+  const riskVol = formatRiskLevel(proposal?.risk_metrics.expected_volatility ?? "")
+
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+    <div className="min-h-screen bg-gray-50">
+      <header className="border-b bg-white">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <a href="/" className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-xs font-bold text-white">I</div>
             <span className="font-bold text-gray-900">InversIA</span>
@@ -119,92 +168,126 @@ function PropuestaContent() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 py-12">
-        <div className="mb-10">
+      <main className="mx-auto max-w-6xl px-6 py-10">
+        <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Propuesta de Portafolio</h1>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-1 text-gray-500">
             {fromAsesor
               ? "Revisá la propuesta generada por la IA. Podés aprobarla, editarla o rechazarla."
               : "Esta propuesta está alineada con tu perfil de riesgo. Un asesor autorizado debe revisarla y aprobarla."}
           </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-5">
-          <div className="lg:col-span-3">
-            <div className="rounded-2xl border bg-surface p-6">
-              <h2 className="mb-6 text-lg font-bold text-gray-900">Distribución sugerida</h2>
+        <div className="grid gap-6 lg:grid-cols-5">
+          {/* Columna izquierda: distribución + explicación */}
+          <div className="space-y-6 lg:col-span-3">
+
+            {/* Tarjeta: Distribución + montos */}
+            <div className="rounded-2xl border bg-white p-6">
+              <h2 className="mb-5 text-lg font-bold text-gray-900">Distribución sugerida</h2>
+
+              {/* Gráfico de torta */}
               <PortfolioChart allocations={proposal?.allocations || []} />
 
-              {proposal?.monthly_investment && proposal.monthly_investment > 0 && (
-                <div className="mt-6 rounded-xl bg-green-50 p-4">
-                  <p className="mb-3 text-sm font-medium text-green-800">
-                    Con tu aporte de <strong>${proposal.monthly_investment}/mes</strong>, cada mes pondrías:
-                  </p>
-                  <div className="space-y-2">
-                    {proposal.allocations.map((a) => {
-                      const amount = (a.percentage / 100) * proposal.monthly_investment
-                      return (
-                        <div key={a.instrument_id} className="flex items-center justify-between rounded-lg bg-white px-3 py-2 text-sm">
-                          <span className="font-medium text-gray-700">{a.instrument_name}</span>
-                          <span className="text-gray-900">
-                            <strong>${amount.toFixed(2)}</strong> ({a.percentage}%)
-                          </span>
+              {/* Desglose visual con barras */}
+              {proposal && (
+                <div className="mt-6 space-y-3">
+                  {proposal.allocations.map((a, i) => {
+                    const amount = monthlyInvest > 0 ? (a.percentage / 100) * monthlyInvest : 0
+                    return (
+                      <div key={a.instrument_id}>
+                        <div className="mb-1 flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-2">
+                            <span className={`inline-block h-3 w-3 rounded-full ${COLORS[i % COLORS.length]}`} />
+                            <span className="font-medium text-gray-800">{a.instrument_name}</span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="font-semibold text-gray-900">{a.percentage}%</span>
+                            {monthlyInvest > 0 && (
+                              <span className="min-w-[72px] text-right text-sm text-blue-600 font-semibold">
+                                ${amount.toFixed(2)}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      )
-                    })}
-                  </div>
-                  <p className="mt-3 text-xs text-green-700">
-                    * Monto estimado basado en tu inversión mensual. Podés ajustarlo cuando quieras.
-                  </p>
+                        <div className="h-2 w-full rounded-full bg-gray-100">
+                          <div
+                            className={`h-2 rounded-full transition-all ${COLORS[i % COLORS.length]}`}
+                            style={{ width: `${a.percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {monthlyInvest > 0 && (
+                <div className="mt-4 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-700">
+                  Con tu aporte de <strong>${monthlyInvest}/mes</strong>, cada mes destinás esos montos a cada activo.
                 </div>
               )}
             </div>
 
-            <div className="mt-6 rounded-2xl border bg-surface p-6">
-              <h2 className="mb-4 text-lg font-bold text-gray-900">Explicación</h2>
-              <p className="whitespace-pre-wrap leading-relaxed text-gray-700">{proposal?.explanation}</p>
+            {/* Tarjeta: Explicación de la IA */}
+            <div className="rounded-2xl border bg-white p-6">
+              <h2 className="mb-4 text-lg font-bold text-gray-900">Explicación de la propuesta</h2>
+              {proposal?.explanation ? (
+                <div
+                  className="prose prose-gray max-w-none space-y-3"
+                  dangerouslySetInnerHTML={{ __html: simpleMarkdown(proposal.explanation) }}
+                />
+              ) : (
+                <p className="text-gray-500">No hay explicación disponible.</p>
+              )}
             </div>
+
           </div>
 
-          <div className="lg:col-span-2">
-            <div className="rounded-2xl border bg-blue-50 p-6">
+          {/* Columna derecha: métricas + aprobación */}
+          <div className="space-y-6 lg:col-span-2">
+
+            {/* Métricas de riesgo */}
+            <div className="rounded-2xl border bg-white p-6">
               <h2 className="text-lg font-bold text-gray-900">Métricas de Riesgo</h2>
               <div className="mt-5 space-y-4">
-                <div className="rounded-xl bg-white p-4">
-                  <p className="text-sm text-gray-500">Volatilidad esperada</p>
-                  <p className="mt-1 text-lg font-bold text-gray-900">{proposal?.risk_metrics.expected_volatility}</p>
+                <div className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
+                  <span className="text-sm text-gray-500">Volatilidad esperada</span>
+                  <span className={`font-semibold ${riskVol.color}`}>{riskVol.label}</span>
                 </div>
-                <div className="rounded-xl bg-white p-4">
-                  <p className="text-sm text-gray-500">Puntaje de diversificación</p>
-                  <div className="mt-2 flex items-center gap-3">
-                    <div className="h-2 flex-1 rounded-full bg-gray-200">
-                      <div className="h-2 rounded-full bg-blue-600" style={{ width: `${proposal?.risk_metrics.diversification_score}%` }} />
-                    </div>
+                <div className="rounded-xl bg-gray-50 px-4 py-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">Diversificación</span>
                     <span className="text-lg font-bold text-gray-900">{proposal?.risk_metrics.diversification_score}/100</span>
                   </div>
+                  <div className="mt-2 h-2 w-full rounded-full bg-gray-200">
+                    <div
+                      className="h-2 rounded-full bg-blue-600"
+                      style={{ width: `${proposal?.risk_metrics.diversification_score}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="rounded-xl bg-white p-4">
-                  <p className="text-sm text-gray-500">Drawdown máximo estimado</p>
-                  <p className="mt-1 text-lg font-bold text-gray-900">{proposal?.risk_metrics.max_drawdown_estimate}</p>
+                <div className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
+                  <span className="text-sm text-gray-500">Drawdown máximo estimado</span>
+                  <span className="font-semibold text-gray-900">{proposal?.risk_metrics.max_drawdown_estimate}</span>
                 </div>
               </div>
             </div>
 
+            {/* Panel de aprobación (solo asesor) */}
             {fromAsesor && (
-              <div className="mt-6">
-                <ApprovalPanel
-                  proposalId={proposal?.proposal_id || ""}
-                  profileName={proposal?.profile || ""}
-                  allocations={proposal?.allocations || []}
-                  rulesVersion="1.0.0"
-                  onDecisionComplete={() => setDecisionMade(true)}
-                />
-              </div>
+              <ApprovalPanel
+                proposalId={proposal?.proposal_id || ""}
+                profileName={proposal?.profile || ""}
+                allocations={proposal?.allocations || []}
+                rulesVersion="1.0.0"
+                onDecisionComplete={() => setDecisionMade(true)}
+              />
             )}
           </div>
         </div>
 
-        <p className="mt-10 text-center text-sm text-gray-400">
+        <p className="mt-10 text-center text-xs text-gray-400">
           Esta es una propuesta informativa generada por IA. No constituye una recomendación de inversión ni garantiza rentabilidad futura.
         </p>
       </main>
