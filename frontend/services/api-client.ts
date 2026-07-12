@@ -79,6 +79,8 @@ export interface ProposalResult {
     expected_volatility: string
     diversification_score: number
     max_drawdown_estimate: string
+    expected_return_range: string
+    expected_return_pct: number
   }
   explanation: string
   monthly_investment: number

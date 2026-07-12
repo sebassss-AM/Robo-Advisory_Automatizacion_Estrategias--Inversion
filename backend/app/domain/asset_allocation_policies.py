@@ -6,6 +6,7 @@ from backend.app.models.portfolio_proposal import (
     PortfolioProposal,
 )
 from backend.app.services.market_data import _get_ticker_info
+from backend.app.domain.instrument_catalog import get_instrument_by_id
 
 ALLOCATION_POLICIES = {
     RiskProfile.CONSERVATIVE: {
@@ -77,16 +78,22 @@ RISK_METRICS_BY_PROFILE = {
         expected_volatility="baja (3-7% anual)",
         diversification_score=70,
         max_drawdown_estimate="5-10%",
+        expected_return_range="",
+        expected_return_pct=0.0,
     ),
     RiskProfile.MODERATE: RiskMetrics(
         expected_volatility="media (8-15% anual)",
         diversification_score=75,
         max_drawdown_estimate="10-20%",
+        expected_return_range="",
+        expected_return_pct=0.0,
     ),
     RiskProfile.AGGRESSIVE: RiskMetrics(
         expected_volatility="alta (15-25% anual)",
         diversification_score=80,
         max_drawdown_estimate="20-35%",
+        expected_return_range="",
+        expected_return_pct=0.0,
     ),
 }
 
@@ -122,6 +129,32 @@ def build_market_summary(allocations: list[Allocation]) -> str:
     return "\n".join(lines)
 
 
+def _compute_weighted_return(allocations: list[Allocation]) -> tuple[str, float]:
+    total_pct = sum(a.percentage for a in allocations)
+    if total_pct == 0:
+        return "N/A", 0.0
+
+    weighted_mid = 0.0
+    low_sum = 0.0
+    high_sum = 0.0
+
+    for a in allocations:
+        inst = get_instrument_by_id(a.instrument_id)
+        if inst and inst.expected_return:
+            try:
+                parts = inst.expected_return.replace("%", "").replace("anual", "").strip().split("-")
+                low = float(parts[0].strip())
+                high = float(parts[1].strip()) if len(parts) > 1 else low
+            except (ValueError, IndexError):
+                low, high = 0, 0
+            weight = a.percentage / total_pct
+            low_sum += low * weight
+            high_sum += high * weight
+            weighted_mid += ((low + high) / 2) * weight
+
+    return f"{low_sum:.1f}-{high_sum:.1f}% anual", round(weighted_mid, 1)
+
+
 def build_allocations(profile: RiskProfile, profile_id: str) -> PortfolioProposal:
     detail = DETAILED_ALLOCATIONS[profile]
     allocations = []
@@ -133,6 +166,9 @@ def build_allocations(profile: RiskProfile, profile_id: str) -> PortfolioProposa
 
     explanation = build_explanation(profile, allocations)
     risk_metrics = RISK_METRICS_BY_PROFILE[profile]
+    return_range, return_pct = _compute_weighted_return(allocations)
+    risk_metrics.expected_return_range = return_range
+    risk_metrics.expected_return_pct = return_pct
 
     return PortfolioProposal(
         profile_id=profile_id,

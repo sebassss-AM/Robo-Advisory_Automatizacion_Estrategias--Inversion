@@ -33,6 +33,8 @@ class RiskMetrics(BaseModel):
     expected_volatility: str
     diversification_score: int = Field(..., ge=0, le=100)
     max_drawdown_estimate: str
+    expected_return_range: str = ""
+    expected_return_pct: float = 0.0
 
 
 class PortfolioProposal(BaseModel):

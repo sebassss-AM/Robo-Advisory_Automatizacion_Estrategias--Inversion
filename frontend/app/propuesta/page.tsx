@@ -147,6 +147,7 @@ function PropuestaContent() {
 
   const monthlyInvest = proposal?.monthly_investment ?? 0
   const riskVol = formatRiskLevel(proposal?.risk_metrics.expected_volatility ?? "")
+  const returnPct = proposal?.risk_metrics?.expected_return_pct ?? 0
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -189,7 +190,7 @@ function PropuestaContent() {
               {/* Gráfico de torta */}
               <PortfolioChart allocations={proposal?.allocations || []} />
 
-              {/* Desglose visual con barras */}
+              {/* Desglose visual con barras + monto USD */}
               {proposal && (
                 <div className="mt-6 space-y-3">
                   {proposal.allocations.map((a, i) => {
@@ -201,12 +202,13 @@ function PropuestaContent() {
                             <span className={`inline-block h-3 w-3 rounded-full ${COLORS[i % COLORS.length]}`} />
                             <span className="font-medium text-gray-800">{a.instrument_name}</span>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3 text-sm">
                             <span className="font-semibold text-gray-900">{a.percentage}%</span>
                             {monthlyInvest > 0 && (
-                              <span className="min-w-[72px] text-right text-sm text-blue-600 font-semibold">
-                                ${amount.toFixed(2)}
-                              </span>
+                              <>
+                                <span className="text-gray-300">|</span>
+                                <span className="font-semibold text-blue-600">${amount.toFixed(2)}/mes</span>
+                              </>
                             )}
                           </div>
                         </div>
@@ -219,12 +221,6 @@ function PropuestaContent() {
                       </div>
                     )
                   })}
-                </div>
-              )}
-
-              {monthlyInvest > 0 && (
-                <div className="mt-4 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-700">
-                  Con tu aporte de <strong>${monthlyInvest}/mes</strong>, cada mes destinás esos montos a cada activo.
                 </div>
               )}
             </div>
@@ -273,6 +269,55 @@ function PropuestaContent() {
                 </div>
               </div>
             </div>
+
+            {/* Proyección de rentabilidad */}
+            {proposal && returnPct > 0 && (
+              <div className="rounded-2xl border bg-white p-6">
+                <h2 className="text-lg font-bold text-gray-900">Proyección Estimada</h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  Rentabilidad: <span className="font-semibold text-gray-700">{proposal.risk_metrics.expected_return_range}</span>
+                </p>
+                <p className="mt-1 text-xs text-gray-400">
+                  Basado en el rendimiento histórico promedio de cada activo.
+                </p>
+
+                {monthlyInvest > 0 && (
+                  <div className="mt-4 space-y-2">
+                    {(() => {
+                      const r = returnPct / 100
+                      const monthly = monthlyInvest
+                      const periods = [
+                        { label: "1 año", months: 12 },
+                        { label: "5 años", months: 60 },
+                        { label: "10 años", months: 120 },
+                      ]
+                      return periods.map((p) => {
+                        const totalContrib = monthly * p.months
+                        const futureValue = monthly * ((Math.pow(1 + r / 12, p.months) - 1) / (r / 12)) * (1 + r / 12)
+                        const gain = futureValue - totalContrib
+                        return (
+                          <div key={p.label} className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
+                            <div>
+                              <span className="text-sm text-gray-500">{p.label}</span>
+                              <p className="text-xs text-gray-400">${monthly}/mes</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-semibold text-gray-900">${futureValue.toFixed(0)}</p>
+                              <p className={`text-xs ${gain >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                                {gain >= 0 ? "+" : ""}${gain.toFixed(0)}
+                              </p>
+                            </div>
+                          </div>
+                        )
+                      })
+                    })()}
+                    <p className="mt-2 text-xs text-gray-400">
+                      Proyección informativa basada en rendimiento promedio histórico. No garantiza resultados futuros.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Panel de aprobación (solo asesor) */}
             {fromAsesor && (
