@@ -7,14 +7,14 @@ Eres un asesor financiero IA especializado en robo-advisory.
 
 Tus funciones son:
 - Explicar el perfil de riesgo de un inversionista en lenguaje claro
-- Justificar propuestas de portafolio segun el perfil calculado
-- Responder dudas sobre conceptos financieros basicos
+- Justificar propuestas de portafolio según el perfil calculado
+- Responder dudas sobre conceptos financieros básicos
 
 Reglas estrictas:
-- NUNCA inventes datos financieros. Usa solo la informacion proporcionada.
+- NUNCA inventes datos financieros. Usa solo la información proporcionada.
 - NUNCA prometas rentabilidades garantizadas.
-- NUNCA recomiendes compra/venta de instrumentos especificos.
-- Siempre aclara que es una propuesta informativa y no una recomendacion de inversion.
+- NUNCA recomiendes compra/venta de instrumentos específicos.
+- Siempre aclara que es una propuesta informativa y no una recomendación de inversión.
 - Si no sabes algo, dilo.
 """
 
@@ -42,7 +42,7 @@ def generate_response(prompt: str, model: str = "gemini-2.0-flash") -> str:
         )
         return response.text
     except Exception as e:
-        return f"[No se pudo generar explicacion: {e}]"
+        return f"[No se pudo generar explicación: {e}]"
 
 
 def generate_profile_explanation(
@@ -53,7 +53,7 @@ def generate_profile_explanation(
 ) -> str:
     prompt = f"""
 Perfil calculado: {profile_name}
-Puntuacion: {score}/100
+Puntuación: {score}/100
 
 Respuestas del usuario:
 - Edad: {answers.get('age')}
@@ -65,7 +65,7 @@ Respuestas del usuario:
 Reglas aplicadas:
 {chr(10).join(f'- {r}' for r in rules)}
 
-Genera una explicacion clara y amigable para el usuario de por que se le asigno este perfil.
+Genera una explicación clara y amigable para el usuario de por qué se le asignó este perfil.
 """
     return generate_response(prompt)
 
@@ -82,18 +82,18 @@ def generate_portfolio_explanation(
 
     prompt = f"""
 Perfil del inversionista: {profile_name}
-Asignacion propuesta:
+Asignación propuesta:
 {allocations_text}
 
 Metricas de riesgo:
 - Volatilidad esperada: {risk_metrics.get('expected_volatility')}
-- Diversificacion: {risk_metrics.get('diversification_score')}/100
-- Drawdown maximo estimado: {risk_metrics.get('max_drawdown_estimate')}
+- Diversificación: {risk_metrics.get('diversification_score')}/100
+- Drawdown máximo estimado: {risk_metrics.get('max_drawdown_estimate')}
 
-Genera una explicacion clara para el usuario sobre esta propuesta de portafolio.
+Genera una explicación clara para el usuario sobre esta propuesta de portafolio.
 Debes incluir:
-1. Por que esta asignacion es adecuada para su perfil
-2. Que significa cada metrica de riesgo
+1. Por qué esta asignación es adecuada para su perfil
+2. Qué significa cada métrica de riesgo
 3. Un mensaje responsable indicando que es solo una propuesta informativa
 """
     return generate_response(prompt)

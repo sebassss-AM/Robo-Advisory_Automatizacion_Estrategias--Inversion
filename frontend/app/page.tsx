@@ -49,18 +49,29 @@ export default function Home() {
               Sin letra chica, sin promesas falsas.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
-              <a
-                href={loggedIn ? "/cuestionario" : "/register"}
-                className="rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl"
-              >
-                {loggedIn ? "Iniciar Perfilamiento" : "Crear Cuenta"}
-              </a>
-              <a
-                href={loggedIn ? "/cuestionario" : "/login"}
-                className="rounded-xl border bg-white px-8 py-4 text-base font-semibold text-gray-700 transition hover:bg-gray-50"
-              >
-                {loggedIn ? "Nuevo Perfilamiento" : "Ya tengo cuenta"}
-              </a>
+              {loggedIn ? (
+                <a
+                  href="/cuestionario"
+                  className="rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl"
+                >
+                  Iniciar Perfilamiento
+                </a>
+              ) : (
+                <>
+                  <a
+                    href="/register"
+                    className="rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl"
+                  >
+                    Crear Cuenta
+                  </a>
+                  <a
+                    href="/login"
+                    className="rounded-xl border bg-white px-8 py-4 text-base font-semibold text-gray-700 transition hover:bg-gray-50"
+                  >
+                    Ya tengo cuenta
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </section>

@@ -77,5 +77,5 @@ class TestLLMMock:
 
                 result = generate_response("test prompt")
 
-                assert "No se pudo generar explicacion" in result
+                assert "No se pudo generar explicación" in result
                 assert "API Error" in result
