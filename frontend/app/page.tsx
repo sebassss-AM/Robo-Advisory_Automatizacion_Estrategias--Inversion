@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import type { AuthUser } from "@/services/auth"
 
-
 export default function Home() {
   const router = useRouter()
   const [user, setUser] = useState<AuthUser | null>(null)
@@ -40,6 +39,7 @@ export default function Home() {
           <nav className="flex items-center gap-3">
             {advisor ? (
               <>
+                <a href="/cuestionario" className="btn-primary text-sm">Nuevo Perfilamiento</a>
                 <a href="/asesor" className="btn-ghost text-sm">Panel Asesor</a>
                 <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700">
                   Cerrar sesión
@@ -48,7 +48,6 @@ export default function Home() {
             ) : loggedIn ? (
               <>
                 <a href="/mis-perfilamientos" className="btn-ghost text-sm">Mis Perfilamientos</a>
-                <a href="/cuestionario" className="btn-primary text-sm">Nuevo Perfilamiento</a>
                 <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700">
                   Cerrar sesión
                 </button>
@@ -89,11 +88,16 @@ export default function Home() {
               </p>
               <div className="animate-fade-in-up stagger-3 mt-10 flex flex-wrap gap-4">
                 {advisor ? (
-                  <a href="/asesor" className="btn-primary rounded-xl px-8 py-4 text-base shadow-xl shadow-blue-600/25">
-                    Ir al Panel de Asesor
-                  </a>
+                  <>
+                    <a href="/cuestionario" className="rounded-xl bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl shadow-black/10 transition hover:bg-blue-50 hover:shadow-2xl">
+                      Nuevo Perfilamiento
+                    </a>
+                    <a href="/asesor" className="rounded-xl border border-white/20 px-8 py-4 text-base font-semibold text-white transition hover:bg-white/10">
+                      Ir al Panel de Asesor
+                    </a>
+                  </>
                 ) : loggedIn ? (
-                  <a href="/cuestionario" className="btn-primary rounded-xl px-8 py-4 text-base shadow-xl shadow-blue-600/25">
+                  <a href="/cuestionario" className="rounded-xl bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl shadow-black/10 transition hover:bg-blue-50 hover:shadow-2xl">
                     Iniciar Perfilamiento
                   </a>
                 ) : (
@@ -185,32 +189,11 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        {/* CTA */}
-        <section className="bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 py-24">
-          <div className="mx-auto max-w-4xl px-6 text-center">
-            <h2 className="text-4xl font-extrabold tracking-tight text-white">
-              ¿Listo para comenzar?
-            </h2>
-            <p className="mt-4 text-lg text-blue-200/80">
-              Sin compromiso. Solo respondé el cuestionario y recibirás tu propuesta personalizada.
-            </p>
-            <a
-              href={advisor ? "/asesor" : loggedIn ? "/cuestionario" : "/register"}
-              className="mt-10 inline-flex items-center gap-2 rounded-xl bg-white px-10 py-4 text-lg font-semibold text-slate-900 shadow-xl shadow-black/10 transition hover:bg-blue-50 hover:shadow-2xl"
-            >
-              {advisor ? "Ir al Panel" : loggedIn ? "Iniciar Perfilamiento" : "Crear Cuenta Gratis"}
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </a>
-          </div>
-        </section>
       </main>
 
       <footer className="border-t border-gray-100 bg-white py-10">
         <div className="mx-auto max-w-7xl px-6 text-center text-sm text-gray-400">
-          <p>InversIA — Proyecto académico Hackathon Guide Financial Agents IA 2026</p>
+          <p>InversIA — creado por el grupo Vision Coders</p>
         </div>
       </footer>
     </div>
