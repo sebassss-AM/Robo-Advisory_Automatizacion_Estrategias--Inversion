@@ -42,6 +42,7 @@ export interface QuestionnaireAnswers {
   monthly_income: number
   monthly_investment: number
   investment_experience: number
+  requires_review?: boolean
 }
 
 export interface FormAnswers {
@@ -58,6 +59,7 @@ export interface ProfileResult {
   profile_id: string
   profile: string
   score: number
+  status: string
   explanations: string[]
   llm_explanation: string
   available_instruments: { name: string; category: string; risk: string }[]
@@ -114,6 +116,7 @@ export interface MisPerfilamientoItem {
   score: number
   status: string
   created_at: string
+  requires_review: boolean
   allocations: Allocation[] | null
   risk_metrics: object | null
   proposal_status: string | null
@@ -168,5 +171,10 @@ export const api = {
   reclamarPerfil: (profileId: string) =>
     request<{ status: string; profile_id: string }>(`/perfil/${profileId}/reclamar`, {
       method: "POST",
+    }),
+
+  deleteProfile: (profileId: string) =>
+    request<{ message: string }>(`/perfil/${profileId}`, {
+      method: "DELETE",
     }),
 }

@@ -16,6 +16,10 @@ export default function MisPerfilamientosPage() {
   const [items, setItems] = useState<MisPerfilamientoItem[]>([])
   const [loading, setLoading] = useState(true)
 
+  const loadItems = () => {
+    api.getMisPerfilamientos().then(setItems).catch(console.error).finally(() => setLoading(false))
+  }
+
   useEffect(() => {
     if (!isAuthenticated()) {
       router.replace("/login")
@@ -25,12 +29,22 @@ export default function MisPerfilamientosPage() {
       router.replace("/asesor")
       return
     }
-    api.getMisPerfilamientos().then(setItems).catch(console.error).finally(() => setLoading(false))
+    loadItems()
   }, [router])
 
   const handleLogout = () => {
     logout()
     router.push("/")
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("¿Estás seguro de eliminar este perfilamiento?")) return
+    try {
+      await api.deleteProfile(id)
+      setItems((prev) => prev.filter((i) => i.id !== id))
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Error al eliminar")
+    }
   }
 
   if (loading) {
@@ -43,7 +57,6 @@ export default function MisPerfilamientosPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
-      {/* Header */}
       <header className="glass-strong sticky top-0 z-50 border-b border-white/20">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <a href="/" className="flex items-center gap-2.5">
@@ -105,15 +118,31 @@ export default function MisPerfilamientosPage() {
                         <p className="mt-0.5 text-sm text-gray-500">
                           Puntaje: {item.score}/100
                         </p>
+                        {!item.requires_review && item.status === "completado" && (
+                          <p className="mt-0.5 text-xs text-gray-400">Sin revisión de asesor</p>
+                        )}
                       </div>
                     </div>
-                    <span className="whitespace-nowrap text-sm text-gray-400">
-                      {new Date(item.created_at).toLocaleDateString("es-ES", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="whitespace-nowrap text-sm text-gray-400">
+                        {new Date(item.created_at).toLocaleDateString("es-ES", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
+                      {item.status === "pendiente" && (
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="btn-ghost text-sm text-red-500 hover:bg-red-50 hover:text-red-700"
+                          title="Eliminar"
+                        >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {item.status === "completado" && item.action && (
@@ -144,6 +173,17 @@ export default function MisPerfilamientosPage() {
                           Ver propuesta
                         </a>
                       )}
+                    </div>
+                  )}
+
+                  {item.status === "completado" && !item.requires_review && item.allocations && (
+                    <div className="mt-4">
+                      <a
+                        href={`/propuesta?profile_id=${item.id}&profile=${item.profile}`}
+                        className="btn-primary inline-flex text-sm"
+                      >
+                        Ver propuesta
+                      </a>
                     </div>
                   )}
 

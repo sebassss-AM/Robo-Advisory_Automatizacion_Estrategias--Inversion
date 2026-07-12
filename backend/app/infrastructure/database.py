@@ -103,6 +103,7 @@ def _ensure_database():
         "ALTER TABLE profiles ADD COLUMN IF NOT EXISTS user_id TEXT REFERENCES users(id)",
         "ALTER TABLE profiles ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'pendiente'",
         "ALTER TABLE profiles ADD COLUMN IF NOT EXISTS advisor_id TEXT REFERENCES users(id)",
+        "ALTER TABLE profiles ADD COLUMN IF NOT EXISTS requires_review BOOLEAN NOT NULL DEFAULT true",
     ]
     for m in migrations:
         with conn.cursor() as cur:

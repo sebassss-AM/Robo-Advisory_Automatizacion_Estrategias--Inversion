@@ -14,7 +14,11 @@ async def review_proposal(decision: AdvisorDecision):
     decision_id = str(uuid.uuid4())
 
     profile_rows = execute_query(
-        "SELECT p.profile FROM proposals p WHERE p.id = %s", (decision.proposal_id,)
+        """SELECT pr.profile
+           FROM proposals p
+           JOIN profiles pr ON pr.id = p.profile_id
+           WHERE p.id = %s""",
+        (decision.proposal_id,),
     )
     profile_name = profile_rows[0]["profile"] if profile_rows else None
 
@@ -58,9 +62,10 @@ async def get_history():
         rows = execute_query(
             """
             SELECT d.id, d.proposal_id, d.advisor_id, d.action, d.comments,
-                   d.rules_version, d.decided_at, p.profile
+                   d.rules_version, d.decided_at, pr.profile
             FROM decisions d
             LEFT JOIN proposals p ON p.id = d.proposal_id
+            LEFT JOIN profiles pr ON pr.id = p.profile_id
             ORDER BY d.decided_at DESC
             """
         )

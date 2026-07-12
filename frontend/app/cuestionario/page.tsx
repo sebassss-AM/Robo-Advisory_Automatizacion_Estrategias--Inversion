@@ -18,6 +18,8 @@ export default function CuestionarioPage() {
   const handleComplete = (result: ProfileResult) => {
     if (isAdvisor()) {
       router.push(`/propuesta?profile_id=${result.profile_id}&profile=${result.profile}&from=asesor`)
+    } else if (result.status === "completado") {
+      router.push(`/propuesta?profile_id=${result.profile_id}&profile=${result.profile}`)
     } else {
       router.push("/mis-perfilamientos")
     }

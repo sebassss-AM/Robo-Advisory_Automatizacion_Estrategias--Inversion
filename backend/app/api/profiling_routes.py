@@ -36,10 +36,20 @@ async def create_profile(answers: dict, user: dict = Depends(get_current_user)):
 
     profile_result = result["profile_result"]
 
+    requires_review = answers.get("requires_review", True)
+    if isinstance(requires_review, str):
+        requires_review = requires_review.lower() in ("true", "1", "yes")
+
+    is_advisor = user.get("role") == "asesor"
+
+    status = "pendiente"
+    if is_advisor or not requires_review:
+        status = "completado"
+
     execute_insert(
         """
-        INSERT INTO profiles (id, user_id, answers, profile, score, rules_version, explanations, status)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO profiles (id, user_id, answers, profile, score, rules_version, explanations, status, requires_review)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """,
         (
             profile_id,
@@ -49,7 +59,8 @@ async def create_profile(answers: dict, user: dict = Depends(get_current_user)):
             profile_result["score"],
             profile_result["rules_version"],
             json.dumps(profile_result["explanations"]),
-            "pendiente",
+            status,
+            requires_review,
         ),
     )
 
@@ -57,7 +68,7 @@ async def create_profile(answers: dict, user: dict = Depends(get_current_user)):
         "profile_id": profile_id,
         "profile": profile_result["profile"],
         "score": profile_result["score"],
-        "status": "pendiente",
+        "status": status,
         "explanations": profile_result["explanations"],
         "llm_explanation": profile_result["llm_explanation"],
         "available_instruments": profile_result["instruments"],
@@ -67,7 +78,7 @@ async def create_profile(answers: dict, user: dict = Depends(get_current_user)):
 @router.get("/mis-perfilamientos")
 async def get_mis_perfilamientos(user: dict = Depends(get_current_user)):
     rows = execute_query(
-        """SELECT p.id, p.profile, p.score, p.status, p.created_at,
+        """SELECT p.id, p.profile, p.score, p.status, p.created_at, p.requires_review,
                   pr.allocations, pr.risk_metrics, pr.status as proposal_status,
                   d.action, d.comments, d.decided_at
            FROM profiles p
@@ -122,6 +133,29 @@ async def get_en_revision(advisor: dict = Depends(get_current_advisor)):
         (advisor["id"],),
     )
     return [dict(r) for r in rows]
+
+
+@router.delete("/{profile_id}")
+async def delete_profile(profile_id: str, user: dict = Depends(get_current_user)):
+    rows = execute_query(
+        "SELECT status, user_id FROM profiles WHERE id = %s", (profile_id,)
+    )
+    if not rows:
+        raise HTTPException(status_code=404, detail="Perfil no encontrado")
+    if rows[0]["user_id"] != user["id"]:
+        raise HTTPException(status_code=403, detail="No puedes eliminar un perfil que no te pertenece")
+    if rows[0]["status"] != "pendiente":
+        raise HTTPException(status_code=400, detail="Solo puedes eliminar perfiles pendientes")
+
+    proposal = execute_query(
+        "SELECT id FROM proposals WHERE profile_id = %s", (profile_id,)
+    )
+    if proposal:
+        execute_query("DELETE FROM decisions WHERE proposal_id = %s", (proposal[0]["id"],))
+        execute_query("DELETE FROM proposals WHERE id = %s", (proposal[0]["id"],))
+
+    execute_query("DELETE FROM profiles WHERE id = %s", (profile_id,))
+    return {"message": "Perfil eliminado exitosamente"}
 
 
 @router.get("/{profile_id}")

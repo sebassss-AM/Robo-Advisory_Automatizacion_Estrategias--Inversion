@@ -132,6 +132,8 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
     }
   }
 
+  const [requiresReview, setRequiresReview] = useState(true)
+
   const handleSubmit = async () => {
     setLoading(true)
     setError("")
@@ -145,6 +147,7 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
         monthly_income: parseFloat(answers.monthly_income) || 0,
         monthly_investment: monthlyInvest,
         investment_experience: parseInt(answers.investment_experience) || 1,
+        requires_review: requiresReview,
       }
       localStorage.setItem("inversia_monthly_investment", String(monthlyInvest))
       const result = await api.submitQuestionnaire(payload)
@@ -260,6 +263,26 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
           )}
         </div>
       </div>
+
+      {step === questions.length - 1 && (
+        <div className="ml-11 mt-8 rounded-xl bg-blue-50/70 p-5 ring-1 ring-blue-100">
+          <label className="flex cursor-pointer items-start gap-3">
+            <input
+              type="checkbox"
+              checked={requiresReview}
+              onChange={(e) => setRequiresReview(e.target.checked)}
+              className="mt-0.5 h-5 w-5 shrink-0 rounded-md border-gray-300 text-blue-600 accent-blue-600"
+            />
+            <div>
+              <span className="font-semibold text-gray-900">Quiero que un asesor revise mi perfilamiento</span>
+              <p className="mt-1 text-sm text-gray-500">
+                Si activás esta opción, un asesor autorizado revisará y aprobará tu propuesta.
+                Si la desactivás, recibirás tu propuesta directamente.
+              </p>
+            </div>
+          </label>
+        </div>
+      )}
 
       {/* Navigation */}
       <div className="mt-10 flex items-center justify-between border-t border-gray-100 pt-6">
