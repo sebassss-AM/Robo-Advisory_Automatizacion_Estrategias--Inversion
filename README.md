@@ -1,8 +1,8 @@
-# Robo-Advisory y Automatización de Estrategias de Inversión
+# InversIA — Robo-Advisory con IA
 
 **Hackathon Guide Financial Agents IA — Track 3**
 
-Sistema de asesoría financiera automatizada basado en agentes IA. Realiza perfilamiento de riesgo, genera propuestas de portafolio explicables, y permite revisión por un asesor humano antes de cualquier acción.
+Sistema de asesoría financiera automatizada con IA. Realiza perfilamiento de riesgo, genera propuestas de portafolio con datos de mercado reales, y permite revisión por un asesor humano antes de cualquier acción.
 
 ---
 
@@ -10,46 +10,61 @@ Sistema de asesoría financiera automatizada basado en agentes IA. Realiza perfi
 
 | Capa | Tecnología |
 |------|-----------|
-| Frontend | Next.js (React + Tailwind) |
-| Backend / API | FastAPI (Python serverless en Vercel) |
-| Agentes IA | LangGraph (Python) |
-| LLM | Gemini API (Google) |
-| Base de datos | Vercel Postgres (Neon) |
-| Memoria / Sesiones | Vercel KV (Upstash Redis) |
-| Vector Store | ChromaDB (RAG anti-alucinación) |
-| Testing | pytest + mocks |
+| Frontend | Next.js 15 (App Router + Tailwind v4) |
+| Backend | FastAPI (Python serverless en Vercel) |
+| LLM | Groq (Llama 3.3 70B) — OpenAI-compatible |
+| Base de datos | Neon (PostgreSQL serverless) |
+| Datos de mercado | yfinance (Yahoo Finance, sin API key) |
+| Testing | pytest |
 | Despliegue | Vercel |
 
 ---
 
 ## Funcionalidades
 
-- **Autenticación de asesores** — Registro e inicio de sesión con JWT, datos persistentes en Neon
-- **Perfilamiento de riesgo** — Cuestionario interactivo con reglas visibles y versionadas
-- **Propuesta de portafolio** — Asignación de activos explicada en lenguaje natural
-- **Revisión por asesor** — Aprobación, edición o rechazo con audit trail completo
+- **Dos roles**: `cliente` y `asesor` — registro con selector de rol
+- **Perfilamiento de riesgo**: cuestionario interactivo que calcula perfil (conservador, moderado, agresivo) con reglas visibles
+- **Propuesta de portafolio**: asignación de activos con datos de mercado reales (precio, P/E, dividendos), rentabilidad estimada ponderada y proyección de crecimiento
+- **Revisión por asesor**: flujo completo pendiente → en revisión → completado, con edición de distribución antes de aprobar
+- **Datos reales de mercado**: precios actuales, P/E, dividend yield y retorno YTD vía yfinance para SPY, VTI, QQQ, BND, VXUS, SHY, SGOV (caché de 5 min)
+
+---
+
+## Roles
+
+| Rol | Acceso | Funcionalidad |
+|-----|--------|---------------|
+| `cliente` | Registro/login | Cuestionario → ver mis perfilamientos → esperar revisión |
+| `asesor` | Registro/login | Ver pendientes → reclamar → revisar/editar propuesta → aprobar/rechazar |
 
 ---
 
 ## Autenticación
 
-El sistema requiere **inicio de sesión obligatorio** para usar cualquier funcionalidad:
-
 | Endpoint | Descripción |
 |----------|-------------|
-| `POST /api/auth/register` | Registro de nuevo asesor |
-| `POST /api/auth/login` | Inicio de sesión (devuelve JWT) |
+| `POST /api/auth/register` | Registro con rol (`cliente` o `asesor`) |
+| `POST /api/auth/login` | Inicio de sesión (devuelve JWT + datos del usuario) |
 | `GET /api/auth/me` | Verificar token activo |
 
-- Las contraseñas se guardan hasheadas con **bcrypt**
-- Los tokens **JWT** expiran a las 24 horas
-- La sesión persiste en `localStorage` (solo el token)
-- Todos los datos se almacenan en **Neon** (PostgreSQL serverless)
+- Contraseñas hasheadas con **bcrypt**
+- Tokens **JWT** expiran a las 24 horas
+- Sesión persiste en `localStorage`
 
-## Documentación
+---
 
-- [`docs/stack.md`](docs/stack.md) — Descripción detallada del stack tecnológico
-- [`docs/arquitectura.md`](docs/arquitectura.md) — Diagrama de arquitectura, flujos y decisiones técnicas
+## API
+
+| Endpoint | Método | Descripción |
+|----------|--------|-------------|
+| `/api/perfil` | POST | Enviar respuestas del cuestionario → crear perfil |
+| `/api/perfil/mis-perfilamientos` | GET | Historial de perfiles del cliente |
+| `/api/perfil/pendientes` | GET | Perfiles pendientes (asesor) |
+| `/api/perfil/en-revision` | GET | Perfiles en revisión del asesor |
+| `/api/perfil/{id}/reclamar` | POST | Asesor reclama un perfil pendiente |
+| `/api/propuesta` | POST | Generar propuesta de portafolio |
+| `/api/revisar` | POST | Aprobar/rechazar/editado |
+| `/api/revisar/historial` | GET | Historial de decisiones |
 
 ---
 
@@ -61,48 +76,50 @@ El sistema requiere **inicio de sesión obligatorio** para usar cualquier funcio
 │   ├── app/
 │   │   ├── layout.tsx
 │   │   ├── page.tsx                   # Landing page
-│   │   ├── login/
-│   │   │   └── page.tsx               # Inicio de sesión
-│   │   ├── register/
-│   │   │   └── page.tsx               # Registro de asesor
-│   │   ├── cuestionario/
-│   │   │   └── page.tsx               # Perfilamiento de riesgo
-│   │   ├── propuesta/
-│   │   │   └── page.tsx               # Visualizar portafolio
-│   │   └── asesor/
-│   │       └── page.tsx               # Panel de revisión
-│   ├── components/                    # Componentes React
-│   │   ├── RiskQuestionnaire.tsx
-│   │   ├── PortfolioChart.tsx
-│   │   └── ApprovalPanel.tsx
+│   │   ├── login/page.tsx             # Inicio de sesión
+│   │   ├── register/page.tsx          # Registro
+│   │   ├── cuestionario/page.tsx      # Perfilamiento de riesgo
+│   │   ├── propuesta/page.tsx         # Dashboard de portafolio
+│   │   ├── mis-perfilamientos/page.tsx # Historial del cliente
+│   │   └── asesor/page.tsx            # Panel del asesor
+│   ├── components/
+│   │   ├── RiskQuestionnaire.tsx      # Cuestionario paso a paso
+│   │   ├── PortfolioChart.tsx         # Gráfico de torta
+│   │   └── ApprovalPanel.tsx          # Panel de aprobación
 │   └── services/
-│       ├── api-client.ts              # Cliente HTTP al backend
-│       └── auth.ts                    # Auth service (JWT)
+│       ├── api-client.ts              # Cliente HTTP
+│       └── auth.ts                    # Auth service
 │
-├── api/                               # Vercel Python serverless
-│   └── index.py                       # FastAPI entry point
+├── api/index.py                       # Vercel serverless entry
 │
-├── backend/                           # FastAPI + LangGraph
-│   └── app/
-│       ├── main.py
-│       ├── api/                       # Routes
-│       │   ├── auth_routes.py         # Registro, login JWT
-│       │   ├── profiling_routes.py
-│       │   ├── portfolio_routes.py
-│       │   └── approval_routes.py
-│       ├── agents/                    # LangGraph state graph
-│       ├── domain/                    # Lógica de negocio
-│       ├── models/                    # Pydantic schemas
-│       ├── infrastructure/            # DB, Redis, ChromaDB
-│       │   ├── database.py
-│       │   ├── schema.sql
-│       │   └── ...
-│       └── llm/                       # Gemini integration
+├── backend/app/
+│   ├── main.py                        # FastAPI app
+│   ├── api/                           # Routes
+│   │   ├── auth_routes.py
+│   │   ├── profiling_routes.py
+│   │   ├── portfolio_routes.py
+│   │   └── approval_routes.py
+│   ├── agents/
+│   │   ├── state.py
+│   │   └── investor_profiling_node.py
+│   ├── domain/
+│   │   ├── risk_profiling_rules.py
+│   │   ├── asset_allocation_policies.py
+│   │   └── instrument_catalog.py
+│   ├── models/
+│   │   ├── investor_profile.py
+│   │   ├── portfolio_proposal.py
+│   │   └── audit_decision.py
+│   ├── services/
+│   │   └── market_data.py             # yfinance wrapper
+│   ├── infrastructure/
+│   │   ├── database.py                # PostgreSQL conexión
+│   │   └── schema.sql
+│   └── llm/
+│       └── gemini_client.py           # Cliente Groq (OpenAI compat)
 │
 ├── tests/
 ├── docs/
-├── parametros_del_proyecto.md
-├── track3.md
 ├── .env.example
 ├── vercel.json
 └── README.md
@@ -110,13 +127,13 @@ El sistema requiere **inicio de sesión obligatorio** para usar cualquier funcio
 
 ---
 
-## Despliegue (Vercel)
+## Variables de Entorno
 
-Vercel detecta automáticamente:
-- **Next.js** en `frontend/` → frontend
-- **Python** en `api/` → backend serverless functions
-
-> Nota: el `vercel.json` en la raíz configura las rutas porque el frontend está dentro de `frontend/`.
+```
+DATABASE_URL=postgresql://...
+GROQ_API_KEY=gsk_tu_key_aqui          # https://console.groq.com
+JWT_SECRET=tu_secreto                 # Opcional, default para desarrollo
+```
 
 ---
 
@@ -124,15 +141,21 @@ Vercel detecta automáticamente:
 
 ```bash
 # Backend
-source venv/bin/activate
+source .venv/bin/activate
 uvicorn backend.app.main:app --reload
 
 # Frontend (desde frontend/)
-cd frontend && pnpm dev
+cd frontend && npm run dev
 ```
 
-> Asegurate de tener las variables de entorno configuradas en Vercel Dashboard:
-> `DATABASE_URL`, `GEMINI_API_KEY` y opcionalmente `JWT_SECRET`.
+---
+
+## Despliegue (Vercel)
+
+1. Conectar repositorio a Vercel
+2. Configurar variables de entorno en Vercel Dashboard: `DATABASE_URL`, `GROQ_API_KEY`, `JWT_SECRET`
+3. Vercel detecta automáticamente Next.js en `frontend/` y Python en `api/`
+4. El `vercel.json` en la raíz configura las rutas
 
 ---
 
