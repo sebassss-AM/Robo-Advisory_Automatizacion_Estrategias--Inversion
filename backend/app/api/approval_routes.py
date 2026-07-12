@@ -42,6 +42,14 @@ async def review_proposal(decision: AdvisorDecision):
     except Exception:
         pass
 
+    try:
+        execute_query(
+            "UPDATE profiles SET status = %s WHERE id = (SELECT profile_id FROM proposals WHERE id = %s)",
+            ("completado", decision.proposal_id),
+        )
+    except Exception:
+        pass
+
     _in_memory_decisions.insert(
         0,
         {

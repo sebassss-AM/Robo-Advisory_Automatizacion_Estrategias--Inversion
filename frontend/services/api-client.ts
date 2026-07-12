@@ -1,9 +1,24 @@
 const API_BASE = "/api"
 
+function authHeaders(): Record<string, string> {
+  if (typeof window === "undefined") return {}
+  try {
+    const raw = localStorage.getItem("inversia_token")
+    return raw ? { Authorization: `Bearer ${raw}` } : {}
+  } catch {
+    return {}
+  }
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  const headers = {
+    "Content-Type": "application/json",
+    ...authHeaders(),
+    ...(options?.headers || {}),
+  } as Record<string, string>
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: { "Content-Type": "application/json" },
     ...options,
+    headers,
   })
   if (!res.ok) {
     const body = await res.json().catch(() => ({}))
@@ -86,6 +101,29 @@ export interface HistoryItem {
   profile: string
 }
 
+export interface MisPerfilamientoItem {
+  id: string
+  profile: string
+  score: number
+  status: string
+  created_at: string
+  allocations: Allocation[] | null
+  risk_metrics: object | null
+  proposal_status: string | null
+  action: string | null
+  comments: string | null
+  decided_at: string | null
+}
+
+export interface PerfilPendiente {
+  id: string
+  profile: string
+  score: number
+  status: string
+  created_at: string
+  user_name: string
+}
+
 export const api = {
   submitQuestionnaire: (answers: QuestionnaireAnswers) =>
     request<ProfileResult>("/perfil", {
@@ -110,4 +148,15 @@ export const api = {
     }),
 
   getHistory: () => request<HistoryItem[]>("/revisar/historial"),
+
+  getMisPerfilamientos: () =>
+    request<MisPerfilamientoItem[]>("/perfil/mis-perfilamientos"),
+
+  getPendientes: () =>
+    request<PerfilPendiente[]>("/perfil/pendientes"),
+
+  reclamarPerfil: (profileId: string) =>
+    request<{ status: string; profile_id: string }>(`/perfil/${profileId}/reclamar`, {
+      method: "POST",
+    }),
 }

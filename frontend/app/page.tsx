@@ -50,6 +50,9 @@ export default function Home() {
           )}
           {loggedIn && !isAdvisor && (
             <nav className="flex items-center gap-6">
+              <a href="/mis-perfilamientos" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+                Mis Perfilamientos
+              </a>
               <button
                 onClick={handleLogout}
                 className="rounded-lg px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"

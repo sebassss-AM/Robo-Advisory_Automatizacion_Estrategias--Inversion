@@ -5,11 +5,14 @@
 
 CREATE TABLE IF NOT EXISTS profiles (
     id TEXT PRIMARY KEY,
+    user_id TEXT REFERENCES users(id),
     answers JSONB NOT NULL,
     profile VARCHAR(20) NOT NULL,
     score INTEGER NOT NULL,
     rules_version VARCHAR(10) NOT NULL,
     explanations JSONB,
+    status VARCHAR(20) NOT NULL DEFAULT 'pendiente',
+    advisor_id TEXT REFERENCES users(id),
     created_at TIMESTAMP DEFAULT NOW()
 );
 

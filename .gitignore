@@ -12,5 +12,6 @@ chroma_db/
 
 pnpm-workspace.yaml
 next-env.d.ts
+*.tsbuildinfo
 
 .agente/
