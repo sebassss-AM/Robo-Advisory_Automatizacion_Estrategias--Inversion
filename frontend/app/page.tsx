@@ -1,13 +1,22 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function Home() {
+  const router = useRouter()
   const [loggedIn, setLoggedIn] = useState(false)
 
   useEffect(() => {
     import("@/services/auth").then((m) => setLoggedIn(m.isAuthenticated()))
   }, [])
+
+  const handleLogout = () => {
+    import("@/services/auth").then((m) => {
+      m.logout()
+      router.push("/")
+    })
+  }
 
   return (
     <div className="min-h-screen">
@@ -23,12 +32,21 @@ export default function Home() {
             <a href={loggedIn ? "/asesor" : "/login"} className="text-sm font-medium text-gray-600 hover:text-gray-900">
               Acceso Asesores
             </a>
-            <a
-              href={loggedIn ? "/cuestionario" : "/login"}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              {loggedIn ? "Comenzar" : "Iniciar Sesión"}
-            </a>
+            {loggedIn ? (
+              <button
+                onClick={handleLogout}
+                className="rounded-lg px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+              >
+                Cerrar sesión
+              </button>
+            ) : (
+              <a
+                href="/login"
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              >
+                Iniciar Sesión
+              </a>
+            )}
           </nav>
         </div>
       </header>
