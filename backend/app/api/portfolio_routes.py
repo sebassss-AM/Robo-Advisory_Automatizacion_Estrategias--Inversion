@@ -33,7 +33,6 @@ async def create_proposal(
             resolved_profile = RiskProfile(profile_rows[0]["profile"])
             answers = profile_rows[0].get("answers", {})
             if isinstance(answers, str):
-                import json
                 answers = json.loads(answers)
             monthly_investment = float(answers.get("monthly_investment", 0))
 
