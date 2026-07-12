@@ -39,7 +39,6 @@ export default function Home() {
           <nav className="flex items-center gap-3">
             {advisor ? (
               <>
-                <a href="/cuestionario" className="btn-primary text-sm">Nuevo Perfilamiento</a>
                 <a href="/asesor" className="btn-ghost text-sm">Panel Asesor</a>
                 <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700">
                   Cerrar sesión
@@ -53,10 +52,7 @@ export default function Home() {
                 </button>
               </>
             ) : (
-              <>
-                <a href="/login" className="btn-ghost text-sm">Iniciar sesión</a>
-                <a href="/register" className="btn-primary text-sm">Crear cuenta</a>
-              </>
+              <div />
             )}
           </nav>
         </div>
