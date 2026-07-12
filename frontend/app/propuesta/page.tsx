@@ -64,6 +64,7 @@ function PropuestaContent() {
   const router = useRouter()
   const profileId = searchParams.get("profile_id")
   const fromAsesor = searchParams.get("from") === "asesor"
+  const profileParam = searchParams.get("profile") || undefined
 
   const [proposal, setProposal] = useState<ProposalResult | null>(null)
   const [loading, setLoading] = useState(true)
@@ -81,15 +82,14 @@ function PropuestaContent() {
       return
     }
 
-    const profile = searchParams.get("profile") || undefined
     const storedInvest = parseFloat(localStorage.getItem("inversia_monthly_investment") || "0")
 
     api
-      .createProposal(profileId, profile, storedInvest > 0 ? storedInvest : undefined)
+      .createProposal(profileId, profileParam, storedInvest > 0 ? storedInvest : undefined)
       .then(setProposal)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [profileId, searchParams, router])
+  }, [profileId, profileParam, router])
 
   const handleLogout = () => {
     logout()

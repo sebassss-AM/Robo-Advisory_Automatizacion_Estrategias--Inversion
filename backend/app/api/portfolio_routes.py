@@ -42,6 +42,22 @@ async def create_proposal(
             detail="No se pudo determinar el perfil de riesgo. Proporciona 'profile' o asegúrate de que el perfil exista en la base de datos.",
         )
 
+    existing = execute_query(
+        "SELECT id, allocations, risk_metrics, explanation, status FROM proposals WHERE profile_id = %s ORDER BY created_at DESC LIMIT 1",
+        (profile_id,),
+    )
+    if existing:
+        row = existing[0]
+        return {
+            "proposal_id": row["id"],
+            "profile_id": profile_id,
+            "profile": resolved_profile.value,
+            "allocations": row["allocations"],
+            "risk_metrics": row["risk_metrics"],
+            "explanation": row["explanation"],
+            "monthly_investment": monthly_investment,
+        }
+
     proposal = build_allocations(resolved_profile, profile_id)
     proposal_id = str(uuid.uuid4())
 

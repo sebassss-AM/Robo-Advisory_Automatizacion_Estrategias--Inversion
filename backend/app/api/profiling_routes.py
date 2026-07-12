@@ -138,21 +138,19 @@ async def get_en_revision(advisor: dict = Depends(get_current_advisor)):
 @router.delete("/{profile_id}")
 async def delete_profile(profile_id: str, user: dict = Depends(get_current_user)):
     rows = execute_query(
-        "SELECT status, user_id FROM profiles WHERE id = %s", (profile_id,)
+        "SELECT user_id FROM profiles WHERE id = %s", (profile_id,)
     )
     if not rows:
         raise HTTPException(status_code=404, detail="Perfil no encontrado")
     if rows[0]["user_id"] != user["id"]:
         raise HTTPException(status_code=403, detail="No puedes eliminar un perfil que no te pertenece")
-    if rows[0]["status"] != "pendiente":
-        raise HTTPException(status_code=400, detail="Solo puedes eliminar perfiles pendientes")
 
-    proposal = execute_query(
+    proposals = execute_query(
         "SELECT id FROM proposals WHERE profile_id = %s", (profile_id,)
     )
-    if proposal:
-        execute_query("DELETE FROM decisions WHERE proposal_id = %s", (proposal[0]["id"],))
-        execute_query("DELETE FROM proposals WHERE id = %s", (proposal[0]["id"],))
+    for p in proposals:
+        execute_query("DELETE FROM decisions WHERE proposal_id = %s", (p["id"],))
+        execute_query("DELETE FROM proposals WHERE id = %s", (p["id"],))
 
     execute_query("DELETE FROM profiles WHERE id = %s", (profile_id,))
     return {"message": "Perfil eliminado exitosamente"}
