@@ -137,16 +137,38 @@ JWT_SECRET=tu_secreto                 # Opcional, default para desarrollo
 
 ---
 
-## Desarrollo
+## Desarrollo Local
+
+### Linux / macOS
 
 ```bash
-# Backend
+# Terminal 1 — Backend (FastAPI)
 source .venv/bin/activate
-uvicorn backend.app.main:app --reload
+uvicorn backend.app.main:app --reload --port 8000
 
-# Frontend (desde frontend/)
-cd frontend && npm run dev
+# Terminal 2 — Frontend (Next.js)
+cd frontend
+npm run dev -- --port 3000
 ```
+
+Luego abrir http://localhost:3000
+
+### Windows (PowerShell)
+
+```powershell
+# Terminal 1 — Backend (FastAPI)
+.venv\Scripts\activate
+uvicorn backend.app.main:app --reload --port 8000
+
+# Terminal 2 — Frontend (Next.js)
+cd frontend
+npm run dev -- --port 3000
+```
+
+Luego abrir http://localhost:3000
+
+> ⚠️ El frontend necesita el backend corriendo para que funcionen las APIs.
+> La base de datos está en Neon (nube), no requiere instalación local.
 
 ---
 

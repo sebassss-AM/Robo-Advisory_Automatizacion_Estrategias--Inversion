@@ -6,9 +6,9 @@ import { api, type MisPerfilamientoItem } from "@/services/api-client"
 import { isAuthenticated, logout, isAdvisor } from "@/services/auth"
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  pendiente: { label: "Pendiente", color: "bg-yellow-100 text-yellow-700" },
-  en_revision: { label: "En revisión", color: "bg-blue-100 text-blue-700" },
-  completado: { label: "Completado", color: "bg-green-100 text-green-700" },
+  pendiente: { label: "Pendiente", color: "badge-yellow" },
+  en_revision: { label: "En revisión", color: "badge-blue" },
+  completado: { label: "Completado", color: "badge-green" },
 }
 
 export default function MisPerfilamientosPage() {
@@ -35,22 +35,26 @@ export default function MisPerfilamientosPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="mx-auto h-10 w-10 animate-spin rounded-full border-[3px] border-blue-600 border-t-transparent" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b">
+    <div className="min-h-screen bg-[#f8fafc]">
+      {/* Header */}
+      <header className="glass-strong sticky top-0 z-50 border-b border-white/20">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <a href="/" className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-xs font-bold text-white">I</div>
+          <a href="/" className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 text-xs font-bold text-white shadow-md">
+              I
+            </div>
             <span className="font-bold text-gray-900">InversIA</span>
           </a>
-          <nav className="flex items-center gap-4">
-            <button onClick={handleLogout} className="rounded-lg px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50">
+          <nav className="flex items-center gap-3">
+            <a href="/cuestionario" className="btn-primary text-sm">Nuevo perfilamiento</a>
+            <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700">
               Cerrar sesión
             </button>
           </nav>
@@ -58,40 +62,47 @@ export default function MisPerfilamientosPage() {
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-12">
-        <div className="mb-10">
-          <h1 className="text-3xl font-bold text-gray-900">Mis Perfilamientos</h1>
-          <p className="mt-2 text-gray-600">
+        <div className="animate-fade-in-up mb-10">
+          <div className="badge badge-blue mb-4 inline-flex">Historial</div>
+          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">Mis Perfilamientos</h1>
+          <p className="mt-2 text-lg text-gray-500">
             Acá podés ver el estado de tus perfilamientos y sus resultados.
           </p>
         </div>
 
         {items.length === 0 ? (
-          <div className="rounded-2xl border-2 border-dashed border-gray-200 py-20 text-center">
-            <h3 className="text-lg font-semibold text-gray-900">No tenés perfilamientos</h3>
+          <div className="animate-fade-in-up card-premium py-20 text-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 ring-1 ring-blue-100">
+              <svg className="h-8 w-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <h3 className="mt-5 text-lg font-semibold text-gray-900">No tenés perfilamientos</h3>
             <p className="mt-1 text-gray-500">Completá el cuestionario para recibir tu primera propuesta.</p>
-            <a
-              href="/cuestionario"
-              className="mt-6 inline-block rounded-xl bg-blue-600 px-8 py-3 font-semibold text-white hover:bg-blue-700"
-            >
+            <a href="/cuestionario" className="btn-primary mt-6 inline-flex">
               Iniciar Perfilamiento
             </a>
           </div>
         ) : (
-          <div className="space-y-4">
-            {items.map((item) => {
-              const cfg = statusConfig[item.status] || { label: item.status, color: "bg-gray-100 text-gray-700" }
+          <div className="space-y-5">
+            {items.map((item, i) => {
+              const cfg = statusConfig[item.status] || { label: item.status, color: "badge badge-gray" }
               return (
-                <div key={item.id} className="rounded-2xl border bg-surface p-6 transition hover:shadow-md">
-                  <div className="flex items-start justify-between">
+                <div
+                  key={item.id}
+                  className="animate-fade-in-up card-premium p-6 transition-all hover:shadow-md"
+                  style={{ animationDelay: `${i * 0.08}s` }}
+                >
+                  <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-4">
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${cfg.color}`}>
+                      <span className={`badge ${cfg.color}`}>
                         {cfg.label}
                       </span>
                       <div>
-                        <p className="font-semibold text-gray-900">
-                          Perfil: <span className="capitalize">{item.profile}</span>
+                        <p className="font-bold text-gray-900">
+                          Perfil: <span className="capitalize text-blue-600">{item.profile}</span>
                         </p>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <p className="mt-0.5 text-sm text-gray-500">
                           Puntaje: {item.score}/100
                         </p>
                       </div>
@@ -106,9 +117,18 @@ export default function MisPerfilamientosPage() {
                   </div>
 
                   {item.status === "completado" && item.action && (
-                    <div className="mt-4 rounded-xl bg-white p-4">
+                    <div className="mt-4 rounded-xl bg-white p-4 ring-1 ring-gray-100">
                       <div className="flex items-center gap-2">
-                        <span className={`text-sm font-semibold ${item.action === "aprobado" ? "text-green-600" : "text-red-600"}`}>
+                        {item.action === "aprobado" ? (
+                          <svg className="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          <svg className="h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        )}
+                        <span className={`text-sm font-bold ${item.action === "aprobado" ? "text-emerald-600" : "text-red-600"}`}>
                           {item.action === "aprobado" ? "Aprobado" : "Rechazado"}
                         </span>
                         <span className="text-sm text-gray-400">por el asesor</span>
@@ -119,7 +139,7 @@ export default function MisPerfilamientosPage() {
                       {item.allocations && (
                         <a
                           href={`/propuesta?profile_id=${item.id}&profile=${item.profile}`}
-                          className="mt-3 inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                          className="btn-primary mt-4 inline-flex text-sm"
                         >
                           Ver propuesta
                         </a>
@@ -128,13 +148,13 @@ export default function MisPerfilamientosPage() {
                   )}
 
                   {item.status === "pendiente" && (
-                    <div className="mt-4 rounded-xl bg-yellow-50 p-4 text-sm text-yellow-700">
+                    <div className="mt-4 rounded-xl bg-yellow-50/70 p-4 text-sm text-yellow-700 ring-1 ring-yellow-100">
                       Estamos esperando que un asesor revise tu perfilamiento. Te notificaremos cuando haya un resultado.
                     </div>
                   )}
 
                   {item.status === "en_revision" && (
-                    <div className="mt-4 rounded-xl bg-blue-50 p-4 text-sm text-blue-700">
+                    <div className="mt-4 rounded-xl bg-blue-50/70 p-4 text-sm text-blue-700 ring-1 ring-blue-100">
                       Un asesor está revisando tu perfilamiento en este momento.
                     </div>
                   )}

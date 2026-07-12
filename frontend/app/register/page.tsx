@@ -36,21 +36,21 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 px-4">
+      <div className="animate-scale-in w-full max-w-sm rounded-2xl bg-white p-8 shadow-xl shadow-gray-200/50 ring-1 ring-gray-100">
         <div className="mb-8 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-xl font-bold text-white">
+          <a href="/" className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 text-xl font-bold text-white shadow-lg shadow-blue-600/20">
             I
-          </div>
-          <h1 className="mt-4 text-2xl font-bold text-gray-900">
+          </a>
+          <h1 className="mt-5 text-2xl font-bold text-gray-900">
             Crear Cuenta
           </h1>
-           <p className="mt-1 text-sm text-gray-500">
-              Completá tus datos para empezar
-            </p>
+          <p className="mt-1.5 text-sm text-gray-500">
+            Completá tus datos para empezar
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Tipo de cuenta
@@ -59,83 +59,85 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setRole("cliente")}
-                className={`rounded-xl border p-3 text-sm font-medium transition ${
+                className={`rounded-xl border p-3 text-sm font-medium transition-all ${
                   role === "cliente"
                     ? "border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-200"
                     : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                 }`}
               >
+                <div className="text-lg mb-0.5">👤</div>
                 Cliente
               </button>
               <button
                 type="button"
                 onClick={() => setRole("asesor")}
-                className={`rounded-xl border p-3 text-sm font-medium transition ${
+                className={`rounded-xl border p-3 text-sm font-medium transition-all ${
                   role === "asesor"
                     ? "border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-200"
                     : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                 }`}
               >
+                <div className="text-lg mb-0.5">📋</div>
                 Asesor
               </button>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Usuario
             </label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-gray-300 p-3 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              className="input-premium w-full"
               placeholder="Min. 3 caracteres"
               autoFocus
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Nombre visible (opcional)
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Nombre visible <span className="text-gray-400 font-normal">(opcional)</span>
             </label>
             <input
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-gray-300 p-3 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              className="input-premium w-full"
               placeholder="Ej: Juan Pérez"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Contraseña
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-gray-300 p-3 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              className="input-premium w-full"
               placeholder="Min. 4 caracteres"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Confirmar contraseña
             </label>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-gray-300 p-3 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              className="input-premium w-full"
               placeholder="Repetí la contraseña"
             />
           </div>
 
           {error && (
-            <div className="rounded-lg bg-red-50 p-3 text-center text-sm text-red-700">
+            <div className="animate-fade-in rounded-xl bg-red-50 p-3.5 text-center text-sm font-medium text-red-700 ring-1 ring-red-100">
               {error}
             </div>
           )}
@@ -143,15 +145,25 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading || !username || !password}
-            className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+            className="btn-primary w-full py-3.5 text-base"
           >
-            {loading ? "Registrando..." : "Crear cuenta"}
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Registrando...
+              </span>
+            ) : (
+              "Crear cuenta"
+            )}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-500">
+        <p className="mt-8 text-center text-sm text-gray-500">
           ¿Ya tenés cuenta?{" "}
-          <a href="/login" className="font-semibold text-blue-600 hover:text-blue-700">
+          <a href="/login" className="font-semibold text-blue-600 hover:text-blue-700 transition-colors">
             Iniciar sesión
           </a>
         </p>
