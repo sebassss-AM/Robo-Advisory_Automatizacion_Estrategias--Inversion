@@ -102,6 +102,17 @@ def _enrich_with_market_data(ticker: str, percentage: float, category: Instrumen
     info = _get_ticker_info(ticker)
     name = info["name"] if info and info.get("name") else ticker
     price = info["price"] if info and info.get("price") else None
+    inst = get_instrument_by_id(ticker)
+    exp_return = inst.expected_return if inst else ""
+    return_pct = 0.0
+    if exp_return:
+        try:
+            parts = exp_return.replace("%", "").replace("anual", "").strip().split("-")
+            low = float(parts[0].strip())
+            high = float(parts[1].strip()) if len(parts) > 1 else low
+            return_pct = round((low + high) / 2, 1)
+        except (ValueError, IndexError):
+            pass
     return Allocation(
         instrument_id=ticker,
         instrument_name=name,
@@ -110,6 +121,8 @@ def _enrich_with_market_data(ticker: str, percentage: float, category: Instrumen
         amount_usd=price,
         pe_ratio=info["pe_ratio"] if info and info.get("pe_ratio") else None,
         dividend_yield=info["dividend_yield"] if info and info.get("dividend_yield") is not None else None,
+        expected_return=exp_return,
+        return_pct=return_pct,
     )
 
 

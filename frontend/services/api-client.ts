@@ -68,6 +68,8 @@ export interface Allocation {
   instrument_name: string
   category: string
   percentage: number
+  expected_return: string
+  return_pct: number
 }
 
 export interface ProposalResult {

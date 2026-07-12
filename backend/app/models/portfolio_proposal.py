@@ -27,6 +27,8 @@ class Allocation(BaseModel):
     amount_usd: float | None = None
     pe_ratio: float | None = None
     dividend_yield: float | None = None
+    expected_return: str = ""
+    return_pct: float = 0.0
 
 
 class RiskMetrics(BaseModel):
