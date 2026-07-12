@@ -10,6 +10,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [displayName, setDisplayName] = useState("")
+  const [role, setRole] = useState<"cliente" | "asesor">("cliente")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -25,7 +26,7 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      const result = await register(username, password, displayName || undefined)
+      const result = await register(username, password, displayName || undefined, role)
       router.push(result.user.role === "asesor" ? "/asesor" : "/")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al registrarse")
@@ -50,6 +51,36 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tipo de cuenta
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setRole("cliente")}
+                className={`rounded-xl border p-3 text-sm font-medium transition ${
+                  role === "cliente"
+                    ? "border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-200"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                }`}
+              >
+                Cliente
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("asesor")}
+                className={`rounded-xl border p-3 text-sm font-medium transition ${
+                  role === "asesor"
+                    ? "border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-200"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                }`}
+              >
+                Asesor
+              </button>
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Usuario
