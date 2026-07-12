@@ -17,3 +17,22 @@ body {
   background-color: var(--color-surface);
   color: #1e293b;
 }
+
+.explanation strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+.explanation p {
+  margin-bottom: 0.75rem;
+  line-height: 1.7;
+}
+
+.explanation ul {
+  margin-bottom: 0.75rem;
+}
+
+.explanation li {
+  margin-bottom: 0.25rem;
+  line-height: 1.6;
+}

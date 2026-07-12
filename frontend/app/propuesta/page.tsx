@@ -221,6 +221,16 @@ function PropuestaContent() {
                       </div>
                     )
                   })}
+
+                  {/* Total */}
+                  {monthlyInvest > 0 && (
+                    <div className="border-t pt-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-bold text-gray-900">Total mensual</span>
+                        <span className="font-bold text-blue-600">${monthlyInvest.toFixed(2)}/mes</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -230,7 +240,7 @@ function PropuestaContent() {
               <h2 className="mb-4 text-lg font-bold text-gray-900">Explicación de la propuesta</h2>
               {proposal?.explanation ? (
                 <div
-                  className="prose prose-gray max-w-none space-y-3"
+                  className="explanation text-gray-700 text-sm leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: simpleMarkdown(proposal.explanation) }}
                 />
               ) : (
@@ -296,17 +306,19 @@ function PropuestaContent() {
                         const futureValue = monthly * ((Math.pow(1 + r / 12, p.months) - 1) / (r / 12)) * (1 + r / 12)
                         const gain = futureValue - totalContrib
                         return (
-                          <div key={p.label} className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
-                            <div>
-                              <span className="text-sm text-gray-500">{p.label}</span>
-                              <p className="text-xs text-gray-400">${monthly}/mes</p>
+                          <div key={p.label} className="rounded-xl bg-gray-50 px-4 py-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-semibold text-gray-700">{p.label}</span>
+                              <div className="text-right">
+                                <span className="font-bold text-gray-900">${futureValue.toFixed(0)}</span>
+                                <span className={`ml-2 text-xs font-semibold ${gain >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                                  ({gain >= 0 ? "+" : ""}${gain.toFixed(0)})
+                                </span>
+                              </div>
                             </div>
-                            <div className="text-right">
-                              <p className="font-semibold text-gray-900">${futureValue.toFixed(0)}</p>
-                              <p className={`text-xs ${gain >= 0 ? "text-emerald-600" : "text-red-500"}`}>
-                                {gain >= 0 ? "+" : ""}${gain.toFixed(0)}
-                              </p>
-                            </div>
+                            <p className="mt-1 text-xs text-gray-400">
+                              Aportado: ${totalContrib.toFixed(0)} | Ganancia: ${gain.toFixed(0)}
+                            </p>
                           </div>
                         )
                       })
