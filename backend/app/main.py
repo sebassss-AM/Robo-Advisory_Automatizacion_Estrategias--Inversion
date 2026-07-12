@@ -14,7 +14,6 @@ from backend.app.api.profiling_routes import router as profiling_router
 from backend.app.api.portfolio_routes import router as portfolio_router
 from backend.app.api.approval_routes import router as approval_router
 from backend.app.infrastructure.database import init_db, close as close_db
-from backend.app.infrastructure.redis_session import close as close_redis
 
 
 @asynccontextmanager
@@ -26,10 +25,6 @@ async def lifespan(app: FastAPI):
     yield
     try:
         close_db()
-    except Exception:
-        pass
-    try:
-        await close_redis()
     except Exception:
         pass
 

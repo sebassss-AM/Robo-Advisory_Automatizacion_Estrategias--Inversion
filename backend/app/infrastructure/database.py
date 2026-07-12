@@ -97,6 +97,19 @@ def _ensure_database():
     for q in queries:
         with conn.cursor() as cur:
             cur.execute(q)
+
+    migrations = [
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) NOT NULL DEFAULT 'cliente'",
+        "ALTER TABLE profiles ADD COLUMN IF NOT EXISTS user_id TEXT REFERENCES users(id)",
+        "ALTER TABLE profiles ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'pendiente'",
+        "ALTER TABLE profiles ADD COLUMN IF NOT EXISTS advisor_id TEXT REFERENCES users(id)",
+    ]
+    for m in migrations:
+        with conn.cursor() as cur:
+            try:
+                cur.execute(m)
+            except Exception:
+                pass
     return True
 
 

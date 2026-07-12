@@ -1,12 +1,10 @@
 fastapi
 uvicorn
 langgraph
-langchain-google-genai
 pydantic
 psycopg2-binary
 redis
-chromadb
-google-genai
+openai
 pytest
 pytest-asyncio
 httpx
