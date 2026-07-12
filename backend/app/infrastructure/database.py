@@ -86,6 +86,7 @@ def _ensure_database():
             username VARCHAR(50) UNIQUE NOT NULL,
             password_hash VARCHAR(255) NOT NULL,
             display_name VARCHAR(100),
+            role VARCHAR(20) NOT NULL DEFAULT 'cliente',
             created_at TIMESTAMP DEFAULT NOW()
         )
         """,

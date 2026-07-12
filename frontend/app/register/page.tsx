@@ -25,8 +25,8 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      await register(username, password, displayName || undefined)
-      router.push("/asesor")
+      const result = await register(username, password, displayName || undefined)
+      router.push(result.user.role === "asesor" ? "/asesor" : "/")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al registrarse")
     } finally {
@@ -44,9 +44,9 @@ export default function RegisterPage() {
           <h1 className="mt-4 text-2xl font-bold text-gray-900">
             Crear Cuenta
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Registrate como asesor
-          </p>
+           <p className="mt-1 text-sm text-gray-500">
+              Completá tus datos para empezar
+            </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

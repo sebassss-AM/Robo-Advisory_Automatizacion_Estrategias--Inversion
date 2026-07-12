@@ -17,8 +17,8 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      await login(username, password)
-      router.push("/asesor")
+      const result = await login(username, password)
+      router.push(result.user.role === "asesor" ? "/asesor" : "/")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al iniciar sesión")
     } finally {
@@ -36,9 +36,9 @@ export default function LoginPage() {
           <h1 className="mt-4 text-2xl font-bold text-gray-900">
             Iniciar Sesión
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Accedé al panel de asesor
-          </p>
+           <p className="mt-1 text-sm text-gray-500">
+              Ingresá con tu usuario y contraseña
+            </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

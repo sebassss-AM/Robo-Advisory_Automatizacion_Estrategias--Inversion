@@ -2,19 +2,25 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import type { AuthUser } from "@/services/auth"
 
 export default function Home() {
   const router = useRouter()
-  const [loggedIn, setLoggedIn] = useState(false)
+  const [user, setUser] = useState<AuthUser | null>(null)
 
   useEffect(() => {
-    import("@/services/auth").then((m) => setLoggedIn(m.isAuthenticated()))
+    import("@/services/auth").then((m) => {
+      setUser(m.getUser())
+    })
   }, [])
+
+  const loggedIn = !!user
+  const isAdvisor = user?.role === "asesor"
 
   const handleLogout = () => {
     import("@/services/auth").then((m) => {
       m.logout()
-      setLoggedIn(false)
+      setUser(null)
       router.push("/")
     })
   }
@@ -29,25 +35,29 @@ export default function Home() {
             </div>
             <span className="text-lg font-bold text-gray-900">InversIA</span>
           </div>
-          <nav className="flex items-center gap-6">
-            {loggedIn ? (
-              <>
-                <a href="/asesor" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-                  Acceso Asesores
-                </a>
-                <button
-                  onClick={handleLogout}
-                  className="rounded-lg px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
-                >
-                  Cerrar sesión
-                </button>
-              </>
-            ) : (
-              <a href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-                Acceso Asesores
+          {isAdvisor && (
+            <nav className="flex items-center gap-6">
+              <a href="/asesor" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+                Panel Asesor
               </a>
-            )}
-          </nav>
+              <button
+                onClick={handleLogout}
+                className="rounded-lg px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+              >
+                Cerrar sesión
+              </button>
+            </nav>
+          )}
+          {loggedIn && !isAdvisor && (
+            <nav className="flex items-center gap-6">
+              <button
+                onClick={handleLogout}
+                className="rounded-lg px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+              >
+                Cerrar sesión
+              </button>
+            </nav>
+          )}
         </div>
       </header>
 
@@ -67,7 +77,14 @@ export default function Home() {
               Sin letra chica, sin promesas falsas.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
-              {loggedIn ? (
+              {isAdvisor ? (
+                <a
+                  href="/asesor"
+                  className="rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl"
+                >
+                  Ir al Panel de Asesor
+                </a>
+              ) : loggedIn ? (
                 <a
                   href="/cuestionario"
                   className="rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl"
@@ -146,10 +163,10 @@ export default function Home() {
               Sin compromiso. Solo un cuestionario y recibirás tu propuesta.
             </p>
             <a
-              href={loggedIn ? "/cuestionario" : "/register"}
+              href={isAdvisor ? "/asesor" : loggedIn ? "/cuestionario" : "/register"}
               className="mt-8 inline-block rounded-xl bg-blue-600 px-10 py-4 text-lg font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl"
             >
-              {loggedIn ? "Iniciar Perfilamiento" : "Crear Cuenta"}
+              {isAdvisor ? "Ir al Panel de Asesor" : loggedIn ? "Iniciar Perfilamiento" : "Crear Cuenta"}
             </a>
           </div>
         </section>

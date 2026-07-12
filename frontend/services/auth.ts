@@ -5,6 +5,11 @@ export interface AuthUser {
   id: string
   username: string
   display_name: string
+  role: "cliente" | "asesor"
+}
+
+export function isAdvisor(): boolean {
+  return getUser()?.role === "asesor"
 }
 
 export function getToken(): string | null {

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { api, type HistoryItem } from "@/services/api-client"
-import { isAuthenticated, logout, getUser } from "@/services/auth"
+import { isAuthenticated, isAdvisor, logout, getUser } from "@/services/auth"
 
 const actionBadge: Record<string, string> = {
   aprobado: "bg-green-100 text-green-700",
@@ -20,6 +20,10 @@ export default function AsesorPage() {
   useEffect(() => {
     if (!isAuthenticated()) {
       router.replace("/login")
+      return
+    }
+    if (!isAdvisor()) {
+      router.replace("/")
       return
     }
     setChecking(false)
