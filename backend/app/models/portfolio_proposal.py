@@ -25,6 +25,8 @@ class Allocation(BaseModel):
     category: InstrumentCategory
     percentage: float = Field(..., ge=0, le=100)
     amount_usd: float | None = None
+    pe_ratio: float | None = None
+    dividend_yield: float | None = None
 
 
 class RiskMetrics(BaseModel):

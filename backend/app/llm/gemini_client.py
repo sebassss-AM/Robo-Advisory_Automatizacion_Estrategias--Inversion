@@ -6,16 +6,17 @@ SYSTEM_PROMPT = """
 Eres un asesor financiero IA especializado en robo-advisory.
 
 Tus funciones son:
-- Explicar el perfil de riesgo de un inversionista en lenguaje claro
-- Justificar propuestas de portafolio según el perfil calculado
+- Explicar el perfil de riesgo de un inversionista en lenguaje claro y cercano
+- Justificar propuestas de portafolio con datos de mercado reales que se te proporcionan
 - Responder dudas sobre conceptos financieros básicos
 
-Reglas estrictas:
-- NUNCA inventes datos financieros. Usa solo la información proporcionada.
-- NUNCA prometas rentabilidades garantizadas.
-- NUNCA recomiendes compra/venta de instrumentos específicos.
-- Siempre aclara que es una propuesta informativa y no una recomendación de inversión.
-- Si no sabes algo, dilo.
+REGLAS ESTRICTAS (violarlas hará que los inversores pierdan dinero):
+1. NUNCA inventes datos financieros. Usa SOLO la información que se te proporciona en el prompt.
+2. NUNCA prometas rentabilidades garantizadas. "Rendimiento pasado no garantiza rendimiento futuro."
+3. NUNCA recomiendes compra/venta de instrumentos específicos. Es solo una propuesta informativa.
+4. Si no se te proporciona un dato, NO LO INVENTES. Dijiste: "No tengo ese dato disponible."
+5. Siempre aclara que es una propuesta informativa y no una recomendación de inversión.
+6. No uses frases como "podría rendir X%" o "esperamos un retorno de". Limítate a los datos entregados.
 """
 
 
@@ -65,7 +66,9 @@ Respuestas del usuario:
 Reglas aplicadas:
 {chr(10).join(f'- {r}' for r in rules)}
 
+IMPORTANTE: Usa SOLO los datos de arriba. No inventes nada.
 Genera una explicación clara y amigable para el usuario de por qué se le asignó este perfil.
+Menciona cómo cada respuesta influyó en el resultado.
 """
     return generate_response(prompt)
 
@@ -75,25 +78,40 @@ def generate_portfolio_explanation(
     allocations: list[dict],
     risk_metrics: dict,
 ) -> str:
-    allocations_text = "\n".join(
-        f"- {a['percentage']}% en {a['instrument_name']} ({a['category']})"
-        for a in allocations
-    )
+    lines = []
+    for a in allocations:
+        parts = [f"- {a['percentage']}% en {a.get('instrument_name', a['instrument_id'])} ({a['category']})"]
+        extra = []
+        if a.get("amount_usd"):
+            extra.append(f"Precio: ${a['amount_usd']:.2f}")
+        if a.get("pe_ratio"):
+            extra.append(f"P/E: {a['pe_ratio']}")
+        if a.get("dividend_yield") is not None:
+            extra.append(f"Dividendo: {a['dividend_yield']:.2f}%")
+        if extra:
+            parts[0] += " — " + " | ".join(extra)
+        lines.append(parts[0])
+    allocations_text = "\n".join(lines)
 
     prompt = f"""
 Perfil del inversionista: {profile_name}
-Asignación propuesta:
+
+Asignación propuesta (con datos de mercado actuales):
 {allocations_text}
 
-Metricas de riesgo:
+Métricas de riesgo:
 - Volatilidad esperada: {risk_metrics.get('expected_volatility')}
 - Diversificación: {risk_metrics.get('diversification_score')}/100
 - Drawdown máximo estimado: {risk_metrics.get('max_drawdown_estimate')}
 
+INSTRUCCIÓN IMPORTANTE: Los datos de precio, P/E y dividendos arriba son REALES de Yahoo Finance.
+NO inventes ningún número adicional. Si un dato no está listado, no lo menciones.
+
 Genera una explicación clara para el usuario sobre esta propuesta de portafolio.
 Debes incluir:
-1. Por qué esta asignación es adecuada para su perfil
-2. Qué significa cada métrica de riesgo
-3. Un mensaje responsable indicando que es solo una propuesta informativa
+1. Por qué esta asignación es adecuada para su perfil de riesgo
+2. Qué significa cada métrica de riesgo en lenguaje simple
+3. Solo si los datos fueron proporcionados, menciona el precio actual y P/E de los instrumentos
+4. Un mensaje responsable indicando que es solo una propuesta informativa, no una recomendación
 """
     return generate_response(prompt)

@@ -2,54 +2,61 @@ from backend.app.models.portfolio_proposal import Instrument, InstrumentCategory
 
 INSTRUMENTS: list[Instrument] = [
     Instrument(
-        id="BONO-001",
-        name="Bonos del Tesoro",
+        id="BND",
+        name="Vanguard Total Bond Market (BND)",
         category=InstrumentCategory.FIXED_INCOME,
         risk_level="bajo",
         expected_return="4-6% anual",
-        description="Bonos soberanos de bajo riesgo. Ideales para perfiles conservadores.",
+        description="ETF de bonos diversificados del mercado total de EE.UU. Bajo riesgo.",
     ),
     Instrument(
-        id="BONO-002",
-        name="Bonos Corporativos Grado de Inversión",
+        id="SHY",
+        name="iShares 1-3 Year Treasury Bond (SHY)",
         category=InstrumentCategory.FIXED_INCOME,
-        risk_level="bajo-medio",
-        expected_return="5-8% anual",
-        description="Bonos de empresas con alta calificación crediticia.",
+        risk_level="muy bajo",
+        expected_return="3-5% anual",
+        description="Bonos del tesoro de corto plazo. Alta seguridad y liquidez.",
     ),
     Instrument(
-        id="ETF-001",
-        name="ETF de Mercado Global",
+        id="VTI",
+        name="Vanguard Total Stock Market (VTI)",
         category=InstrumentCategory.EQUITY,
         risk_level="medio",
         expected_return="8-12% anual",
-        description="ETF diversificado que sigue índices globales de renta variable.",
+        description="ETF que cubre todo el mercado accionario de EE.UU. Diversificación total.",
     ),
     Instrument(
-        id="ETF-002",
-        name="ETF de Tecnología",
+        id="VXUS",
+        name="Vanguard Total International Stock (VXUS)",
+        category=InstrumentCategory.EQUITY,
+        risk_level="medio-alto",
+        expected_return="8-14% anual",
+        description="Exposición a mercados internacionales desarrollados y emergentes.",
+    ),
+    Instrument(
+        id="QQQ",
+        name="Invesco QQQ Trust (QQQ)",
         category=InstrumentCategory.EQUITY,
         risk_level="alto",
         expected_return="12-18% anual",
-        description="ETF sectorial enfocado en empresas tecnológicas.",
+        description="ETF que sigue el índice Nasdaq-100. Alta exposición tecnológica.",
     ),
     Instrument(
-        id="LIQ-001",
-        name="Fondo Money Market",
+        id="SGOV",
+        name="iShares 0-3 Month Treasury Bond (SGOV)",
         category=InstrumentCategory.LIQUIDITY,
         risk_level="muy bajo",
         expected_return="2-4% anual",
-        description="Fondo de liquidez inmediata con bajo rendimiento pero alta disponibilidad.",
-    ),
-    Instrument(
-        id="ALT-001",
-        name="Fondo de Infraestructura",
-        category=InstrumentCategory.ALTERNATIVES,
-        risk_level="medio-alto",
-        expected_return="8-14% anual",
-        description="Inversión en proyectos de infraestructura con horizonte largo.",
+        description="ETF de bonos del tesoro a cortísimo plazo. Liquidez inmediata.",
     ),
 ]
+
+TICKERS_BY_CATEGORY = {
+    InstrumentCategory.FIXED_INCOME: ["BND", "SHY"],
+    InstrumentCategory.EQUITY: ["VTI", "VXUS", "QQQ"],
+    InstrumentCategory.LIQUIDITY: ["SGOV"],
+    InstrumentCategory.ALTERNATIVES: [],
+}
 
 
 def get_instrument_by_id(instrument_id: str) -> Instrument | None:

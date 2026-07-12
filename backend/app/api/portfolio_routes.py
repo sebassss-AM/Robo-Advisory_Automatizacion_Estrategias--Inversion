@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Body
 from backend.app.models.investor_profile import RiskProfile
 from backend.app.domain.asset_allocation_policies import build_allocations
 from backend.app.infrastructure.database import execute_insert, execute_query
+from backend.app.llm.gemini_client import generate_portfolio_explanation
 
 router = APIRouter(prefix="/api/propuesta", tags=["portfolio"])
 
@@ -39,6 +40,15 @@ async def create_proposal(
     proposal = build_allocations(resolved_profile, profile_id)
     proposal_id = str(uuid.uuid4())
 
+    allocs_dict = [a.model_dump() for a in proposal.allocations]
+
+    llm_explanation = generate_portfolio_explanation(
+        profile_name=resolved_profile.value,
+        allocations=allocs_dict,
+        risk_metrics=proposal.risk_metrics.model_dump(),
+    )
+    final_explanation = llm_explanation if llm_explanation else proposal.explanation
+
     execute_insert(
         """
         INSERT INTO proposals (id, profile_id, allocations, risk_metrics, explanation, status)
@@ -47,9 +57,9 @@ async def create_proposal(
         (
             proposal_id,
             profile_id,
-            json.dumps([a.model_dump() for a in proposal.allocations]),
+            json.dumps(allocs_dict),
             json.dumps(proposal.risk_metrics.model_dump()),
-            proposal.explanation,
+            final_explanation,
             "pending",
         ),
     )
@@ -58,9 +68,9 @@ async def create_proposal(
         "proposal_id": proposal_id,
         "profile_id": profile_id,
         "profile": resolved_profile.value,
-        "allocations": [a.model_dump() for a in proposal.allocations],
+        "allocations": allocs_dict,
         "risk_metrics": proposal.risk_metrics.model_dump(),
-        "explanation": proposal.explanation,
+        "explanation": final_explanation,
     }
 
 

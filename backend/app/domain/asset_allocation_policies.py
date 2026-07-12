@@ -5,6 +5,7 @@ from backend.app.models.portfolio_proposal import (
     RiskMetrics,
     PortfolioProposal,
 )
+from backend.app.services.market_data import _get_ticker_info
 
 ALLOCATION_POLICIES = {
     RiskProfile.CONSERVATIVE: {
@@ -27,6 +28,50 @@ ALLOCATION_POLICIES = {
     },
 }
 
+DETAILED_ALLOCATIONS = {
+    RiskProfile.CONSERVATIVE: {
+        InstrumentCategory.FIXED_INCOME: [
+            ("BND", 40),
+            ("SHY", 20),
+        ],
+        InstrumentCategory.EQUITY: [
+            ("VTI", 20),
+            ("VXUS", 10),
+        ],
+        InstrumentCategory.LIQUIDITY: [
+            ("SGOV", 10),
+        ],
+    },
+    RiskProfile.MODERATE: {
+        InstrumentCategory.FIXED_INCOME: [
+            ("BND", 25),
+            ("SHY", 15),
+        ],
+        InstrumentCategory.EQUITY: [
+            ("VTI", 30),
+            ("VXUS", 12),
+            ("QQQ", 8),
+        ],
+        InstrumentCategory.LIQUIDITY: [
+            ("SGOV", 10),
+        ],
+    },
+    RiskProfile.AGGRESSIVE: {
+        InstrumentCategory.FIXED_INCOME: [
+            ("BND", 12),
+            ("SHY", 8),
+        ],
+        InstrumentCategory.EQUITY: [
+            ("VTI", 30),
+            ("VXUS", 15),
+            ("QQQ", 25),
+        ],
+        InstrumentCategory.LIQUIDITY: [
+            ("SGOV", 10),
+        ],
+    },
+}
+
 RISK_METRICS_BY_PROFILE = {
     RiskProfile.CONSERVATIVE: RiskMetrics(
         expected_volatility="baja (3-7% anual)",
@@ -46,62 +91,44 @@ RISK_METRICS_BY_PROFILE = {
 }
 
 
-def build_explanation(profile: RiskProfile, allocations: list[Allocation]) -> str:
-    lines = [f"Esta propuesta está alineada con tu perfil **{profile.value}**."]
-    for alloc in allocations:
-        category_label = {
-            InstrumentCategory.FIXED_INCOME: "Renta Fija",
-            InstrumentCategory.EQUITY: "Renta Variable",
-            InstrumentCategory.LIQUIDITY: "Liquidez",
-            InstrumentCategory.ALTERNATIVES: "Alternativos",
-        }.get(alloc.category, alloc.category.value)
-        lines.append(
-            f"- **{alloc.percentage:.0f}%** en **{category_label}**: {alloc.instrument_name}"
-        )
-
-    lines.append("")
-    lines.append(
-        "Esta asignación busca equilibrar tu tolerancia al riesgo con tus objetivos de inversión. "
-        "No garantiza rentabilidad y está sujeta a revisión periódica."
+def _enrich_with_market_data(ticker: str, percentage: float, category: InstrumentCategory) -> Allocation:
+    info = _get_ticker_info(ticker)
+    name = info["name"] if info and info.get("name") else ticker
+    price = info["price"] if info and info.get("price") else None
+    return Allocation(
+        instrument_id=ticker,
+        instrument_name=name,
+        category=category,
+        percentage=percentage,
+        amount_usd=price,
+        pe_ratio=info["pe_ratio"] if info and info.get("pe_ratio") else None,
+        dividend_yield=info["dividend_yield"] if info and info.get("dividend_yield") is not None else None,
     )
+
+
+def build_market_summary(allocations: list[Allocation]) -> str:
+    lines = ["Datos de mercado actuales:"]
+    for a in allocations:
+        info = _get_ticker_info(a.instrument_id)
+        if info:
+            parts = [f"  {a.instrument_name}: ${info.get('price', 'N/A')}"]
+            if info.get("pe_ratio"):
+                parts.append(f"P/E {info['pe_ratio']:.1f}")
+            if info.get("dividend_yield") is not None:
+                parts.append(f"Div {info['dividend_yield']:.2f}%")
+            if info.get("ytd_return") is not None:
+                parts.append(f"YTD {info['ytd_return']:+.2f}%")
+            lines.append(" · ".join(parts))
     return "\n".join(lines)
 
 
-def build_allocations(
-    profile: RiskProfile, profile_id: str
-) -> PortfolioProposal:
-    policy = ALLOCATION_POLICIES[profile]
-
-    instrument_map = {
-        InstrumentCategory.FIXED_INCOME: {
-            "name": "Bonos del Tesoro",
-            "id": "BONO-001",
-        },
-        InstrumentCategory.EQUITY: {
-            "name": "ETF de Mercado Global",
-            "id": "ETF-001",
-        },
-        InstrumentCategory.LIQUIDITY: {
-            "name": "Fondo Money Market",
-            "id": "LIQ-001",
-        },
-        InstrumentCategory.ALTERNATIVES: {
-            "name": "Fondo de Infraestructura",
-            "id": "ALT-001",
-        },
-    }
-
+def build_allocations(profile: RiskProfile, profile_id: str) -> PortfolioProposal:
+    detail = DETAILED_ALLOCATIONS[profile]
     allocations = []
-    for category, percentage in policy.items():
-        if percentage > 0:
-            info = instrument_map[category]
+    for category, tickers in detail.items():
+        for ticker, pct in tickers:
             allocations.append(
-                Allocation(
-                    instrument_id=info["id"],
-                    instrument_name=info["name"],
-                    category=category,
-                    percentage=percentage,
-                )
+                _enrich_with_market_data(ticker, pct, category)
             )
 
     explanation = build_explanation(profile, allocations)
@@ -113,3 +140,47 @@ def build_allocations(
         risk_metrics=risk_metrics,
         explanation=explanation,
     )
+
+
+def build_explanation(profile: RiskProfile, allocations: list[Allocation]) -> str:
+    lines = [f"Esta propuesta está alineada con tu perfil **{profile.value}**."]
+    lines.append("")
+
+    category_labels = {
+        InstrumentCategory.FIXED_INCOME: "Renta Fija",
+        InstrumentCategory.EQUITY: "Renta Variable",
+        InstrumentCategory.LIQUIDITY: "Liquidez",
+        InstrumentCategory.ALTERNATIVES: "Alternativos",
+    }
+
+    by_category: dict[InstrumentCategory, list[Allocation]] = {}
+    for a in allocations:
+        by_category.setdefault(a.category, []).append(a)
+
+    for category, items in by_category.items():
+        label = category_labels.get(category, category.value)
+        total_pct = sum(a.percentage for a in items)
+        ticker_list = ", ".join(a.instrument_id for a in items)
+        lines.append(f"**{label}** ({total_pct:.0f}%): {ticker_list}")
+        for a in items:
+            info_id = a.instrument_id
+            info = _get_ticker_info(info_id)
+            if info:
+                extra = []
+                if info.get("price"):
+                    extra.append(f"${info['price']:.2f}")
+                if info.get("pe_ratio"):
+                    extra.append(f"P/E {info['pe_ratio']:.1f}")
+                if info.get("dividend_yield") is not None:
+                    extra.append(f"Div {info['dividend_yield']:.2f}%")
+                lines.append(f"  - {info['name']}: {', '.join(extra) if extra else 'sin datos'}")
+            else:
+                lines.append(f"  - {a.instrument_name}")
+
+    lines.append("")
+    lines.append(
+        "Esta asignación busca equilibrar tu tolerancia al riesgo con tus objetivos de inversión. "
+        "Los datos de mercado mostrados son obtenidos de fuentes públicas (Yahoo Finance) como referencia. "
+        "No garantiza rentabilidad y está sujeta a revisión periódica."
+    )
+    return "\n".join(lines)

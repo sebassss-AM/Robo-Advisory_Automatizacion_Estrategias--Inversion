@@ -13,3 +13,4 @@ httpx
 python-dotenv
 bcrypt
 pyjwt
+yfinance
