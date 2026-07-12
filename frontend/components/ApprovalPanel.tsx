@@ -10,6 +10,7 @@ interface ApprovalPanelProps {
   allocations: Allocation[]
   rulesVersion: string
   onDecisionComplete: () => void
+  onAllocationsChange?: (allocs: Allocation[]) => void
 }
 
 export default function ApprovalPanel({
@@ -18,6 +19,7 @@ export default function ApprovalPanel({
   allocations: initialAllocations,
   rulesVersion,
   onDecisionComplete,
+  onAllocationsChange,
 }: ApprovalPanelProps) {
   const [advisorId, setAdvisorId] = useState("")
   const [comments, setComments] = useState("")
@@ -36,6 +38,12 @@ export default function ApprovalPanel({
 
   const total = editableAllocs.reduce((s, a) => s + a.percentage, 0)
   const isModified = JSON.stringify(editableAllocs) !== JSON.stringify(initialAllocations)
+
+  useEffect(() => {
+    if (editMode && onAllocationsChange) {
+      onAllocationsChange(editableAllocs)
+    }
+  }, [editableAllocs, editMode, onAllocationsChange])
 
   const updatePercentage = (index: number, value: number) => {
     const copy = editableAllocs.map((a, i) =>

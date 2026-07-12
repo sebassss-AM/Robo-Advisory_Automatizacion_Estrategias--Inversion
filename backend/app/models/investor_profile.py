@@ -29,7 +29,7 @@ class RiskProfile(str, Enum):
 
 
 class QuestionnaireAnswers(BaseModel):
-    age: int = Field(..., ge=18, le=100, description="Edad del inversionista")
+    age: int = Field(..., ge=16, le=100, description="Edad del inversionista")
     investment_horizon: InvestmentHorizon
     risk_tolerance: RiskTolerance
     goal: InvestmentGoal

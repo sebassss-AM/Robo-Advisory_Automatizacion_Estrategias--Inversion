@@ -110,6 +110,20 @@ async def reclamar_perfil(profile_id: str, advisor: dict = Depends(get_current_a
     return {"status": "en_revision", "profile_id": profile_id}
 
 
+@router.get("/en-revision")
+async def get_en_revision(advisor: dict = Depends(get_current_advisor)):
+    rows = execute_query(
+        """SELECT p.id, p.profile, p.score, p.status, p.created_at,
+                  u.display_name as user_name
+           FROM profiles p
+           JOIN users u ON u.id = p.user_id
+           WHERE p.status = 'en_revision' AND p.advisor_id = %s
+           ORDER BY p.created_at DESC""",
+        (advisor["id"],),
+    )
+    return [dict(r) for r in rows]
+
+
 @router.get("/{profile_id}")
 async def get_profile(profile_id: str):
     rows = execute_query("SELECT * FROM profiles WHERE id = %s", (profile_id,))

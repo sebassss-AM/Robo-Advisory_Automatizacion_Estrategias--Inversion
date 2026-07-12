@@ -166,6 +166,9 @@ export const api = {
   getPendientes: () =>
     request<PerfilPendiente[]>("/perfil/pendientes"),
 
+  getEnRevision: () =>
+    request<PerfilPendiente[]>("/perfil/en-revision"),
+
   reclamarPerfil: (profileId: string) =>
     request<{ status: string; profile_id: string }>(`/perfil/${profileId}/reclamar`, {
       method: "POST",

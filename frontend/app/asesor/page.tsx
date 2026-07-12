@@ -8,9 +8,25 @@ import { isAuthenticated, isAdvisor, logout, getUser } from "@/services/auth"
 export default function AsesorPage() {
   const router = useRouter()
   const [pendientes, setPendientes] = useState<PerfilPendiente[]>([])
+  const [enRevision, setEnRevision] = useState<PerfilPendiente[]>([])
   const [history, setHistory] = useState<HistoryItem[]>([])
   const [loading, setLoading] = useState(true)
-  const [tab, setTab] = useState<"pendientes" | "historial">("pendientes")
+  const [tab, setTab] = useState<"pendientes" | "en-revision" | "historial">("pendientes")
+
+  const fetchData = () => {
+    setLoading(true)
+    Promise.all([
+      api.getPendientes().catch(() => []),
+      api.getEnRevision().catch(() => []),
+      api.getHistory().catch(() => []),
+    ])
+      .then(([p, r, h]) => {
+        setPendientes(p)
+        setEnRevision(r)
+        setHistory(h)
+      })
+      .finally(() => setLoading(false))
+  }
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -21,27 +37,22 @@ export default function AsesorPage() {
       router.replace("/")
       return
     }
-
-    Promise.all([
-      api.getPendientes().catch(() => []),
-      api.getHistory().catch(() => []),
-    ])
-      .then(([p, h]) => {
-        setPendientes(p)
-        setHistory(h)
-      })
-      .finally(() => setLoading(false))
+    fetchData()
   }, [router])
 
   const handleReclamar = async (profileId: string) => {
     try {
       await api.reclamarPerfil(profileId)
-      setPendientes((prev) => prev.filter((p) => p.id !== profileId))
       const profile = pendientes.find((p) => p.id === profileId)
+      setPendientes((prev) => prev.filter((p) => p.id !== profileId))
       router.push(`/propuesta?profile_id=${profileId}&profile=${profile?.profile}&from=asesor`)
     } catch {
       alert("Este perfil ya no está disponible")
     }
+  }
+
+  const handleContinuar = (profileId: string, profile: string | undefined) => {
+    router.push(`/propuesta?profile_id=${profileId}&profile=${profile}&from=asesor`)
   }
 
   const handleLogout = () => {
@@ -92,6 +103,12 @@ export default function AsesorPage() {
               Pendientes ({pendientes.length})
             </button>
             <button
+              onClick={() => setTab("en-revision")}
+              className={`px-4 py-2 text-sm font-medium ${tab === "en-revision" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-50"}`}
+            >
+              En revisión ({enRevision.length})
+            </button>
+            <button
               onClick={() => setTab("historial")}
               className={`px-4 py-2 text-sm font-medium ${tab === "historial" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-50"}`}
             >
@@ -120,23 +137,58 @@ export default function AsesorPage() {
                         <p className="mt-2 text-sm text-gray-500">
                           Cliente: <span className="font-medium text-gray-700">{p.user_name}</span>
                         </p>
-                        <p className="text-sm text-gray-500">
-                          Puntaje: {p.score}/100
-                        </p>
+                        <p className="text-sm text-gray-500">Puntaje: {p.score}/100</p>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="text-sm text-gray-400">
-                          {new Date(p.created_at).toLocaleDateString("es-ES", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
+                          {new Date(p.created_at).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" })}
                         </span>
                         <button
                           onClick={() => handleReclamar(p.id)}
                           className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
                         >
                           Revisar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {tab === "en-revision" && (
+          <>
+            {enRevision.length === 0 ? (
+              <div className="rounded-2xl border-2 border-dashed border-gray-200 py-20 text-center">
+                <h3 className="text-lg font-semibold text-gray-900">No tienes perfiles en revisión</h3>
+                <p className="mt-1 text-gray-500">Los perfiles que tomes para revisar aparecerán acá.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {enRevision.map((p) => (
+                  <div key={p.id} className="rounded-2xl border bg-surface p-6 transition hover:shadow-md">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="flex items-center gap-3">
+                          <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">En revisión</span>
+                          <span className="font-semibold text-gray-900 capitalize">{p.profile}</span>
+                        </div>
+                        <p className="mt-2 text-sm text-gray-500">
+                          Cliente: <span className="font-medium text-gray-700">{p.user_name}</span>
+                        </p>
+                        <p className="text-sm text-gray-500">Puntaje: {p.score}/100</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm text-gray-400">
+                          {new Date(p.created_at).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" })}
+                        </span>
+                        <button
+                          onClick={() => handleContinuar(p.id, p.profile)}
+                          className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600"
+                        >
+                          Continuar
                         </button>
                       </div>
                     </div>
@@ -168,9 +220,7 @@ export default function AsesorPage() {
                           {item.action === "aprobado" ? "Aprobado" : item.action === "rechazado" ? "Rechazado" : "Editado"}
                         </span>
                         <div>
-                          <p className="font-semibold text-gray-900">
-                            Propuesta #{item.proposal_id}
-                          </p>
+                          <p className="font-semibold text-gray-900">Propuesta #{item.proposal_id}</p>
                           <p className="mt-1 text-sm text-gray-500">
                             Perfil: {item.profile} · Reglas v{item.rules_version}
                           </p>
@@ -184,9 +234,7 @@ export default function AsesorPage() {
                       </span>
                     </div>
                     {item.comments && (
-                      <div className="mt-4 rounded-xl bg-white p-4 text-sm text-gray-700">
-                        {item.comments}
-                      </div>
+                      <div className="mt-4 rounded-xl bg-white p-4 text-sm text-gray-700">{item.comments}</div>
                     )}
                   </div>
                 ))}
