@@ -92,7 +92,7 @@ export interface ProposalResult {
 
 export interface AdvisorDecision {
   proposal_id: string
-  advisor_id: string
+  advisor_id?: string
   action: "aprobado" | "editado" | "rechazado"
   comments?: string
   edited_allocations?: Allocation[]

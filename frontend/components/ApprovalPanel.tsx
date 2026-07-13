@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { api, type Allocation } from "@/services/api-client"
-import { getUser } from "@/services/auth"
 
 interface ApprovalPanelProps {
   proposalId: string
@@ -21,7 +20,6 @@ export default function ApprovalPanel({
   onDecisionComplete,
   onAllocationsChange,
 }: ApprovalPanelProps) {
-  const [advisorId, setAdvisorId] = useState("")
   const [comments, setComments] = useState("")
   const [editableAllocs, setEditableAllocs] = useState<Allocation[]>(initialAllocations)
   const [loading, setLoading] = useState(false)
@@ -29,12 +27,6 @@ export default function ApprovalPanel({
   const [showConfirm, setShowConfirm] = useState(false)
   const [pendingAction, setPendingAction] = useState<"aprobado" | "rechazado" | null>(null)
   const [editMode, setEditMode] = useState(false)
-
-  useEffect(() => {
-    const user = getUser()
-    if (user?.display_name) setAdvisorId(user.display_name)
-    else if (user?.username) setAdvisorId(user.username)
-  }, [])
 
   const total = editableAllocs.reduce((s, a) => s + a.percentage, 0)
   const isModified = JSON.stringify(editableAllocs) !== JSON.stringify(initialAllocations)
@@ -53,10 +45,6 @@ export default function ApprovalPanel({
   }
 
   const handleAction = async (action: "aprobado" | "rechazado") => {
-    if (!advisorId.trim()) {
-      setError("Ingresa tu ID de asesor")
-      return
-    }
     if (action === "aprobado" && total !== 100) {
       setError(`Los porcentajes deben sumar 100% (actual: ${total}%)`)
       return
@@ -71,7 +59,6 @@ export default function ApprovalPanel({
     try {
       await api.reviewProposal({
         proposal_id: proposalId,
-        advisor_id: advisorId,
         action: pendingAction!,
         comments: comments || undefined,
         edited_allocations: isModified && pendingAction === "aprobado" ? editableAllocs : undefined,
@@ -201,19 +188,6 @@ export default function ApprovalPanel({
           Restablecer original
         </button>
       )}
-
-      <div className="mt-5">
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-          Asesor
-        </label>
-        <input
-          type="text"
-          value={advisorId}
-          onChange={(e) => setAdvisorId(e.target.value)}
-          className="input-premium w-full"
-          placeholder="Tu nombre o ID"
-        />
-      </div>
 
       <div className="mt-4">
         <label className="block text-sm font-medium text-gray-700 mb-1.5">

@@ -27,7 +27,7 @@ export default function RegisterPage() {
 
     try {
       const result = await register(username, password, displayName || undefined, role)
-      router.push(result.user.role === "asesor" ? "/asesor" : "/")
+      router.push(result.user.role === "asesor" ? "/asesor" : "/dashboard")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al registrarse")
     } finally {

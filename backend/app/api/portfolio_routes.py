@@ -1,11 +1,12 @@
 import json
 import uuid
 
-from fastapi import APIRouter, HTTPException, Body
+from fastapi import APIRouter, HTTPException, Body, Depends
 
 from backend.app.models.investor_profile import RiskProfile
 from backend.app.domain.asset_allocation_policies import build_allocations
 from backend.app.infrastructure.database import execute_insert, execute_query
+from backend.app.api.auth_routes import get_current_user
 
 router = APIRouter(prefix="/api/propuesta", tags=["portfolio"])
 
@@ -15,6 +16,7 @@ async def create_proposal(
     profile_id: str = Body(...),
     profile: str = Body(None),
     monthly_investment: float = Body(default=0.0),
+    user: dict = Depends(get_current_user),
 ):
     resolved_profile: RiskProfile | None = None
 
@@ -90,7 +92,7 @@ async def create_proposal(
 
 
 @router.get("/{proposal_id}")
-async def get_proposal(proposal_id: str):
+async def get_proposal(proposal_id: str, user: dict = Depends(get_current_user)):
     rows = execute_query("SELECT * FROM proposals WHERE id = %s", (proposal_id,))
     if not rows:
         raise HTTPException(status_code=404, detail="Propuesta no encontrada")

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { api, type MisPerfilamientoItem } from "@/services/api-client"
 import { isAuthenticated, logout, isAdvisor } from "@/services/auth"
+import NotificationBell from "@/components/NotificationBell"
 
 const statusConfig: Record<string, { label: string; color: string }> = {
   pendiente: { label: "Pendiente", color: "badge-yellow" },
@@ -65,8 +66,10 @@ export default function MisPerfilamientosPage() {
             </div>
             <span className="font-bold text-gray-900">InversIA</span>
           </a>
-          <nav className="flex items-center gap-3">
-            <a href="/cuestionario" className="btn-primary text-sm">Nuevo perfilamiento</a>
+          <nav className="flex items-center gap-1">
+            <a href="/dashboard" className="btn-ghost text-sm">Dashboard</a>
+            <NotificationBell />
+            <a href="/cuestionario" className="btn-primary text-sm ml-1">Nuevo perfilamiento</a>
             <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700">
               Cerrar sesión
             </button>

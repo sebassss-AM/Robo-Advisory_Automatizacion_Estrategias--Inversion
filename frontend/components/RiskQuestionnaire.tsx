@@ -81,9 +81,10 @@ const questions: Question[] = [
 
 interface RiskQuestionnaireProps {
   onComplete: (result: ProfileResult) => void
+  demo?: boolean
 }
 
-export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps) {
+export default function RiskQuestionnaire({ onComplete, demo }: RiskQuestionnaireProps) {
   const [step, setStep] = useState(0)
   const [direction, setDirection] = useState<"next" | "prev">("next")
   const [answers, setAnswers] = useState<FormAnswers>({
@@ -142,7 +143,32 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
         requires_review: requiresReview,
       }
       localStorage.setItem("inversia_monthly_investment", String(monthlyInvest))
-      const result = await api.submitQuestionnaire(payload)
+
+      let result: ProfileResult
+      if (demo) {
+        const res = await fetch("/api/demo/procesar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        })
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ detail: "Error en demo" }))
+          throw new Error(err.detail || "Error en demo")
+        }
+        const data = await res.json()
+        sessionStorage.setItem("inversia_demo_result", JSON.stringify(data))
+        result = {
+          profile_id: data.profile_id,
+          profile: data.profile,
+          score: data.score,
+          status: data.status,
+          explanations: data.explanations,
+          llm_explanation: data.llm_explanation,
+          available_instruments: data.available_instruments,
+        }
+      } else {
+        result = await api.submitQuestionnaire(payload)
+      }
       onComplete(result)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al enviar el cuestionario")

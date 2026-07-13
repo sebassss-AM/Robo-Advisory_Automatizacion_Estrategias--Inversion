@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import RiskQuestionnaire from "@/components/RiskQuestionnaire"
 import type { ProfileResult } from "@/services/api-client"
 import { isAuthenticated, isAdvisor, logout } from "@/services/auth"
+import NotificationBell from "@/components/NotificationBell"
 
 export default function CuestionarioPage() {
   const router = useRouter()
@@ -41,8 +42,9 @@ export default function CuestionarioPage() {
             </div>
             <span className="font-bold text-gray-900">InversIA</span>
           </a>
-          <nav className="flex items-center gap-4">
+          <nav className="flex items-center gap-2">
             <span className="hidden text-sm text-gray-500 sm:block">Perfilamiento de Riesgo</span>
+            <NotificationBell />
             <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700">
               Cerrar sesión
             </button>

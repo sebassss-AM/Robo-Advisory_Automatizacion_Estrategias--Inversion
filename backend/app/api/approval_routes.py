@@ -1,8 +1,9 @@
 import json
 import uuid
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from backend.app.api.auth_routes import get_current_advisor, get_current_user
 from backend.app.infrastructure.database import execute_insert, execute_query
 from backend.app.models.audit_decision import AdvisorDecision
 
@@ -10,8 +11,9 @@ router = APIRouter(prefix="/api/revisar", tags=["approval"])
 
 
 @router.post("")
-async def review_proposal(decision: AdvisorDecision):
+async def review_proposal(decision: AdvisorDecision, advisor: dict = Depends(get_current_advisor)):
     decision_id = str(uuid.uuid4())
+    advisor_id = advisor["id"]
 
     profile_rows = execute_query(
         """SELECT pr.profile
@@ -30,7 +32,7 @@ async def review_proposal(decision: AdvisorDecision):
         (
             decision_id,
             decision.proposal_id,
-            decision.advisor_id,
+            advisor_id,
             decision.action.value,
             decision.comments,
             json.dumps(decision.edited_allocations) if decision.edited_allocations else None,
@@ -57,7 +59,7 @@ async def review_proposal(decision: AdvisorDecision):
 
 
 @router.get("/historial")
-async def get_history():
+async def get_history(user: dict = Depends(get_current_user)):
     try:
         rows = execute_query(
             """

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import type { AuthUser } from "@/services/auth"
+import NotificationBell from "@/components/NotificationBell"
 
 export default function Home() {
   const router = useRouter()
@@ -46,13 +47,19 @@ export default function Home() {
               </>
             ) : loggedIn ? (
               <>
-                <a href="/mis-perfilamientos" className="btn-ghost text-sm">Mis Perfilamientos</a>
+                <a href="/dashboard" className="btn-ghost text-sm">Dashboard</a>
+                <NotificationBell />
                 <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700">
                   Cerrar sesión
                 </button>
               </>
             ) : (
-              <a href="#como-funciona" className="btn-ghost text-sm">Cómo funciona</a>
+              <>
+                <a href="#el-problema" className="btn-ghost text-sm">El problema</a>
+                <a href="#funcionalidades" className="btn-ghost text-sm">Funcionalidades</a>
+                <a href="#como-funciona" className="btn-ghost text-sm">Cómo funciona</a>
+                <a href="/demo" className="btn-primary text-sm">Probar demo</a>
+              </>
             )}
           </nav>
         </div>
@@ -98,6 +105,9 @@ export default function Home() {
                   </a>
                 ) : (
                   <>
+                    <a href="/demo" className="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-black/10 transition hover:from-amber-600 hover:to-orange-600 hover:shadow-2xl">
+                      Probar demo gratis
+                    </a>
                     <a href="/register" className="rounded-xl bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl shadow-black/10 transition hover:bg-blue-50 hover:shadow-2xl">
                       Crear Cuenta Gratis
                     </a>
@@ -129,6 +139,125 @@ export default function Home() {
                 <p className="mt-1 text-sm text-gray-500">{stat.label}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Problem */}
+        <section id="el-problema" className="scroll-mt-20 py-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="mx-auto max-w-2xl text-center">
+              <span className="badge badge-red mb-4">El problema</span>
+              <h2 className="text-4xl font-extrabold tracking-tight text-gray-900">
+                Invertir no debería ser solo para expertos
+              </h2>
+              <p className="mt-4 text-lg text-gray-500 leading-relaxed">
+                Hoy arrancar en el mundo de las inversiones es complicado: los asesores tradicionales
+                son caros, las plataformas usan lenguaje técnico que no entendés y muchas veces no
+                sabés en qué estás invirtiendo realmente. <strong className="text-gray-700">InversIA resuelve esto con un agente financiero de IA que analiza tu perfil, genera propuestas transparentes y te da control total.</strong>
+              </p>
+            </div>
+            <div className="mt-14 grid gap-6 md:grid-cols-3">
+              {[
+                {
+                  title: "Falta de acceso",
+                  desc: "Los asesores financieros privados tienen costos elevados que los hacen inaccesibles para la mayoría de las personas.",
+                  icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
+                },
+                {
+                  title: "Falta de transparencia",
+                  desc: "Muchas plataformas no explican claramente en qué se invierte, cuáles son los riesgos ni cómo se toman las decisiones.",
+                  icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
+                },
+                {
+                  title: "Complejidad innecesaria",
+                  desc: "Entre ETFs, bonos, acciones, comisiones y plazos, es fácil sentirse abrumado sin una guía clara y honesta.",
+                  icon: "M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z",
+                },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="animate-fade-in-up card-premium p-8"
+                  style={{ animationDelay: `${0.3 + i * 0.1}s` }}
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 ring-1 ring-red-100">
+                    <svg className="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={item.icon} />
+                    </svg>
+                  </div>
+                  <h3 className="mt-5 text-lg font-bold text-gray-900">{item.title}</h3>
+                  <p className="mt-2 leading-relaxed text-gray-500">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Features */}
+        <section id="funcionalidades" className="scroll-mt-20 py-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="mx-auto max-w-2xl text-center">
+              <span className="badge badge-green mb-4">Funcionalidades</span>
+              <h2 className="text-4xl font-extrabold tracking-tight text-gray-900">
+                Todo lo que necesitás para invertir con confianza
+              </h2>
+              <p className="mt-4 text-lg text-gray-500">
+                Una plataforma completa que combina inteligencia artificial con supervisión humana.
+              </p>
+            </div>
+            <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {[
+                {
+                  title: "Agente financiero de IA",
+                  desc: "Un agente de IA especializado analiza tus respuestas —tolerancia al riesgo, horizonte, ingresos y objetivos— y construye un perfil de inversionista completo y personalizado.",
+                  gradient: "from-blue-500 to-blue-600",
+                  icon: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+                },
+                {
+                  title: "Datos de mercado reales",
+                  desc: "Cada propuesta usa información actualizada de Yahoo Finance: precios, rendimientos, P/E y dividendos de 7 activos financieros.",
+                  gradient: "from-emerald-500 to-emerald-600",
+                  icon: "M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z",
+                },
+                {
+                  title: "Proyecciones claras",
+                  desc: "Ves cuánto podrías tener en 1, 5 y 10 años con aportes mensuales. Sin fórmulas ocultas, todo explicado.",
+                  gradient: "from-amber-500 to-amber-600",
+                  icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
+                },
+                {
+                  title: "Distribución personalizada",
+                  desc: "Cada activo tiene un porcentaje ajustado a tu perfil, con su retorno estimado y el monto que vas a invertir en cada uno.",
+                  gradient: "from-violet-500 to-violet-600",
+                  icon: "M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z",
+                },
+                {
+                  title: "Revisión por asesor",
+                  desc: "Si querés, un asesor autorizado revisa tu propuesta. Puede ajustar los porcentajes y aprobar o rechazar con comentarios.",
+                  gradient: "from-rose-500 to-rose-600",
+                  icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
+                },
+                {
+                  title: "Sin comisiones ocultas",
+                  desc: "Sin letra chica, sin costos escondidos. Todo el proceso es transparente y cada decisión queda registrada con auditoría completa.",
+                  gradient: "from-cyan-500 to-cyan-600",
+                  icon: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
+                },
+              ].map((feature, i) => (
+                <div
+                  key={i}
+                  className="animate-fade-in-up card-premium p-6 transition-all hover:shadow-md"
+                  style={{ animationDelay: `${0.3 + i * 0.08}s` }}
+                >
+                  <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${feature.gradient} text-white shadow-md`}>
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={feature.icon} />
+                    </svg>
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold text-gray-900">{feature.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-500">{feature.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -211,7 +340,7 @@ export default function Home() {
                     {
                       num: "02",
                       title: "Propuesta",
-                      desc: "La IA genera una distribución de activos ajustada a tu perfil con métricas de riesgo claras.",
+                      desc: "El agente financiero de IA genera una distribución de activos ajustada a tu perfil con métricas de riesgo claras y datos de mercado reales.",
                       gradient: "from-emerald-500 to-emerald-600",
                       badge: "Análisis IA",
                     },

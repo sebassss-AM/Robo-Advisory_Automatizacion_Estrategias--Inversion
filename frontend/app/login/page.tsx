@@ -18,7 +18,7 @@ export default function LoginPage() {
 
     try {
       const result = await login(username, password)
-      router.push(result.user.role === "asesor" ? "/asesor" : "/")
+      router.push(result.user.role === "asesor" ? "/asesor" : "/dashboard")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al iniciar sesión")
     } finally {

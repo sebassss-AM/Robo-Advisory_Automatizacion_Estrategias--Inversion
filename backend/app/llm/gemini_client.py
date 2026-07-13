@@ -41,7 +41,7 @@ def generate_response(prompt: str) -> str:
                 {"role": "user", "content": prompt},
             ],
             temperature=0.3,
-            max_tokens=1024,
+            max_tokens=512,
         )
         return response.choices[0].message.content or ""
     except Exception as e:

@@ -6,6 +6,7 @@ import { api, type ProposalResult, type Allocation } from "@/services/api-client
 import { isAuthenticated, logout } from "@/services/auth"
 import PortfolioChart from "@/components/PortfolioChart"
 import ApprovalPanel from "@/components/ApprovalPanel"
+import ChatBot from "@/components/ChatBot"
 
 const COLORS = [
   "bg-blue-500", "bg-emerald-500", "bg-amber-500",
@@ -64,6 +65,7 @@ function PropuestaContent() {
   const router = useRouter()
   const profileId = searchParams.get("profile_id")
   const fromAsesor = searchParams.get("from") === "asesor"
+  const fromDemo = searchParams.get("from") === "demo"
   const profileParam = searchParams.get("profile") || undefined
 
   const [proposal, setProposal] = useState<ProposalResult | null>(null)
@@ -73,6 +75,32 @@ function PropuestaContent() {
   const [editedAllocs, setEditedAllocs] = useState<Allocation[] | null>(null)
 
   useEffect(() => {
+    if (fromDemo) {
+      try {
+        const raw = sessionStorage.getItem("inversia_demo_result")
+        if (!raw) {
+          router.push("/demo")
+          return
+        }
+        const data = JSON.parse(raw)
+        const p = data.proposal
+        setProposal({
+          proposal_id: p.proposal_id,
+          profile_id: p.profile_id,
+          profile: p.profile,
+          allocations: p.allocations,
+          risk_metrics: p.risk_metrics,
+          explanation: p.explanation,
+          monthly_investment: p.monthly_investment,
+        })
+      } catch {
+        router.push("/demo")
+      } finally {
+        setLoading(false)
+      }
+      return
+    }
+
     if (!isAuthenticated()) {
       router.replace("/login")
       return
@@ -89,7 +117,7 @@ function PropuestaContent() {
       .then(setProposal)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [profileId, profileParam, router])
+  }, [profileId, profileParam, router, fromDemo])
 
   const handleLogout = () => {
     logout()
@@ -182,14 +210,30 @@ function PropuestaContent() {
               Perfil {p.profile}
             </span>
             {fromAsesor && <span className="badge text-xs bg-amber-50 text-amber-700">Revisión</span>}
-            <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700">
-              Cerrar sesión
-            </button>
+            {fromDemo ? (
+              <a href="/register" className="btn-primary text-sm">
+                Crear cuenta gratis
+              </a>
+            ) : (
+              <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700">
+                Cerrar sesión
+              </button>
+            )}
           </nav>
         </div>
       </header>
 
       <main className="mx-auto max-w-7xl px-6 py-8">
+        {/* Demo banner */}
+        {fromDemo && (
+          <div className="animate-fade-in-up mb-8 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 p-5 text-center shadow-lg">
+            <p className="text-lg font-bold text-white">Modo demo — nada de esto se guarda</p>
+            <p className="mt-1 text-sm text-amber-100">
+              <a href="/register" className="font-semibold underline hover:text-white">Creá tu cuenta gratis</a> para guardar tu perfilamiento y acceder a asesoría personalizada.
+            </p>
+          </div>
+        )}
+
         {/* Title */}
         <div className="animate-fade-in-up mb-8">
           <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Propuesta de Portafolio</h1>
@@ -423,6 +467,17 @@ function PropuestaContent() {
           Esta es una propuesta informativa generada por IA. No constituye una recomendación de inversión ni garantiza rentabilidad futura.
         </p>
       </main>
+
+      {!fromDemo && (
+        <ChatBot
+          profile={p.profile}
+          score={0}
+          monthlyInvestment={monthlyInvest}
+          allocations={p.allocations}
+          riskMetrics={p.risk_metrics}
+          explanation={p.explanation}
+        />
+      )}
     </div>
   )
 }

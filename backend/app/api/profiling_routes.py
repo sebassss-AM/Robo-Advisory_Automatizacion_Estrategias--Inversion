@@ -157,7 +157,7 @@ async def delete_profile(profile_id: str, user: dict = Depends(get_current_user)
 
 
 @router.get("/{profile_id}")
-async def get_profile(profile_id: str):
+async def get_profile(profile_id: str, user: dict = Depends(get_current_user)):
     rows = execute_query("SELECT * FROM profiles WHERE id = %s", (profile_id,))
     if not rows:
         raise HTTPException(status_code=404, detail="Perfil no encontrado")

@@ -12,7 +12,7 @@ class DecisionAction(str, Enum):
 class AdvisorDecision(BaseModel):
     id: str | None = None
     proposal_id: str
-    advisor_id: str
+    advisor_id: str | None = None
     action: DecisionAction
     comments: str | None = None
     edited_allocations: list[dict] | None = None
