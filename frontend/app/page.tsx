@@ -30,35 +30,35 @@ export default function Home() {
     <div className="min-h-screen bg-[#f8fafc]">
       {/* Navbar */}
       <header className="glass-strong sticky top-0 z-50 border-b border-white/20">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <a href="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 text-sm font-bold text-white shadow-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
+          <a href="/" className="flex items-center gap-2">
+            <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 text-xs sm:text-sm font-bold text-white shadow-md">
               I
             </div>
-            <span className="text-xl font-bold tracking-tight text-gray-900">InversIA</span>
+            <span className="text-lg sm:text-xl font-bold tracking-tight text-gray-900">InversIA</span>
           </a>
-          <nav className="flex items-center gap-3">
+          <nav className="flex items-center gap-1 sm:gap-3">
             {advisor ? (
               <>
-                <a href="/asesor" className="btn-ghost text-sm">Panel Asesor</a>
-                <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700">
-                  Cerrar sesión
+                <a href="/asesor" className="btn-ghost text-xs sm:text-sm px-2 sm:px-3">Panel</a>
+                <button onClick={handleLogout} className="btn-ghost text-xs sm:text-sm text-red-600 hover:bg-red-50 hover:text-red-700 px-2 sm:px-3">
+                  Salir
                 </button>
               </>
             ) : loggedIn ? (
               <>
-                <a href="/dashboard" className="btn-ghost text-sm">Dashboard</a>
+                <a href="/dashboard" className="btn-ghost text-xs sm:text-sm px-2 sm:px-3">Dashboard</a>
                 <NotificationBell />
-                <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700">
-                  Cerrar sesión
+                <button onClick={handleLogout} className="btn-ghost text-xs sm:text-sm text-red-600 hover:bg-red-50 hover:text-red-700 px-2 sm:px-3">
+                  Salir
                 </button>
               </>
             ) : (
               <>
-                <a href="#el-problema" className="btn-ghost text-sm">El problema</a>
-                <a href="#funcionalidades" className="btn-ghost text-sm">Funcionalidades</a>
-                <a href="#como-funciona" className="btn-ghost text-sm">Cómo funciona</a>
-                <a href="/demo" className="btn-primary text-sm">Probar demo</a>
+                <a href="#el-problema" className="hidden sm:inline-flex btn-ghost text-xs sm:text-sm">El problema</a>
+                <a href="#funcionalidades" className="hidden sm:inline-flex btn-ghost text-xs sm:text-sm">Funcionalidades</a>
+                <a href="#como-funciona" className="hidden sm:inline-flex btn-ghost text-xs sm:text-sm">Cómo funciona</a>
+                <a href="/demo" className="btn-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2">Demo</a>
               </>
             )}
           </nav>
@@ -72,46 +72,58 @@ export default function Home() {
           <div className="pointer-events-none absolute -top-40 -right-40 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-violet-500/10 blur-3xl" />
 
-          <div className="relative mx-auto max-w-7xl px-6 pb-28 pt-24 lg:pt-32">
+          <div className="relative mx-auto max-w-7xl px-6 pb-28 pt-20 sm:pt-24 lg:pt-32">
             <div className="max-w-3xl">
-              <div className="animate-fade-in-up mb-6 inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-400/10 px-4 py-1.5 text-sm font-medium text-blue-200">
-                <span className="h-2 w-2 rounded-full bg-blue-400 animate-pulse-soft" />
-                Asesoría Financiera con IA
+              <div className="animate-fade-in-up mb-6 inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-400/10 px-3 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm font-medium text-blue-200">
+                <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-blue-400 animate-pulse-soft" />
+                {advisor ? "Panel de Asesor Financiero" : "Asesoría Financiera con IA"}
               </div>
-              <h1 className="animate-fade-in-up stagger-1 text-5xl font-extrabold leading-tight tracking-tight text-white lg:text-6xl">
-                Tu portafolio de inversión,{" "}
-                <span className="bg-gradient-to-r from-blue-300 via-blue-200 to-violet-200 bg-clip-text text-transparent">
-                  explicado y transparente
-                </span>
+              <h1 className="animate-fade-in-up stagger-1 text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight text-white lg:text-6xl">
+                {advisor ? (
+                  <>Gestioná perfiles de clientes con{" "}
+                    <span className="bg-gradient-to-r from-blue-300 via-blue-200 to-violet-200 bg-clip-text text-transparent">
+                      asistencia de IA
+                    </span>
+                  </>
+                ) : (
+                  <>Tu portafolio de inversión,{" "}
+                    <span className="bg-gradient-to-r from-blue-300 via-blue-200 to-violet-200 bg-clip-text text-transparent">
+                      explicado y transparente
+                    </span>
+                  </>
+                )}
               </h1>
-              <p className="animate-fade-in-up stagger-2 mt-6 max-w-xl text-lg leading-relaxed text-blue-200/80">
-                Respondés un cuestionario, la IA analiza tu perfil de riesgo y genera una propuesta
-                de portafolio. Si querés, un asesor humano la revisa y aprueba. Sin letra chica,
-                sin promesas falsas.
+              <p className="animate-fade-in-up stagger-2 mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-blue-200/80">
+                {advisor ? (
+                  <>Revisá perfilamientos, analizá propuestas y aprobá o rechazá asignaciones de forma ágil con datos de mercado reales. <strong className="text-blue-200">100% gratis, sin comisiones.</strong></>
+                ) : (
+                  <>Respondés un cuestionario, el agente financiero de IA analiza tu perfil de riesgo y genera una propuesta
+                  de portafolio personalizada. <strong className="text-blue-200">100% gratis, sin comisiones ocultas.</strong></>
+                )}
               </p>
-              <div className="animate-fade-in-up stagger-3 mt-10 flex flex-wrap gap-4">
+              <div className="animate-fade-in-up stagger-3 mt-10 flex flex-wrap gap-3">
                 {advisor ? (
                   <>
-                    <a href="/cuestionario" className="rounded-xl bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl shadow-black/10 transition hover:bg-blue-50 hover:shadow-2xl">
+                    <a href="/cuestionario" className="w-full sm:w-auto text-center rounded-xl bg-white px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-slate-900 shadow-xl shadow-black/10 transition hover:bg-blue-50 hover:shadow-2xl">
                       Nuevo Perfilamiento
                     </a>
-                    <a href="/asesor" className="rounded-xl border border-white/20 px-8 py-4 text-base font-semibold text-white transition hover:bg-white/10">
+                    <a href="/asesor" className="w-full sm:w-auto text-center rounded-xl border border-white/20 px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-white transition hover:bg-white/10">
                       Ir al Panel de Asesor
                     </a>
                   </>
                 ) : loggedIn ? (
-                  <a href="/cuestionario" className="rounded-xl bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl shadow-black/10 transition hover:bg-blue-50 hover:shadow-2xl">
+                  <a href="/cuestionario" className="w-full sm:w-auto text-center rounded-xl bg-white px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-slate-900 shadow-xl shadow-black/10 transition hover:bg-blue-50 hover:shadow-2xl">
                     Iniciar Perfilamiento
                   </a>
                 ) : (
                   <>
-                    <a href="/demo" className="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-black/10 transition hover:from-amber-600 hover:to-orange-600 hover:shadow-2xl">
+                    <a href="/demo" className="w-full sm:w-auto text-center rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-white shadow-xl shadow-black/10 transition hover:from-amber-600 hover:to-orange-600 hover:shadow-2xl">
                       Probar demo gratis
                     </a>
-                    <a href="/register" className="rounded-xl bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl shadow-black/10 transition hover:bg-blue-50 hover:shadow-2xl">
+                    <a href="/register" className="w-full sm:w-auto text-center rounded-xl bg-white px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-slate-900 shadow-xl shadow-black/10 transition hover:bg-blue-50 hover:shadow-2xl">
                       Crear Cuenta Gratis
                     </a>
-                    <a href="/login" className="rounded-xl border border-white/20 px-8 py-4 text-base font-semibold text-white transition hover:bg-white/10">
+                    <a href="/login" className="w-full sm:w-auto text-center rounded-xl border border-white/20 px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-white transition hover:bg-white/10">
                       Ya tengo cuenta
                     </a>
                   </>
@@ -201,7 +213,7 @@ export default function Home() {
                 Todo lo que necesitás para invertir con confianza
               </h2>
               <p className="mt-4 text-lg text-gray-500">
-                Una plataforma completa que combina inteligencia artificial con supervisión humana.
+                Una plataforma completamente gratuita que combina inteligencia artificial con supervisión humana.
               </p>
             </div>
             <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

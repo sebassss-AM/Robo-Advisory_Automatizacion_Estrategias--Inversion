@@ -10,7 +10,6 @@ router = APIRouter(prefix="/api/chat", tags=["chat"])
 class ChatRequest(BaseModel):
     message: str
     profile: str = ""
-    score: int = 0
     monthly_investment: float = 0.0
     allocations: list[dict] = []
     risk_metrics: dict = {}
@@ -42,11 +41,11 @@ Reglas estrictas:
 1. Respondé SOLO con la información proporcionada en el contexto de abajo. No inventes datos.
 2. Nunca prometas rentabilidades. Decí "según los datos disponibles" o "basado en estimaciones".
 3. Aclará siempre que es una propuesta informativa, no una recomendación de inversión.
-4. Sé claro, amigable, usá "vos". Mantené respuestas concisas (máx 3-4 párrafos).
+4. Sé claro, amigable, usá "vos". Respondé de forma concisa (máx 2-3 párrafos).
 5. Si te preguntan algo fuera del contexto, decí que no tenés esa información.
 
 Contexto del portafolio del usuario:
-- Perfil: {profile} (score: {score}/100)
+- Perfil: {profile}
 - Aporte mensual: ${monthly_investment:.0f}
 - Asignación actual:
 {allocations}
@@ -63,7 +62,7 @@ Contexto del portafolio del usuario:
         history_msgs.append({"role": role, "content": h.get("content", "")})
 
     prompt = f"""Contexto actual del portafolio:
-Perfil: {req.profile} (score: {req.score}/100)
+Perfil: {req.profile}
 Aporte mensual: ${req.monthly_investment:.0f}
 
 Asignación:
@@ -74,7 +73,7 @@ Métricas de riesgo:
 
 Pregunta del usuario: {req.message}
 
-Respondé de forma clara y amigable, usando SOLO los datos proporcionados arriba."""
+Respondé de forma clara y concisa, usando SOLO los datos proporcionados arriba."""
 
     try:
         response = generate_response(prompt)

@@ -4,7 +4,6 @@ import { useRef, useState, useEffect } from "react"
 
 interface ChatBotProps {
   profile: string
-  score: number
   monthlyInvestment: number
   allocations: { instrument_name: string; instrument_id: string; percentage: number; expected_return: string }[]
   riskMetrics: { expected_volatility?: string; diversification_score?: number; max_drawdown_estimate?: string; expected_return_range?: string }
@@ -18,7 +17,6 @@ interface ChatMessage {
 
 export default function ChatBot({
   profile,
-  score,
   monthlyInvestment,
   allocations,
   riskMetrics,
@@ -53,7 +51,6 @@ export default function ChatBot({
         body: JSON.stringify({
           message: text,
           profile,
-          score,
           monthly_investment: monthlyInvestment,
           allocations,
           risk_metrics: riskMetrics,

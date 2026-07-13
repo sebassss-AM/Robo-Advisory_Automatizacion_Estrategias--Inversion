@@ -471,7 +471,6 @@ function PropuestaContent() {
       {!fromDemo && (
         <ChatBot
           profile={p.profile}
-          score={0}
           monthlyInvestment={monthlyInvest}
           allocations={p.allocations}
           riskMetrics={p.risk_metrics}

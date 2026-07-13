@@ -270,7 +270,7 @@ export default function RiskQuestionnaire({ onComplete, demo }: RiskQuestionnair
         </div>
       </div>
 
-      {step === questions.length - 1 && (
+      {step === questions.length - 1 && !demo && (
         <div className="mt-8 rounded-xl bg-blue-50/70 p-5 ring-1 ring-blue-100">
           <label className="flex cursor-pointer items-start gap-3">
             <input
