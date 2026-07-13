@@ -12,6 +12,14 @@ export default function DashboardPage() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [profiles, setProfiles] = useState<MisPerfilamientoItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const onScroll = () => setMenuOpen(false)
+    window.addEventListener("scroll", onScroll)
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [menuOpen])
 
   useEffect(() => {
     const u = getUser()
@@ -40,7 +48,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       <header className="glass-strong sticky top-0 z-50 border-b border-white/20">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <a href="/" className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 text-sm font-bold text-white shadow-md">
               I
@@ -48,13 +56,42 @@ export default function DashboardPage() {
             <span className="text-xl font-bold tracking-tight text-gray-900">InversIA</span>
           </a>
           <nav className="flex items-center gap-1 sm:gap-3 min-h-[36px]">
-            <a href="/dashboard" className="btn-ghost text-sm font-semibold text-blue-600">Dashboard</a>
-            <a href="/mis-perfilamientos" className="btn-ghost text-sm">Mis Perfilamientos</a>
-            <NotificationBell />
-            <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700 ml-1">
-              Cerrar sesión
-            </button>
+            <div className="hidden sm:flex items-center gap-1 sm:gap-3">
+              <a href="/dashboard" className="btn-ghost text-sm font-semibold text-blue-600 whitespace-nowrap">Dashboard</a>
+              <a href="/mis-perfilamientos" className="btn-ghost text-sm whitespace-nowrap">Mis Perfilamientos</a>
+              <NotificationBell />
+              <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700 ml-1 whitespace-nowrap">
+                Cerrar sesión
+              </button>
+            </div>
+            <div className="sm:hidden flex items-center gap-1">
+              <NotificationBell />
+              <button onClick={() => setMenuOpen(!menuOpen)} className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100" aria-label="Menú">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {menuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
           </nav>
+          {menuOpen && (
+            <div className="sm:hidden absolute left-0 right-0 top-full border-b border-gray-100 bg-white shadow-lg animate-fade-in">
+              <div className="flex flex-col gap-1 px-4 py-3">
+                <a href="/dashboard" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-semibold text-blue-600 hover:bg-gray-50">
+                  Dashboard
+                </a>
+                <a href="/mis-perfilamientos" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                  Mis Perfilamientos
+                </a>
+                <button onClick={() => { setMenuOpen(false); handleLogout() }} className="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 hover:bg-red-50">
+                  Cerrar sesión
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
