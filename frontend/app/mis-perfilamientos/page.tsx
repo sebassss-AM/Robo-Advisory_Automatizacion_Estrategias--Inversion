@@ -71,7 +71,7 @@ export default function MisPerfilamientosPage() {
             <span className="btn-ghost text-xs sm:text-sm px-2 sm:px-3 whitespace-nowrap text-blue-600 font-semibold">Mis Perfilamientos</span>
             <NotificationBell />
             <button onClick={handleLogout} className="btn-ghost text-xs sm:text-sm text-red-600 hover:bg-red-50 hover:text-red-700 px-2 sm:px-3 whitespace-nowrap">
-              Salir
+              Cerrar sesión
             </button>
           </nav>
         </div>
