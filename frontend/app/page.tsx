@@ -8,12 +8,20 @@ import NotificationBell from "@/components/NotificationBell"
 export default function Home() {
   const router = useRouter()
   const [user, setUser] = useState<AuthUser | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     import("@/services/auth").then((m) => {
       setUser(m.getUser())
     })
   }, [])
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const onScroll = () => setMenuOpen(false)
+    window.addEventListener("scroll", onScroll)
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [menuOpen])
 
   const loggedIn = !!user
   const advisor = user?.role === "asesor"
@@ -58,12 +66,61 @@ export default function Home() {
                 <a href="#el-problema" className="hidden sm:inline-flex btn-ghost text-xs sm:text-sm whitespace-nowrap">El problema</a>
                 <a href="#funcionalidades" className="hidden sm:inline-flex btn-ghost text-xs sm:text-sm whitespace-nowrap">Funcionalidades</a>
                 <a href="#como-funciona" className="hidden sm:inline-flex btn-ghost text-xs sm:text-sm whitespace-nowrap">Cómo funciona</a>
-                <a href="/demo" className="btn-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 whitespace-nowrap">Demo</a>
+                <a href="/demo" className="hidden sm:inline-flex btn-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 whitespace-nowrap">Demo</a>
+                <button
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  className="sm:hidden flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100"
+                  aria-label="Menú"
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {menuOpen ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    ) : (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    )}
+                  </svg>
+                </button>
               </>
             )}
           </nav>
         </div>
       </header>
+
+      {/* Mobile menu */}
+      {menuOpen && !advisor && !loggedIn && (
+        <div className="animate-fade-in border-b border-gray-100 bg-white sm:hidden">
+          <div className="flex flex-col gap-1 px-4 py-3">
+            <a
+              href="#el-problema"
+              onClick={() => setMenuOpen(false)}
+              className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              El problema
+            </a>
+            <a
+              href="#funcionalidades"
+              onClick={() => setMenuOpen(false)}
+              className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Funcionalidades
+            </a>
+            <a
+              href="#como-funciona"
+              onClick={() => setMenuOpen(false)}
+              className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Cómo funciona
+            </a>
+            <a
+              href="/demo"
+              onClick={() => setMenuOpen(false)}
+              className="btn-primary mt-1 justify-center text-sm"
+            >
+              Probar demo
+            </a>
+          </div>
+        </div>
+      )}
 
       <main>
         {/* Hero */}
