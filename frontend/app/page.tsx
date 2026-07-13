@@ -50,7 +50,7 @@ export default function Home() {
               <>
                 <a href="/asesor" className="btn-ghost text-xs sm:text-sm px-2 sm:px-3 whitespace-nowrap">Panel</a>
                 <button onClick={handleLogout} className="btn-ghost text-xs sm:text-sm text-red-600 hover:bg-red-50 hover:text-red-700 px-2 sm:px-3 whitespace-nowrap">
-                  Salir
+                  Cerrar sesión
                 </button>
               </>
             ) : loggedIn ? (
@@ -58,7 +58,7 @@ export default function Home() {
                 <a href="/dashboard" className="btn-ghost text-xs sm:text-sm px-2 sm:px-3 whitespace-nowrap">Dashboard</a>
                 <NotificationBell />
                 <button onClick={handleLogout} className="btn-ghost text-xs sm:text-sm text-red-600 hover:bg-red-50 hover:text-red-700 px-2 sm:px-3 whitespace-nowrap">
-                  Salir
+                  Cerrar sesión
                 </button>
               </>
             ) : (
