@@ -12,7 +12,6 @@ interface Question {
   min?: number
   max?: number
   placeholder?: string
-  showDollar?: boolean
 }
 
 const questions: Question[] = [
@@ -62,7 +61,6 @@ const questions: Question[] = [
     description: "Esto nos ayuda a evaluar tu capacidad financiera.",
     type: "number",
     placeholder: "Monto en USD",
-    showDollar: true,
   },
   {
     key: "monthly_investment",
@@ -70,7 +68,6 @@ const questions: Question[] = [
     description: "No es necesario que sea todo tu ingreso. Solo lo que puedas comprometer.",
     type: "number",
     placeholder: "Ej: 200",
-    showDollar: true,
   },
   {
     key: "investment_experience",
@@ -194,17 +191,14 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
 
         <div className="mt-8">
           {q.type === "number" && (
-            <div className="relative">
-              {q.showDollar && <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">$</span>}
-              <input
-                type="number"
-                value={answers[q.key]}
-                onChange={(e) => handleChange(q.key, e.target.value)}
-                className={`input-premium w-full text-lg ${q.showDollar ? "pl-8" : ""}`}
-                placeholder={q.placeholder}
-                autoFocus
-              />
-            </div>
+            <input
+              type="number"
+              value={answers[q.key]}
+              onChange={(e) => handleChange(q.key, e.target.value)}
+              className="input-premium w-full text-lg"
+              placeholder={q.placeholder}
+              autoFocus
+            />
           )}
 
           {q.type === "select" && q.options && (
