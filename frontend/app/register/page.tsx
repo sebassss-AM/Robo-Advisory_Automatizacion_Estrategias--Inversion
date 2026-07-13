@@ -51,7 +51,7 @@ export default function RegisterPage() {
             Crear Cuenta
           </h1>
           <p className="mt-1.5 text-sm text-gray-500">
-            Completá tus datos para empezar
+            Completa tus datos para empezar
           </p>
         </div>
 
@@ -167,7 +167,7 @@ export default function RegisterPage() {
         </form>
 
         <p className="mt-8 text-center text-sm text-gray-500">
-          ¿Ya tenés cuenta?{" "}
+          ¿Ya tienes cuenta?{" "}
           <a href="/login" className="font-semibold text-blue-600 hover:text-blue-700 transition-colors">
             Iniciar sesión
           </a>

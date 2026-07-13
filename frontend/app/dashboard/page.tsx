@@ -47,7 +47,7 @@ export default function DashboardPage() {
             </div>
             <span className="text-xl font-bold tracking-tight text-gray-900">InversIA</span>
           </a>
-          <nav className="flex items-center gap-1">
+          <nav className="flex items-center gap-1 sm:gap-3 min-h-[36px]">
             <a href="/dashboard" className="btn-ghost text-sm font-semibold text-blue-600">Dashboard</a>
             <a href="/mis-perfilamientos" className="btn-ghost text-sm">Mis Perfilamientos</a>
             <NotificationBell />
@@ -124,8 +124,8 @@ export default function DashboardPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </div>
-              <h3 className="mt-5 text-lg font-semibold text-gray-900">Aún no tenés perfilamientos</h3>
-              <p className="mt-2 text-sm text-gray-500">Completá el cuestionario para recibir tu primera propuesta de inversión.</p>
+              <h3 className="mt-5 text-lg font-semibold text-gray-900">Aún no tienes perfilamientos</h3>
+              <p className="mt-2 text-sm text-gray-500">Completa el cuestionario para recibir tu primera propuesta de inversión.</p>
               <a href="/cuestionario" className="btn-primary mt-6 px-6 py-2.5 text-sm">
                 Iniciar perfilamiento
               </a>

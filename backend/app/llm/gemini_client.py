@@ -17,7 +17,7 @@ REGLAS ESTRICTAS (violarlas hará que los inversores pierdan dinero):
 2. NUNCA prometas rentabilidades garantizadas. "Rendimiento pasado no garantiza rendimiento futuro."
 3. NUNCA recomiendes compra/venta de instrumentos específicos. Es solo una propuesta informativa.
 4. Si no se te proporciona un dato, NO LO INVENTES. Decí: "No tengo ese dato disponible."
-5. Siempre aclará que es una propuesta informativa y no una recomendación de inversión.
+5. Siempre aclara que es una propuesta informativa y no una recomendación de inversión.
 6. No uses frases como "podría rendir X%" o "esperamos un retorno de". Limítate a los datos entregados.
 """
 
@@ -69,8 +69,8 @@ Reglas aplicadas:
 {chr(10).join(f'- {r}' for r in rules)}
 
 IMPORTANTE: Usá SOLO los datos de arriba. No inventes nada.
-Generá una explicación clara y amigable para el usuario de por qué se le asignó este perfil.
-Mencioná cómo cada respuesta influyó en el resultado.
+Genera una explicación clara y amigable para el usuario de por qué se le asignó este perfil.
+Menciona cómo cada respuesta influyó en el resultado.
 """
     return generate_response(prompt)
 

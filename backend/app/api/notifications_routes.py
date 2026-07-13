@@ -55,7 +55,7 @@ def _build_message(row: dict) -> str:
     if action == "aprobado":
         return f"Tu perfil {profile} fue aprobado por el asesor"
     elif action == "rechazado":
-        return f"Tu perfil {profile} fue rechazado. Revisá los comentarios del asesor."
+        return f"Tu perfil {profile} fue rechazado. Revisa los comentarios del asesor."
     elif action == "editado":
         return f"Tu perfil {profile} fue aprobado con modificaciones"
     return f"Tu perfil {profile} tiene una actualización"

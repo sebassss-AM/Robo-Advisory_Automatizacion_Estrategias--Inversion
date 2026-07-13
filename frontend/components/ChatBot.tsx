@@ -24,7 +24,7 @@ export default function ChatBot({
 }: ChatBotProps) {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: "assistant", content: "¡Hola! Soy InversIA, tu agente financiero. Podés preguntarme sobre esta propuesta, qué significa cada activo, o cómo cambiaría tu portafolio si ajustás el aporte mensual." },
+    { role: "assistant", content: "¡Hola! Soy InversIA, tu agente financiero. Puedes preguntarme sobre esta propuesta, qué significa cada activo, o cómo cambiaría tu portafolio si ajustas el aporte mensual." },
   ])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)

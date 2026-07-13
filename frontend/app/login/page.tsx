@@ -37,7 +37,7 @@ export default function LoginPage() {
             Iniciar Sesión
           </h1>
           <p className="mt-1.5 text-sm text-gray-500">
-            Ingresá con tu usuario y contraseña
+            Ingresa con tu usuario y contraseña
           </p>
         </div>
 
@@ -95,9 +95,9 @@ export default function LoginPage() {
         </form>
 
         <p className="mt-8 text-center text-sm text-gray-500">
-          ¿No tenés cuenta?{" "}
+          ¿No tienes cuenta?{" "}
           <a href="/register" className="font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-            Registrate
+            Regístrate
           </a>
         </p>
       </div>

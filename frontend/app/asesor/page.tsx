@@ -136,7 +136,7 @@ export default function AsesorPage() {
                   </svg>
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-gray-900">No hay perfilamientos pendientes</h3>
-                <p className="mt-1 text-gray-500">Los nuevos perfilamientos de clientes aparecerán acá.</p>
+                <p className="mt-1 text-gray-500">Los nuevos perfilamientos de clientes aparecerán aquí.</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -188,8 +188,8 @@ export default function AsesorPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="mt-5 text-lg font-semibold text-gray-900">No tenés perfiles en revisión</h3>
-                <p className="mt-1 text-gray-500">Los perfiles que tomes para revisar aparecerán acá.</p>
+                <h3 className="mt-5 text-lg font-semibold text-gray-900">No tienes perfiles en revisión</h3>
+                <p className="mt-1 text-gray-500">Los perfiles que tomes para revisar aparecerán aquí.</p>
               </div>
             ) : (
               <div className="space-y-4">

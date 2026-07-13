@@ -205,7 +205,7 @@ function PropuestaContent() {
             </div>
             <span className="text-lg font-bold text-gray-900">InversIA</span>
           </a>
-          <nav className="flex items-center gap-3">
+          <nav className="flex items-center gap-1 sm:gap-3 min-h-[36px]">
             <span className="badge badge-blue text-xs">
               Perfil {p.profile}
             </span>
@@ -229,7 +229,7 @@ function PropuestaContent() {
           <div className="animate-fade-in-up mb-8 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 p-5 text-center shadow-lg">
             <p className="text-lg font-bold text-white">Modo demo — nada de esto se guarda</p>
             <p className="mt-1 text-sm text-amber-100">
-              <a href="/register" className="font-semibold underline hover:text-white">Creá tu cuenta gratis</a> para guardar tu perfilamiento y acceder a asesoría personalizada.
+              <a href="/register" className="font-semibold underline hover:text-white">Crea tu cuenta gratis</a> para guardar tu perfilamiento y acceder a asesoría personalizada.
             </p>
           </div>
         )}
@@ -239,7 +239,7 @@ function PropuestaContent() {
           <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Propuesta de Portafolio</h1>
           <p className="mt-2 text-gray-500">
             {fromAsesor
-              ? "Revisá la propuesta generada. Podés aprobarla, editarla o rechazarla."
+              ? "Revisa la propuesta generada. Puedes aprobarla, editarla o rechazarla."
               : "Esta propuesta está alineada con tu perfil de riesgo. Un asesor autorizado debe revisarla y aprobarla."}
           </p>
         </div>

@@ -59,7 +59,7 @@ export default function CuestionarioPage() {
             Conoce tu perfil de inversionista
           </h1>
           <p className="mt-3 text-lg text-gray-500">
-            Respondé estas preguntas para que podamos recomendarte una asignación de activos
+            Responde estas preguntas para que podamos recomendarte una asignación de activos
             adecuada a tus necesidades.
           </p>
         </div>

@@ -282,8 +282,8 @@ export default function RiskQuestionnaire({ onComplete, demo }: RiskQuestionnair
             <div>
               <span className="font-semibold text-gray-900">Quiero que un asesor revise mi perfilamiento</span>
               <p className="mt-1 text-sm text-gray-500">
-                Si activás esta opción, un asesor autorizado revisará y aprobará tu propuesta.
-                Si la desactivás, recibirás tu propuesta directamente.
+                Si activas esta opción, un asesor autorizado revisará y aprobará tu propuesta.
+                Si la desactivas, recibirás tu propuesta directamente.
               </p>
             </div>
           </label>

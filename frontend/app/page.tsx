@@ -37,28 +37,28 @@ export default function Home() {
             </div>
             <span className="text-lg sm:text-xl font-bold tracking-tight text-gray-900">InversIA</span>
           </a>
-          <nav className="flex items-center gap-1 sm:gap-3">
+          <nav className="flex items-center gap-1 sm:gap-3 min-h-[36px]">
             {advisor ? (
               <>
-                <a href="/asesor" className="btn-ghost text-xs sm:text-sm px-2 sm:px-3">Panel</a>
-                <button onClick={handleLogout} className="btn-ghost text-xs sm:text-sm text-red-600 hover:bg-red-50 hover:text-red-700 px-2 sm:px-3">
+                <a href="/asesor" className="btn-ghost text-xs sm:text-sm px-2 sm:px-3 whitespace-nowrap">Panel</a>
+                <button onClick={handleLogout} className="btn-ghost text-xs sm:text-sm text-red-600 hover:bg-red-50 hover:text-red-700 px-2 sm:px-3 whitespace-nowrap">
                   Salir
                 </button>
               </>
             ) : loggedIn ? (
               <>
-                <a href="/dashboard" className="btn-ghost text-xs sm:text-sm px-2 sm:px-3">Dashboard</a>
+                <a href="/dashboard" className="btn-ghost text-xs sm:text-sm px-2 sm:px-3 whitespace-nowrap">Dashboard</a>
                 <NotificationBell />
-                <button onClick={handleLogout} className="btn-ghost text-xs sm:text-sm text-red-600 hover:bg-red-50 hover:text-red-700 px-2 sm:px-3">
+                <button onClick={handleLogout} className="btn-ghost text-xs sm:text-sm text-red-600 hover:bg-red-50 hover:text-red-700 px-2 sm:px-3 whitespace-nowrap">
                   Salir
                 </button>
               </>
             ) : (
               <>
-                <a href="#el-problema" className="hidden sm:inline-flex btn-ghost text-xs sm:text-sm">El problema</a>
-                <a href="#funcionalidades" className="hidden sm:inline-flex btn-ghost text-xs sm:text-sm">Funcionalidades</a>
-                <a href="#como-funciona" className="hidden sm:inline-flex btn-ghost text-xs sm:text-sm">Cómo funciona</a>
-                <a href="/demo" className="btn-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2">Demo</a>
+                <a href="#el-problema" className="hidden sm:inline-flex btn-ghost text-xs sm:text-sm whitespace-nowrap">El problema</a>
+                <a href="#funcionalidades" className="hidden sm:inline-flex btn-ghost text-xs sm:text-sm whitespace-nowrap">Funcionalidades</a>
+                <a href="#como-funciona" className="hidden sm:inline-flex btn-ghost text-xs sm:text-sm whitespace-nowrap">Cómo funciona</a>
+                <a href="/demo" className="btn-primary text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 whitespace-nowrap">Demo</a>
               </>
             )}
           </nav>
@@ -80,7 +80,7 @@ export default function Home() {
               </div>
               <h1 className="animate-fade-in-up stagger-1 text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight text-white lg:text-6xl">
                 {advisor ? (
-                  <>Gestioná perfiles de clientes con{" "}
+                  <>Gestiona perfiles de clientes con{" "}
                     <span className="bg-gradient-to-r from-blue-300 via-blue-200 to-violet-200 bg-clip-text text-transparent">
                       asistencia de IA
                     </span>
@@ -95,14 +95,14 @@ export default function Home() {
               </h1>
               <p className="animate-fade-in-up stagger-2 mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-blue-200/80">
                 {advisor ? (
-                  <>Revisá perfilamientos, analizá propuestas y aprobá o rechazá asignaciones de forma ágil con datos de mercado reales. <strong className="text-blue-200">100% gratis, sin comisiones.</strong></>
+                  <>Revisa perfilamientos, analiza propuestas y aprueba o rechaza asignaciones de forma ágil con datos de mercado reales. <strong className="text-blue-200">100% gratis, sin comisiones.</strong></>
                 ) : (
-                  <>InversIA combina un agente financiero de IA con supervisión humana. Creá tu perfil de riesgo, recibí una propuesta personalizada y, si querés, un asesor autorizado la revisa. <strong className="text-blue-200">100% gratis, sin comisiones ocultas.</strong></>
+                  <>InversIA combina un agente financiero de IA con supervisión humana. Crea tu perfil de riesgo, recibe una propuesta personalizada y, si quieres, un asesor autorizado la revisa. <strong className="text-blue-200">100% gratis, sin comisiones ocultas.</strong></>
                 )}
               </p>
               {!advisor && !loggedIn && (
                 <p className="animate-fade-in-up stagger-2 mt-3 text-sm text-blue-300/70">
-                  ¿Sos asesor financiero? También podés registrarte y usar InversIA para gestionar perfiles de clientes.
+                  ¿Eres asesor financiero? También puedes registrarte y usar InversIA para gestionar perfiles de clientes.
                 </p>
               )}
               <div className="animate-fade-in-up stagger-3 mt-10 flex flex-wrap gap-3">
@@ -166,7 +166,7 @@ export default function Home() {
               {advisor ? (
                 <>
                   <h2 className="text-4xl font-extrabold tracking-tight text-gray-900">
-                    Los clientes esperan más de lo que podés darles solo
+                    Los clientes esperan más de lo que puedes darles solo
                   </h2>
                   <p className="mt-4 text-lg text-gray-500 leading-relaxed">
                     Gestionar múltiples clientes, analizar sus perfiles y generar propuestas personalizadas
@@ -245,16 +245,16 @@ export default function Home() {
               {advisor ? (
                 <>
                   <h2 className="text-4xl font-extrabold tracking-tight text-gray-900">
-                    Todo lo que necesitás como asesor
+                    Todo lo que necesitas como asesor
                   </h2>
                   <p className="mt-4 text-lg text-gray-500">
-                    Gestioná clientes, revisá propuestas y tomá decisiones informadas con datos de mercado reales.
+                    Gestiona clientes, revisa propuestas y toma decisiones informadas con datos de mercado reales.
                   </p>
                 </>
               ) : (
                 <>
                   <h2 className="text-4xl font-extrabold tracking-tight text-gray-900">
-                    Todo lo que necesitás para invertir con confianza
+                    Todo lo que necesitas para invertir con confianza
                   </h2>
                   <p className="mt-4 text-lg text-gray-500">
                     Una plataforma completamente gratuita que combina inteligencia artificial con supervisión humana.
@@ -284,7 +284,7 @@ export default function Home() {
                 },
                 {
                   title: "Edición y aprobación flexible",
-                  desc: "Podés ajustar los porcentajes de cada activo, agregar comentarios y aprobar o rechazar con un clic. Todo queda auditado.",
+                  desc: "Puedes ajustar los porcentajes de cada activo, agregar comentarios y aprobar o rechazar con un clic. Todo queda auditado.",
                   gradient: "from-violet-500 to-violet-600",
                   icon: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z",
                 },
@@ -367,7 +367,7 @@ export default function Home() {
                     Tu rol como asesor
                   </h2>
                   <p className="mt-4 text-lg text-gray-500">
-                    Revisá perfiles, analizá propuestas y aprobá o rechazá asignaciones.
+                    Revisa perfiles, analiza propuestas y aprueba o rechaza asignaciones.
                   </p>
                 </>
               ) : (
@@ -376,7 +376,7 @@ export default function Home() {
                     Tres pasos simples
                   </h2>
                   <p className="mt-4 text-lg text-gray-500">
-                    Completá el cuestionario, recibí tu propuesta, un asesor la revisa.
+                    Completa el cuestionario, recibe tu propuesta, un asesor la revisa.
                   </p>
                 </>
               )}
@@ -388,21 +388,21 @@ export default function Home() {
                     {
                       num: "01",
                       title: "Revisar perfiles",
-                      desc: "Ves los perfilamientos pendientes de los clientes y elegís cuáles tomar para revisión.",
+                      desc: "Ves los perfilamientos pendientes de los clientes y eliges cuáles tomar para revisión.",
                       gradient: "from-blue-500 to-blue-600",
                       badge: "Pendientes",
                     },
                     {
                       num: "02",
                       title: "Analizar propuesta",
-                      desc: "Accedés a la distribución de activos, métricas de riesgo y podés editar porcentajes si hace falta.",
+                      desc: "Accedes a la distribución de activos, métricas de riesgo y puedes editar porcentajes si hace falta.",
                       gradient: "from-emerald-500 to-emerald-600",
                       badge: "Propuesta",
                     },
                     {
                       num: "03",
                       title: "Decidir",
-                      desc: "Aprobás, rechazás o editás la asignación. Cada decisión queda registrada con tu ID.",
+                      desc: "Apruebas, rechazas o editas la asignación. Cada decisión queda registrada con tu ID.",
                       gradient: "from-violet-500 to-violet-600",
                       badge: "Aprobar / Rechazar",
                     },
@@ -428,7 +428,7 @@ export default function Home() {
                     {
                       num: "01",
                       title: "Perfilamiento",
-                      desc: "Completás un cuestionario sobre tu horizonte, tolerancia al riesgo y objetivos financieros.",
+                      desc: "Completas un cuestionario sobre tu horizonte, tolerancia al riesgo y objetivos financieros.",
                       gradient: "from-blue-500 to-blue-600",
                       badge: "Cuestionario",
                     },
@@ -442,7 +442,7 @@ export default function Home() {
                     {
                       num: "03",
                       title: "Revisión",
-                      desc: "Vos decidís: recibí tu propuesta directo o deja que un asesor autorizado la revise y apruebe.",
+                      desc: "Tú decides: recibe tu propuesta directo o deja que un asesor autorizado la revise y apruebe.",
                       gradient: "from-violet-500 to-violet-600",
                       badge: "Opcional",
                     },

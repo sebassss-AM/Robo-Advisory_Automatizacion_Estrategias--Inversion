@@ -66,7 +66,7 @@ export default function MisPerfilamientosPage() {
             </div>
             <span className="font-bold text-gray-900">InversIA</span>
           </a>
-          <nav className="flex items-center gap-1">
+          <nav className="flex items-center gap-1 sm:gap-3 min-h-[36px]">
             <a href="/dashboard" className="btn-ghost text-sm">Dashboard</a>
             <NotificationBell />
             <a href="/cuestionario" className="btn-primary text-sm ml-1">Nuevo perfilamiento</a>
@@ -82,7 +82,7 @@ export default function MisPerfilamientosPage() {
           <div className="badge badge-blue mb-4 inline-flex">Historial</div>
           <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">Mis Perfilamientos</h1>
           <p className="mt-2 text-lg text-gray-500">
-            Acá podés ver el estado de tus perfilamientos y sus resultados.
+            Acá puedes ver el estado de tus perfilamientos y sus resultados.
           </p>
         </div>
 
@@ -93,8 +93,8 @@ export default function MisPerfilamientosPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
-            <h3 className="mt-5 text-lg font-semibold text-gray-900">No tenés perfilamientos</h3>
-            <p className="mt-1 text-gray-500">Completá el cuestionario para recibir tu primera propuesta.</p>
+            <h3 className="mt-5 text-lg font-semibold text-gray-900">No tienes perfilamientos</h3>
+            <p className="mt-1 text-gray-500">Completa el cuestionario para recibir tu primera propuesta.</p>
             <a href="/cuestionario" className="btn-primary mt-6 inline-flex">
               Iniciar Perfilamiento
             </a>

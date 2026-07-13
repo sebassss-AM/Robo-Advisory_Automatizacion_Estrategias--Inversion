@@ -32,7 +32,7 @@ export default function DemoPage() {
 
       <main className="mx-auto max-w-3xl px-6 py-12">
         <div className="animate-fade-in-up mb-6 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 p-4 text-center text-sm font-medium text-white shadow-lg">
-          Estás en modo demo — nada se guarda. Registrate gratis para guardar tu perfilamiento y recibir asesoría personalizada.
+          Estás en modo demo — nada se guarda. Regístrate gratis para guardar tu perfilamiento y recibir asesoría personalizada.
         </div>
 
         <div className="animate-fade-in-up mb-10">
@@ -41,7 +41,7 @@ export default function DemoPage() {
             Probá el perfilamiento
           </h1>
           <p className="mt-3 text-lg text-gray-500">
-            Respondé el cuestionario y recibí una propuesta de portafolio generada por nuestro agente financiero de IA.
+            Responde el cuestionario y recibe una propuesta de portafolio generada por nuestro agente financiero de IA.
             Sin registro, sin compromiso.
           </p>
         </div>
