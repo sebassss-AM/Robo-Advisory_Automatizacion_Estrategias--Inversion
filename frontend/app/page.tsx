@@ -100,6 +100,11 @@ export default function Home() {
                   <>InversIA combina un agente financiero de IA con supervisión humana. Creá tu perfil de riesgo, recibí una propuesta personalizada y, si querés, un asesor autorizado la revisa. <strong className="text-blue-200">100% gratis, sin comisiones ocultas.</strong></>
                 )}
               </p>
+              {!advisor && !loggedIn && (
+                <p className="animate-fade-in-up stagger-2 mt-3 text-sm text-blue-300/70">
+                  ¿Sos asesor financiero? También podés registrarte y usar InversIA para gestionar perfiles de clientes.
+                </p>
+              )}
               <div className="animate-fade-in-up stagger-3 mt-10 flex flex-wrap gap-3">
                 {advisor ? (
                   <>
@@ -121,9 +126,6 @@ export default function Home() {
                     </a>
                     <a href="/register" className="w-full sm:w-auto text-center rounded-xl bg-white px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-slate-900 shadow-xl shadow-black/10 transition hover:bg-blue-50 hover:shadow-2xl">
                       Crear Cuenta Gratis
-                    </a>
-                    <a href="/register?role=asesor" className="w-full sm:w-auto text-center rounded-xl border border-blue-400/30 bg-blue-400/10 px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-blue-200 transition hover:bg-blue-400/20">
-                      ¿Sos asesor? Registrate acá
                     </a>
                     <a href="/login" className="w-full sm:w-auto text-center rounded-xl border border-white/20 px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-white transition hover:bg-white/10">
                       Ya tengo cuenta
