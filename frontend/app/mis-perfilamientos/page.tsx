@@ -67,11 +67,11 @@ export default function MisPerfilamientosPage() {
             <span className="font-bold text-gray-900">InversIA</span>
           </a>
           <nav className="flex items-center gap-1 sm:gap-3 min-h-[36px]">
-            <a href="/dashboard" className="btn-ghost text-sm">Dashboard</a>
+            <a href="/dashboard" className="btn-ghost text-xs sm:text-sm px-2 sm:px-3 whitespace-nowrap">Dashboard</a>
+            <span className="btn-ghost text-xs sm:text-sm px-2 sm:px-3 whitespace-nowrap text-blue-600 font-semibold">Mis Perfilamientos</span>
             <NotificationBell />
-            <a href="/cuestionario" className="btn-primary text-sm ml-1">Nuevo perfilamiento</a>
-            <button onClick={handleLogout} className="btn-ghost text-sm text-red-600 hover:bg-red-50 hover:text-red-700">
-              Cerrar sesión
+            <button onClick={handleLogout} className="btn-ghost text-xs sm:text-sm text-red-600 hover:bg-red-50 hover:text-red-700 px-2 sm:px-3 whitespace-nowrap">
+              Salir
             </button>
           </nav>
         </div>
