@@ -2,6 +2,17 @@
 
 **Hackathon Guide Financial Agents IA — Track 3**
 
+**Grupo**: Vision Coders
+
+**Integrantes**:
+- Gerardo Sebastián Anchundia Moreira
+- Elkin Alejandro Tuarez Baque
+- Moran Chiquito Christian Joel
+- Briones Lavayen Briggitte Andrea
+- Ramírez Ramírez Maria de los Ángeles
+
+**Despliegue**: [https://robo-advisory-ia.vercel.app/](https://robo-advisory-ia.vercel.app/)
+
 Sistema de asesoría financiera automatizada con IA. Realiza perfilamiento de riesgo, genera propuestas de portafolio con datos de mercado reales, y permite revisión por un asesor humano antes de cualquier acción.
 
 ---
