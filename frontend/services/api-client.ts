@@ -177,4 +177,18 @@ export const api = {
     request<{ message: string }>(`/perfil/${profileId}`, {
       method: "DELETE",
     }),
+
+  chat: (payload: {
+    message: string
+    profile: string
+    monthly_investment: number
+    allocations: { instrument_name: string; instrument_id: string; percentage: number; expected_return: string }[]
+    risk_metrics: object
+    explanation: string
+    history: { role: string; content: string }[]
+  }) =>
+    request<{ response: string }>("/chat", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
 }

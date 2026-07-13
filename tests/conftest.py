@@ -44,9 +44,3 @@ def aggressive_answers() -> QuestionnaireAnswers:
     )
 
 
-@pytest.fixture
-def mock_llm():
-    from unittest.mock import patch
-    with patch("backend.app.agents.investor_profiling_node.generate_profile_explanation") as mock:
-        mock.return_value = "Explicación simulada del perfil."
-        yield mock

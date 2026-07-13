@@ -5,7 +5,7 @@ from backend.app.models.portfolio_proposal import (
     RiskMetrics,
     PortfolioProposal,
 )
-from backend.app.services.market_data import _get_ticker_info
+from backend.app.services.market_data import get_ticker_info
 from backend.app.domain.instrument_catalog import get_instrument_by_id
 
 DETAILED_ALLOCATIONS = {
@@ -78,7 +78,7 @@ RISK_METRICS_BY_PROFILE = {
 
 
 def _enrich_with_market_data(ticker: str, percentage: float, category: InstrumentCategory) -> Allocation:
-    info = _get_ticker_info(ticker)
+    info = get_ticker_info(ticker)
     name = info["name"] if info and info.get("name") else ticker
     price = info["price"] if info and info.get("price") else None
     inst = get_instrument_by_id(ticker)
@@ -176,7 +176,7 @@ def build_explanation(profile: RiskProfile, allocations: list[Allocation]) -> st
         lines.append(f"**{label}** ({total_pct:.0f}%): {ticker_list}")
         for a in items:
             info_id = a.instrument_id
-            info = _get_ticker_info(info_id)
+            info = get_ticker_info(info_id)
             if info:
                 extra = []
                 if info.get("price"):

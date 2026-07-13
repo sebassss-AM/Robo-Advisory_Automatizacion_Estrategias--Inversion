@@ -4,7 +4,7 @@ _CACHE: dict[str, tuple[float, dict]] = {}
 _CACHE_TTL = 300
 
 
-def _get_ticker_info(ticker: str) -> dict | None:
+def get_ticker_info(ticker: str) -> dict | None:
     now = time.time()
     cached = _CACHE.get(ticker)
     if cached and (now - cached[0]) < _CACHE_TTL:

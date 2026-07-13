@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from backend.app.api.auth_routes import get_current_user
-from backend.app.llm.gemini_client import generate_response
+from backend.app.llm.groq_client import generate_response
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 

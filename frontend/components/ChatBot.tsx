@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
+import { api } from "@/services/api-client"
 
 interface ChatBotProps {
   profile: string
@@ -42,23 +43,15 @@ export default function ChatBot({
     setLoading(true)
 
     try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("inversia_token")}`,
-        },
-        body: JSON.stringify({
-          message: text,
-          profile,
-          monthly_investment: monthlyInvestment,
-          allocations,
-          risk_metrics: riskMetrics,
-          explanation: explanation || "",
-          history: messages.slice(-6),
-        }),
+      const data = await api.chat({
+        message: text,
+        profile,
+        monthly_investment: monthlyInvestment,
+        allocations,
+        risk_metrics: riskMetrics,
+        explanation: explanation || "",
+        history: messages.slice(-6),
       })
-      const data = await res.json()
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.response || "No entendí tu consulta. ¿Podrías reformularla?" },

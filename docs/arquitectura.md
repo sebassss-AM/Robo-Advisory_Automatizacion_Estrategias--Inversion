@@ -28,43 +28,37 @@
 │                     API GATEWAY (FastAPI)                             │
 │                                                                       │
 │   POST /api/perfil     POST /api/propuesta    POST /api/revisar     │
-│   GET  /api/historial  POST /api/reglas       GET  /api/perfil/:id  │
+│   GET  /api/historial  POST /api/chat         GET  /api/perfil/:id  │
+│   POST /api/demo/procesar                     GET /api/notificaciones│
 └──────────────────────────────┬───────────────────────────────────────┘
                                │
                                ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│                   ORQUESTADOR — LANGGRAPH                             │
+│                    MOTOR DE NEGOCIO (Python)                          │
 │                                                                       │
-│   ┌────────────────────────────────────────────────────────────────┐  │
-│   │                    StateGraph                                   │  │
-│   │                                                                  │  │
-│   │   ┌────────────┐    ┌────────────┐    ┌────────────────┐       │  │
-│   │   │  Nodo 1:   │    │  Nodo 2:   │    │  Nodo 3:       │       │  │
-│   │   │ Profiling  │───▶│ Portfolio  │───▶│  Approval      │       │  │
-│   │   │ Agent      │    │ Agent      │    │  Agent         │       │  │
-│   │   └─────┬──────┘    └─────┬──────┘    └───────┬────────┘       │  │
-│   │         │                 │                    │                │  │
-│   │         ▼                 ▼                    ▼                │  │
-│   │   ┌────────────┐    ┌────────────┐    ┌────────────────┐       │  │
-│   │   │ Gemini LLM │    │ Gemini LLM │    │ Gemini LLM     │       │  │
-│   │   │ (explica)  │    │ (explica)  │    │ (resume)       │       │  │
-│   │   └────────────┘    └────────────┘    └────────────────┘       │  │
-│   └────────────────────────────────────────────────────────────────┘  │
+│   ┌────────────────────┐  ┌────────────────────┐                    │
+│   │ Reglas de          │  │ Reglas de          │                    │
+│   │ Perfilamiento      │  │ Asignación         │                    │
+│   │ (determinístico)   │  │ de Activos         │                    │
+│   └────────┬───────────┘  └────────┬───────────┘                    │
+│            │                       │                                │
+│            ▼                       ▼                                │
+│   ┌────────────────────────────────────────────┐                    │
+│   │          Groq (Llama 3.3 70B)               │                    │
+│   │   (explicaciones, no cálculos)              │                    │
+│   └────────────────────────────────────────────┘                    │
 └──────────────────────────────┬───────────────────────────────────────┘
                                │
                                ▼
 ┌──────────────────────────────────────────────────────────────────────┐
 │                    CAPA DE DATOS                                      │
 │                                                                       │
-│   ┌────────────────┐  ┌────────────────┐  ┌──────────────────┐      │
-│   │ Vercel Postgres │  │   Vercel KV    │  │    ChromaDB       │      │
-│   │ (Neon)          │  │  (Upstash Redis│  │  (Vector Store)   │      │
-│   │                  │  │                │  │                   │      │
-│   │ • perfiles      │  │ • sesiones     │  │ • documentos      │      │
-│   │ • propuestas    │  │ • caché        │  │   financieros     │      │
-│   │ • audit trail   │  │ • estado conv. │  │ • normativas      │      │
-│   │ • reglas        │  │                │  │ • reglas          │      │
-│   └────────────────┘  └────────────────┘  └──────────────────┘      │
+│   ┌──────────────────────────────────────────────┐                  │
+│   │              Neon (PostgreSQL)                │                  │
+│   │                                                │                  │
+│   │ • profiles   • proposals   • decisions        │                  │
+│   │ • users      • rules                          │                  │
+│   └──────────────────────────────────────────────┘                  │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -162,7 +156,7 @@ El sistema está diseñado como una **capa agéntica** que se integra sobre infr
 | Riesgo | Mitigación |
 |--------|-----------|
 | El LLM inventa datos financieros | NO se usa LLM para cálculos. Motor de reglas determinístico |
-| El LLM da consejos no regulados | Prompt engineering + RAG con documentos autorizados |
+| El LLM da consejos no regulados | Prompt engineering con instrucciones estrictas |
 | El LLM alucina instrumentos | Catálogo ficticio aprobado, consultado vía base de datos |
 | Recomendación sin fundamento | Cada explicación cita las reglas que la generaron |
 

@@ -1,13 +1,9 @@
 fastapi
 uvicorn
-langgraph
 pydantic
 psycopg2-binary
-redis
 openai
 pytest
-pytest-asyncio
-httpx
 python-dotenv
 bcrypt
 pyjwt
