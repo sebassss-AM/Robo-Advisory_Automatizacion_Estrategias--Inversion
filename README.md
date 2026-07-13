@@ -219,4 +219,4 @@ Luego abrir http://localhost:3000
 
 ## Licencia
 
-Proyecto académico — Hackathon Guide Financial Agents IA 2026
+Desarrollado por: Vision Coders
