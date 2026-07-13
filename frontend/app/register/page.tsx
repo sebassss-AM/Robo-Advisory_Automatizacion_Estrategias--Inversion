@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { register } from "@/services/auth"
 
@@ -13,6 +13,11 @@ export default function RegisterPage() {
   const [role, setRole] = useState<"cliente" | "asesor">("cliente")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("role") === "asesor") setRole("asesor")
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

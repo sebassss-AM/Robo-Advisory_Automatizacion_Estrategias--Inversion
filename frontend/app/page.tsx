@@ -76,7 +76,7 @@ export default function Home() {
             <div className="max-w-3xl">
               <div className="animate-fade-in-up mb-6 inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-400/10 px-3 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm font-medium text-blue-200">
                 <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-blue-400 animate-pulse-soft" />
-                {advisor ? "Panel de Asesor Financiero" : "Asesoría Financiera con IA"}
+                {advisor ? "Panel de Asesor Financiero" : "Asesoría Financiera con IA · 100% Gratis"}
               </div>
               <h1 className="animate-fade-in-up stagger-1 text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight text-white lg:text-6xl">
                 {advisor ? (
@@ -86,9 +86,9 @@ export default function Home() {
                     </span>
                   </>
                 ) : (
-                  <>Tu portafolio de inversión,{" "}
+                  <>Inversiones inteligentes al alcance de{" "}
                     <span className="bg-gradient-to-r from-blue-300 via-blue-200 to-violet-200 bg-clip-text text-transparent">
-                      explicado y transparente
+                      todos
                     </span>
                   </>
                 )}
@@ -97,8 +97,7 @@ export default function Home() {
                 {advisor ? (
                   <>Revisá perfilamientos, analizá propuestas y aprobá o rechazá asignaciones de forma ágil con datos de mercado reales. <strong className="text-blue-200">100% gratis, sin comisiones.</strong></>
                 ) : (
-                  <>Respondés un cuestionario, el agente financiero de IA analiza tu perfil de riesgo y genera una propuesta
-                  de portafolio personalizada. <strong className="text-blue-200">100% gratis, sin comisiones ocultas.</strong></>
+                  <>InversIA combina un agente financiero de IA con supervisión humana. Creá tu perfil de riesgo, recibí una propuesta personalizada y, si querés, un asesor autorizado la revisa. <strong className="text-blue-200">100% gratis, sin comisiones ocultas.</strong></>
                 )}
               </p>
               <div className="animate-fade-in-up stagger-3 mt-10 flex flex-wrap gap-3">
@@ -122,6 +121,9 @@ export default function Home() {
                     </a>
                     <a href="/register" className="w-full sm:w-auto text-center rounded-xl bg-white px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-slate-900 shadow-xl shadow-black/10 transition hover:bg-blue-50 hover:shadow-2xl">
                       Crear Cuenta Gratis
+                    </a>
+                    <a href="/register?role=asesor" className="w-full sm:w-auto text-center rounded-xl border border-blue-400/30 bg-blue-400/10 px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-blue-200 transition hover:bg-blue-400/20">
+                      ¿Sos asesor? Registrate acá
                     </a>
                     <a href="/login" className="w-full sm:w-auto text-center rounded-xl border border-white/20 px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-white transition hover:bg-white/10">
                       Ya tengo cuenta
@@ -175,9 +177,8 @@ export default function Home() {
                     Invertir no debería ser solo para expertos
                   </h2>
                   <p className="mt-4 text-lg text-gray-500 leading-relaxed">
-                    Hoy arrancar en el mundo de las inversiones es complicado: los asesores tradicionales
-                    son caros, las plataformas usan lenguaje técnico que no entendés y muchas veces no
-                    sabés en qué estás invirtiendo realmente. <strong className="text-gray-700">InversIA resuelve esto con un agente financiero de IA que analiza tu perfil, genera propuestas transparentes y te da control total.</strong>
+                    La industria financiera tiene dos problemas: los inversores no encuentran herramientas accesibles
+                    y los asesores no tienen plataformas modernas para escalar su trabajo. <strong className="text-gray-700">InversIA une ambos mundos: un agente financiero de IA para los inversores y un panel de gestión para asesores. Todo gratis.</strong>
                   </p>
                 </>
               )}
@@ -323,8 +324,8 @@ export default function Home() {
                   icon: "M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z",
                 },
                 {
-                  title: "Revisión por asesor",
-                  desc: "Si querés, un asesor autorizado revisa tu propuesta. Puede ajustar los porcentajes y aprobar o rechazar con comentarios.",
+                  title: "Para inversores y asesores",
+                  desc: "Los inversores obtienen propuestas con IA. Los asesores tienen un panel profesional para revisar, editar y aprobar perfiles de sus clientes con auditoría completa.",
                   gradient: "from-rose-500 to-rose-600",
                   icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
                 },
