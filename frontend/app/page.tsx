@@ -79,8 +79,8 @@ export default function Home() {
               </h1>
               <p className="animate-fade-in-up stagger-2 mt-6 max-w-xl text-lg leading-relaxed text-blue-200/80">
                 Respondés un cuestionario, la IA analiza tu perfil de riesgo y genera una propuesta
-                de portafolio. Un asesor humano revisa y aprueba antes de cualquier acción.
-                Sin letra chica, sin promesas falsas.
+                de portafolio. Si querés, un asesor humano la revisa y aprueba. Sin letra chica,
+                sin promesas falsas.
               </p>
               <div className="animate-fade-in-up stagger-3 mt-10 flex flex-wrap gap-4">
                 {advisor ? (
@@ -163,9 +163,9 @@ export default function Home() {
                 {
                   num: "03",
                   title: "Revisión",
-                  desc: "Un asesor de inversiones autorizado revisa, ajusta si es necesario, y aprueba la propuesta.",
+                  desc: "Vos decidís: recibí tu propuesta directo o deja que un asesor autorizado la revise y apruebe.",
                   gradient: "from-violet-500 to-violet-600",
-                  badge: "Asesor humano",
+                  badge: "Opcional",
                 },
               ].map((step, i) => (
                 <div
