@@ -8,11 +8,11 @@ interface Question {
   label: string
   description?: string
   type: "number" | "select" | "range"
-  icon?: string
   options?: { value: string; label: string }[]
   min?: number
   max?: number
   placeholder?: string
+  showDollar?: boolean
 }
 
 const questions: Question[] = [
@@ -20,7 +20,6 @@ const questions: Question[] = [
     key: "age",
     label: "¿Cuál es tu edad?",
     type: "number",
-    icon: "🎂",
     placeholder: "Ingresa tu edad",
   },
   {
@@ -28,7 +27,6 @@ const questions: Question[] = [
     label: "¿Cuál es tu horizonte de inversión?",
     description: "¿Por cuánto tiempo planeas mantener tu inversión?",
     type: "select",
-    icon: "📅",
     options: [
       { value: "corto_plazo", label: "Menos de 3 años" },
       { value: "mediano_plazo", label: "3 a 7 años" },
@@ -40,11 +38,10 @@ const questions: Question[] = [
     label: "¿Cómo describirías tu tolerancia al riesgo?",
     description: "¿Cómo reaccionarías si tu inversión fluctuara?",
     type: "select",
-    icon: "🎯",
     options: [
-      { value: "baja", label: "🛡️ Baja — Prefiero seguridad aunque gane menos" },
-      { value: "media", label: "⚖️ Media — Acepto fluctuaciones moderadas" },
-      { value: "alta", label: "🚀 Alta — Busco máxima rentabilidad posible" },
+      { value: "baja", label: "Baja — Prefiero seguridad aunque gane menos" },
+      { value: "media", label: "Media — Acepto fluctuaciones moderadas" },
+      { value: "alta", label: "Alta — Busco máxima rentabilidad posible" },
     ],
   },
   {
@@ -52,12 +49,11 @@ const questions: Question[] = [
     label: "¿Cuál es tu objetivo principal?",
     description: "¿Qué buscas lograr con esta inversión?",
     type: "select",
-    icon: "🎯",
     options: [
-      { value: "preservacion_capital", label: "🛡️ Preservar mi capital" },
-      { value: "ingresos", label: "💰 Generar ingresos estables" },
-      { value: "crecimiento", label: "📈 Hacer crecer mi dinero" },
-      { value: "crecimiento_agresivo", label: "🔥 Crecimiento agresivo" },
+      { value: "preservacion_capital", label: "Preservar mi capital" },
+      { value: "ingresos", label: "Generar ingresos estables" },
+      { value: "crecimiento", label: "Hacer crecer mi dinero" },
+      { value: "crecimiento_agresivo", label: "Crecimiento agresivo" },
     ],
   },
   {
@@ -65,23 +61,22 @@ const questions: Question[] = [
     label: "¿Cuál es tu ingreso mensual?",
     description: "Esto nos ayuda a evaluar tu capacidad financiera.",
     type: "number",
-    icon: "💵",
     placeholder: "Monto en USD",
+    showDollar: true,
   },
   {
     key: "monthly_investment",
     label: "¿Cuánto podrías destinar a invertir por mes?",
     description: "No es necesario que sea todo tu ingreso. Solo lo que puedas comprometer.",
     type: "number",
-    icon: "📊",
     placeholder: "Ej: 200",
+    showDollar: true,
   },
   {
     key: "investment_experience",
     label: "Nivel de experiencia en inversiones",
     description: "Del 1 al 5, ¿cuánta experiencia tienes?",
     type: "range",
-    icon: "📚",
     min: 1,
     max: 5,
   },
@@ -190,23 +185,22 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
         key={step}
         className="animate-fade-in-up min-h-[240px]"
       >
-        <div className="flex items-center gap-3 mb-2">
-          {q.icon && <span className="text-2xl">{q.icon}</span>}
+        <div className="mb-2">
           <label className="text-2xl font-bold text-gray-900">{q.label}</label>
         </div>
         {q.description && (
-          <p className="text-gray-500 ml-11">{q.description}</p>
+          <p className="text-gray-500">{q.description}</p>
         )}
 
-        <div className="mt-8 ml-11">
+        <div className="mt-8">
           {q.type === "number" && (
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">$</span>
+              {q.showDollar && <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">$</span>}
               <input
                 type="number"
                 value={answers[q.key]}
                 onChange={(e) => handleChange(q.key, e.target.value)}
-                className="input-premium w-full pl-8 text-lg"
+                className={`input-premium w-full text-lg ${q.showDollar ? "pl-8" : ""}`}
                 placeholder={q.placeholder}
                 autoFocus
               />
@@ -265,7 +259,7 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
       </div>
 
       {step === questions.length - 1 && (
-        <div className="ml-11 mt-8 rounded-xl bg-blue-50/70 p-5 ring-1 ring-blue-100">
+        <div className="mt-8 rounded-xl bg-blue-50/70 p-5 ring-1 ring-blue-100">
           <label className="flex cursor-pointer items-start gap-3">
             <input
               type="checkbox"
