@@ -212,15 +212,7 @@ export default function RiskQuestionnaire({ onComplete }: RiskQuestionnaireProps
               {q.options.map((opt) => (
                 <button
                   key={opt.value}
-                  onClick={() => {
-                    handleChange(q.key, opt.value)
-                    if (step < questions.length - 1) {
-                      setTimeout(() => {
-                        setDirection("next")
-                        setStep((s) => s + 1)
-                      }, 200)
-                    }
-                  }}
+                  onClick={() => handleChange(q.key, opt.value)}
                   className={`w-full rounded-xl border p-4 text-left text-base transition-all ${
                     answers[q.key] === opt.value
                       ? "border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-200"
