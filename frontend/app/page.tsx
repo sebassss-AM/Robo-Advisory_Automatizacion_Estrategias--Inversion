@@ -52,7 +52,7 @@ export default function Home() {
                 </button>
               </>
             ) : (
-              <div />
+              <a href="#como-funciona" className="btn-ghost text-sm">Cómo funciona</a>
             )}
           </nav>
         </div>
@@ -133,7 +133,7 @@ export default function Home() {
         </section>
 
         {/* How it works */}
-        <section className="py-24">
+        <section id="como-funciona" className="scroll-mt-20 py-24">
           <div className="mx-auto max-w-6xl px-6">
             <div className="mx-auto max-w-2xl text-center">
               <span className="badge badge-blue mb-4">Cómo funciona</span>
