@@ -137,51 +137,108 @@ export default function Home() {
           <div className="mx-auto max-w-6xl px-6">
             <div className="mx-auto max-w-2xl text-center">
               <span className="badge badge-blue mb-4">Cómo funciona</span>
-              <h2 className="text-4xl font-extrabold tracking-tight text-gray-900">
-                Tres pasos simples
-              </h2>
-              <p className="mt-4 text-lg text-gray-500">
-                Completá el cuestionario, recibí tu propuesta, un asesor la revisa.
-              </p>
+              {advisor ? (
+                <>
+                  <h2 className="text-4xl font-extrabold tracking-tight text-gray-900">
+                    Tu rol como asesor
+                  </h2>
+                  <p className="mt-4 text-lg text-gray-500">
+                    Revisá perfiles, analizá propuestas y aprobá o rechazá asignaciones.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-4xl font-extrabold tracking-tight text-gray-900">
+                    Tres pasos simples
+                  </h2>
+                  <p className="mt-4 text-lg text-gray-500">
+                    Completá el cuestionario, recibí tu propuesta, un asesor la revisa.
+                  </p>
+                </>
+              )}
             </div>
             <div className="mt-16 grid gap-8 md:grid-cols-3">
-              {[
-                {
-                  num: "01",
-                  title: "Perfilamiento",
-                  desc: "Completás un cuestionario sobre tu horizonte, tolerancia al riesgo y objetivos financieros.",
-                  gradient: "from-blue-500 to-blue-600",
-                  badge: "Cuestionario",
-                },
-                {
-                  num: "02",
-                  title: "Propuesta",
-                  desc: "La IA genera una distribución de activos ajustada a tu perfil con métricas de riesgo claras.",
-                  gradient: "from-emerald-500 to-emerald-600",
-                  badge: "Análisis IA",
-                },
-                {
-                  num: "03",
-                  title: "Revisión",
-                  desc: "Vos decidís: recibí tu propuesta directo o deja que un asesor autorizado la revise y apruebe.",
-                  gradient: "from-violet-500 to-violet-600",
-                  badge: "Opcional",
-                },
-              ].map((step, i) => (
-                <div
-                  key={i}
-                  className="animate-fade-in-up card-premium group relative overflow-hidden p-8"
-                  style={{ animationDelay: `${0.4 + i * 0.15}s` }}
-                >
-                  <div className="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-gradient-to-br opacity-5" />
-                  <span className={`inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${step.gradient} text-lg font-bold text-white shadow-lg`}>
-                    {step.num}
-                  </span>
-                  <span className="badge badge-blue ml-3 align-middle">{step.badge}</span>
-                  <h3 className="mt-5 text-xl font-bold text-gray-900">{step.title}</h3>
-                  <p className="mt-3 leading-relaxed text-gray-500">{step.desc}</p>
-                </div>
-              ))}
+              {advisor ? (
+                <>
+                  {[
+                    {
+                      num: "01",
+                      title: "Revisar perfiles",
+                      desc: "Ves los perfilamientos pendientes de los clientes y elegís cuáles tomar para revisión.",
+                      gradient: "from-blue-500 to-blue-600",
+                      badge: "Pendientes",
+                    },
+                    {
+                      num: "02",
+                      title: "Analizar propuesta",
+                      desc: "Accedés a la distribución de activos, métricas de riesgo y podés editar porcentajes si hace falta.",
+                      gradient: "from-emerald-500 to-emerald-600",
+                      badge: "Propuesta",
+                    },
+                    {
+                      num: "03",
+                      title: "Decidir",
+                      desc: "Aprobás, rechazás o editás la asignación. Cada decisión queda registrada con tu ID.",
+                      gradient: "from-violet-500 to-violet-600",
+                      badge: "Aprobar / Rechazar",
+                    },
+                  ].map((step, i) => (
+                    <div
+                      key={i}
+                      className="animate-fade-in-up card-premium group relative overflow-hidden p-8"
+                      style={{ animationDelay: `${0.4 + i * 0.15}s` }}
+                    >
+                      <div className="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-gradient-to-br opacity-5" />
+                      <span className={`inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${step.gradient} text-lg font-bold text-white shadow-lg`}>
+                        {step.num}
+                      </span>
+                      <span className="badge badge-blue ml-3 align-middle">{step.badge}</span>
+                      <h3 className="mt-5 text-xl font-bold text-gray-900">{step.title}</h3>
+                      <p className="mt-3 leading-relaxed text-gray-500">{step.desc}</p>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <>
+                  {[
+                    {
+                      num: "01",
+                      title: "Perfilamiento",
+                      desc: "Completás un cuestionario sobre tu horizonte, tolerancia al riesgo y objetivos financieros.",
+                      gradient: "from-blue-500 to-blue-600",
+                      badge: "Cuestionario",
+                    },
+                    {
+                      num: "02",
+                      title: "Propuesta",
+                      desc: "La IA genera una distribución de activos ajustada a tu perfil con métricas de riesgo claras.",
+                      gradient: "from-emerald-500 to-emerald-600",
+                      badge: "Análisis IA",
+                    },
+                    {
+                      num: "03",
+                      title: "Revisión",
+                      desc: "Vos decidís: recibí tu propuesta directo o deja que un asesor autorizado la revise y apruebe.",
+                      gradient: "from-violet-500 to-violet-600",
+                      badge: "Opcional",
+                    },
+                  ].map((step, i) => (
+                    <div
+                      key={i}
+                      className="animate-fade-in-up card-premium group relative overflow-hidden p-8"
+                      style={{ animationDelay: `${0.4 + i * 0.15}s` }}
+                    >
+                      <div className="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-gradient-to-br opacity-5" />
+                      <span className={`inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${step.gradient} text-lg font-bold text-white shadow-lg`}>
+                        {step.num}
+                      </span>
+                      <span className="badge badge-blue ml-3 align-middle">{step.badge}</span>
+                      <h3 className="mt-5 text-xl font-bold text-gray-900">{step.title}</h3>
+                      <p className="mt-3 leading-relaxed text-gray-500">{step.desc}</p>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
           </div>
         </section>
